@@ -107,7 +107,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 
 var delta;
-var speed = 1;
+var speed = 0.2;
 
 var up = false, down = false, left = false, right = false;
 
@@ -171,9 +171,11 @@ const movement = () => {
 var lastUpdate = Date.now();
 // var myInterval = setInterval(tick, 0);
 
-const update = (delta) => {
-    
+function buttonClick() {
+    sphere.material.color.setHex( Math.random() * 0xffffff );
 }
+
+document.getElementById("changeColor").addEventListener("click", buttonClick);
 
 const tick = () =>
 {
