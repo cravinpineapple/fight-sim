@@ -1,5 +1,6 @@
 import './style.css'
 import * as THREE from 'three'
+import SquareAI from './Entity/ai.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 
@@ -17,27 +18,51 @@ const boxDimensions = 50;
 // Objects
 const geometry = new THREE.BoxGeometry(boxDimensions, boxDimensions, boxDimensions);
 
-// Materials
+// playerMaterials
+const playerMaterial = new THREE.MeshBasicMaterial();
+playerMaterial.color = new THREE.Color(0xff0000);
 
-const material = new THREE.MeshBasicMaterial()
-material.color = new THREE.Color(0xff0000)
-// material.
+//aiMaterial
+const aiMaterial = new THREE.MeshBasicMaterial();
+aiMaterial.color = new THREE.Color(0x0000ff);
+
+// creating AI
+const aiPosition = {
+    width: 555, 
+    height: 75, 
+    depth: -250
+};
+let aiSquare = new SquareAI(0x0000ff, {boxDimensions, boxDimensions, boxDimensions}, aiPosition);
+
 
 // Mesh
-const sphere = new THREE.Mesh(geometry,material)
-const testObj1 = gui.addFolder('Test Obj 1');
+const playerSphere = new THREE.Mesh(geometry,playerMaterial)
+const aiSphere = new THREE.Mesh(geometry, aiMaterial);
+const testObj1 = gui.addFolder('Player Object');
+const testObj2 = gui.addFolder('AI Object')
 
-sphere.position.x = 0;
-sphere.position.y = 0;
-sphere.position.z = -250;
+// PLAYER
+playerSphere.position.x = -395;
+playerSphere.position.y = 75;
+playerSphere.position.z = -250;
 
-testObj1.add(sphere.position, 'x').step(0.5);
-testObj1.add(sphere.position, 'y').step(0.5);
-testObj1.add(sphere.position, 'z').step(2);
+// AI 
+aiSphere.position.x = 555;
+aiSphere.position.y = 75;
+aiSphere.position.z = -250;
+
+testObj1.add(playerSphere.position, 'x').step(0.5);
+testObj1.add(playerSphere.position, 'y').step(0.5);
+testObj1.add(playerSphere.position, 'z').step(2);
+
+testObj2.add(aiSphere.position, 'x').step(0.5);
+testObj2.add(aiSphere.position, 'y').step(0.5);
+testObj2.add(aiSphere.position, 'z').step(2);
 
 // const pointLightHelper = new THREE.PointLightHelper(pointLight2, 0.3);
 // scene.add(pointLightHelper);
-scene.add(sphere)
+scene.add(playerSphere)
+scene.add(aiSphere);
 
 // Lights
 
@@ -162,17 +187,18 @@ document.onkeyup = () => {
 }
 
 const movement = () => {
-    if (up) sphere.position.y += speed * delta;
-    if (left) sphere.position.x -= speed * delta;
-    if (down) sphere.position.y -= speed * delta;
-    if (right) sphere.position.x += speed * delta;
+    if (up) playerSphere.position.y += speed * delta;
+    if (left) playerSphere.position.x -= speed * delta;
+    if (down) playerSphere.position.y -= speed * delta;
+    if (right) playerSphere.position.x += speed * delta;
 }
 
 var lastUpdate = Date.now();
 // var myInterval = setInterval(tick, 0);
 
 function buttonClick() {
-    sphere.material.color.setHex( Math.random() * 0xffffff );
+    playerSphere.material.color.setHex( Math.random() * 0xffffff );
+    aiSphere.material.color.setHex( Math.random() * 0xffffff );
 }
 
 document.getElementById("changeColor").addEventListener("click", buttonClick);
@@ -188,7 +214,7 @@ const tick = () =>
     movement();
 
     // Update objects
-    // sphere.rotation.y = .5 * elapsedTime
+    // playerSphere.rotation.y = .5 * elapsedTime
 
     // Update Orbital Controls
     // update(delta)
