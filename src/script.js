@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import SquareAI from './Entity/ai.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import { GridHelper } from 'three';
 
 // Debug
 const gui = new dat.GUI()
@@ -27,19 +28,24 @@ const aiMaterial = new THREE.MeshBasicMaterial();
 aiMaterial.color = new THREE.Color(0x0000ff);
 
 // creating AI
-const aiPosition = {
-    width: 555, 
-    height: 75, 
-    depth: -250
+var aiPosition = {
+    x: 555, 
+    y: 75, 
+    z: -250
 };
-let aiSquare = new SquareAI(0x0000ff, {boxDimensions, boxDimensions, boxDimensions}, aiPosition);
+
+var aiSize = {
+    width: boxDimensions,
+    height: boxDimensions,
+    depth: boxDimensions,
+};
+
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition);
 
 
 // Mesh
 const playerSphere = new THREE.Mesh(geometry,playerMaterial)
-const aiSphere = new THREE.Mesh(geometry, aiMaterial);
 const testObj1 = gui.addFolder('Player Object');
-const testObj2 = gui.addFolder('AI Object')
 
 // PLAYER
 playerSphere.position.x = -395;
@@ -47,22 +53,17 @@ playerSphere.position.y = 75;
 playerSphere.position.z = -250;
 
 // AI 
-aiSphere.position.x = 555;
-aiSphere.position.y = 75;
-aiSphere.position.z = -250;
-
 testObj1.add(playerSphere.position, 'x').step(0.5);
 testObj1.add(playerSphere.position, 'y').step(0.5);
 testObj1.add(playerSphere.position, 'z').step(2);
 
-testObj2.add(aiSphere.position, 'x').step(0.5);
-testObj2.add(aiSphere.position, 'y').step(0.5);
-testObj2.add(aiSphere.position, 'z').step(2);
-
 // const pointLightHelper = new THREE.PointLightHelper(pointLight2, 0.3);
 // scene.add(pointLightHelper);
+// scene.add(gridHelper);
+console.log(aiSquare.renderObj);
+console.log(playerSphere);
 scene.add(playerSphere)
-scene.add(aiSphere);
+scene.add(aiSquare.renderObj);
 
 // Lights
 
