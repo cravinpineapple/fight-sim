@@ -1,9 +1,12 @@
 import './style.css'
 import * as THREE from 'three'
-import SquareAI from './Entity/ai.js';
+import SquareAI from './Entity/ai.js'; 
+import NodeGrid from './Entity/nodeGrid.js'; 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GridHelper } from 'three';
+
+const GROUND = -250
 
 // Debug
 const gui = new dat.GUI()
@@ -31,7 +34,7 @@ aiMaterial.color = new THREE.Color(0x0000ff);
 var aiPosition = {
     x: 555, 
     y: 75, 
-    z: -250
+    z: GROUND,
 };
 
 var aiSize = {
@@ -41,29 +44,35 @@ var aiSize = {
 };
 
 let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition);
+// let nodeSquare = new Node(aiSize, {x: -605, y: 425, z: GROUND});
+let grid = new NodeGrid(16, 31, scene, {x: -605, y: 425, z: GROUND}, boxDimensions);
 
 
 // Mesh
-const playerSphere = new THREE.Mesh(geometry,playerMaterial)
+const playerSquare = new THREE.Mesh(geometry,playerMaterial)
 const testObj1 = gui.addFolder('Player Object');
 
 // PLAYER
-playerSphere.position.x = -395;
-playerSphere.position.y = 75;
-playerSphere.position.z = -250;
+playerSquare.position.x = -395;
+playerSquare.position.y = 75;
+playerSquare.position.z = GROUND;
 
 // AI 
-testObj1.add(playerSphere.position, 'x').step(0.5);
-testObj1.add(playerSphere.position, 'y').step(0.5);
-testObj1.add(playerSphere.position, 'z').step(2);
+testObj1.add(playerSquare.position, 'x').step(0.5);
+testObj1.add(playerSquare.position, 'y').step(0.5);
+testObj1.add(playerSquare.position, 'z').step(2);
 
-// const pointLightHelper = new THREE.PointLightHelper(pointLight2, 0.3);
-// scene.add(pointLightHelper);
-// scene.add(gridHelper);
+
 console.log(aiSquare.renderObj);
-console.log(playerSphere);
-scene.add(playerSphere)
+console.log(playerSquare);
+scene.add(playerSquare)
 scene.add(aiSquare.renderObj);
+// adding all Nodes from NodeGrid
+// for (let i = 0; i < grid.grid.length; i++) {
+//     for (let j = 0; j < grid.grid[i].length; i++) {
+//         scene.add(grid.grid[i][j]);
+//     }
+// }
 
 // Lights
 
@@ -188,18 +197,18 @@ document.onkeyup = () => {
 }
 
 const movement = () => {
-    if (up) playerSphere.position.y += speed * delta;
-    if (left) playerSphere.position.x -= speed * delta;
-    if (down) playerSphere.position.y -= speed * delta;
-    if (right) playerSphere.position.x += speed * delta;
+    if (up) playerSquare.position.y += speed * delta;
+    if (left) playerSquare.position.x -= speed * delta;
+    if (down) playerSquare.position.y -= speed * delta;
+    if (right) playerSquare.position.x += speed * delta;
 }
 
 var lastUpdate = Date.now();
 // var myInterval = setInterval(tick, 0);
 
 function buttonClick() {
-    playerSphere.material.color.setHex( Math.random() * 0xffffff );
-    aiSphere.material.color.setHex( Math.random() * 0xffffff );
+    playerSquare.material.color.setHex( Math.random() * 0xffffff );
+    aiSquare.renderObj.material.color.setHex( Math.random() * 0xffffff );
 }
 
 document.getElementById("changeColor").addEventListener("click", buttonClick);
@@ -215,7 +224,7 @@ const tick = () =>
     movement();
 
     // Update objects
-    // playerSphere.rotation.y = .5 * elapsedTime
+    // playerSquare.rotation.y = .5 * elapsedTime
 
     // Update Orbital Controls
     // update(delta)
