@@ -10,26 +10,28 @@ const GROUND = -250
 
 // Debug
 const gui = new dat.GUI()
-
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
-
 // Scene
 const scene = new THREE.Scene()
 
 
-const boxDimensions = 50;
+
+// making floor
+const planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+const planeMesh = new THREE.MeshStandardMaterial({color: 0x949494});
+const plane = new THREE.Mesh(planeGeometry, planeMesh);
+plane.castShadow = false;
+plane.receiveShadow = true;
+// plane.rotation.x = -Math.PI / 2;
+plane.position.set(0, 0, 0);
+scene.add(plane);
+
+
+
+const boxDimensions = 5;
 // Objects
 const geometry = new THREE.BoxGeometry(boxDimensions, boxDimensions, boxDimensions);
-
-// playerMaterials
-const playerMaterial = new THREE.MeshBasicMaterial();
-playerMaterial.color = new THREE.Color(0xff0000);
-
-//aiMaterial
-const aiMaterial = new THREE.MeshBasicMaterial();
-aiMaterial.color = new THREE.Color(0x0000ff);
-
 // creating AI
 var aiPosition = {
     x: 555, 
@@ -43,19 +45,21 @@ var aiSize = {
     depth: boxDimensions,
 };
 
+//aiMaterial
+const aiMaterial = new THREE.MeshBasicMaterial();
+aiMaterial.color = new THREE.Color(0x0000ff);
 let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition);
-// let nodeSquare = new Node(aiSize, {x: -605, y: 425, z: GROUND});
-let grid = new NodeGrid(16, 31, scene, {x: -605, y: 425, z: GROUND}, boxDimensions);
 
-
-// Mesh
+// playerMaterials
+const playerMaterial = new THREE.MeshBasicMaterial();
+playerMaterial.color = new THREE.Color(0xff0000);
 const playerSquare = new THREE.Mesh(geometry,playerMaterial)
 const testObj1 = gui.addFolder('Player Object');
 
+let grid = new NodeGrid(16, 31, scene, {x: -605, y: 425, z: GROUND}, boxDimensions);
+
 // PLAYER
-playerSquare.position.x = -395;
-playerSquare.position.y = 75;
-playerSquare.position.z = GROUND;
+playerSquare.position.set(0, 0, 0);
 
 // AI 
 testObj1.add(playerSquare.position, 'x').step(0.5);
@@ -67,20 +71,27 @@ console.log(aiSquare.renderObj);
 console.log(playerSquare);
 scene.add(playerSquare)
 scene.add(aiSquare.renderObj);
-// adding all Nodes from NodeGrid
-// for (let i = 0; i < grid.grid.length; i++) {
-//     for (let j = 0; j < grid.grid[i].length; i++) {
-//         scene.add(grid.grid[i][j]);
-//     }
-// }
 
 // Lights
+const light1 = gui.addFolder('Light 1');
 
 const pointLight = new THREE.PointLight(0xffffff, 0.1)
-pointLight.position.x = 0
-pointLight.position.y = 2
-pointLight.position.z = 40
+pointLight.position.set(0, 0, 40);
+light1.add(pointLight.position, 'x').min(-500).max(500).step(0.001);
+light1.add(pointLight.position, 'y').min(-500).max(500).step(0.001);
+light1.add(pointLight.position, 'z').min(1).max(115).step(0.01);
+light1.add(pointLight, 'intensity').min(0).max(10).step(0.01);
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
+
+const lightColor = {
+    color: 0x7cc8ed,
+}
+light1.addColor(lightColor, 'color').onChange(() => {
+    pointLight.color.set(lightColor.color);
+});
+
 scene.add(pointLight)
+scene.add(pointLightHelper);
 
 /**
  * Sizes
@@ -98,7 +109,7 @@ window.addEventListener('resize', () =>
 
     // Update camera
     camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+    camera.updateProjectionMatrix();
 
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
@@ -112,15 +123,16 @@ window.addEventListener('resize', () =>
 const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
-const camera = new THREE.OrthographicCamera(-aspectRatio * viewSize / 2, aspectRatio * viewSize / 2, viewSize / 2, -viewSize / 2, 1, 1000 );//(500, 500, 500, 500, -300, 1000 );
-camera.position.set(0, 0, 0);
+const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
+camera.position.set(0, 0, 150); // 0, 0, 0
 
-const orthCam1 = gui.addFolder('Orth Cam 1');
+const perpCam = gui.addFolder('Orth Cam 1');
 
-orthCam1.add(camera.position, 'x').step(0.5);
-orthCam1.add(camera.position, 'y').step(0.5);
-orthCam1.add(camera.position, 'z').step(0.5);
+perpCam.add(camera.position, 'x').step(0.5);
+perpCam.add(camera.position, 'y').step(0.5);
+perpCam.add(camera.position, 'z').step(0.5);
 scene.add(camera)
+camera.lookAt(playerSquare.position);
 
 // Controls
 // const controls = new OrbitControls(camera, canvas)
@@ -142,58 +154,48 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 
 var delta;
-var speed = 0.2;
+var speed = 0.05;
 
 var up = false, down = false, left = false, right = false;
 
 document.onkeydown = () => {
     var e = e || window.event;
-
     // up
     if (e.keyCode == 87) {
         up = true;
     }
-
     // left
     if (e.keyCode == 65) {
         left = true;
     }
-
     // down
     if (e.keyCode == 83) {
         down = true;
     }
-
     // right
     if (e.keyCode == 68) {
         right = true;
     }
-
 }
 
 document.onkeyup = () => {
     var e = e || window.event;
-
     // up
     if (e.keyCode == 87) {
         up = false;
     }
-
     // left
     if (e.keyCode == 65) {
         left = false;
     }
-
     // down
     if (e.keyCode == 83) {
         down = false;
     }
-
     // right
     if (e.keyCode == 68) {
         right = false;
     }
-
 }
 
 const movement = () => {
@@ -213,9 +215,21 @@ function buttonClick() {
 
 document.getElementById("changeColor").addEventListener("click", buttonClick);
 
+function resizeCanvasToDiv() {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    if (canvas.width !== width || canvas.height !== height) {
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+}
+
 const tick = () =>
 {
-
+    resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
     var now = Date.now();
     delta = now - lastUpdate;

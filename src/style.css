@@ -11,6 +11,16 @@ body
     font-family: 'Poppins';
 }
 
+.canvas-container
+{
+    margin-left: 15%;
+    top: 0;
+    /* background-color: blue;
+    color: blue; */
+    width: 25%;
+    height: 25%;
+}
+
 .webgl
 {
     position: absolute;
