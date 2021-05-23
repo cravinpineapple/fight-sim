@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
-import SquareAI from './Entity/ai.js'; 
-import NodeGrid from './Entity/nodeGrid.js'; 
+import SquareAI from './Entity/ai.js';
+import NodeGrid from './Entity/nodeGrid.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GridHelper } from 'three';
@@ -18,8 +18,9 @@ const scene = new THREE.Scene()
 
 
 // making floor
-const planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
-const planeMesh = new THREE.MeshStandardMaterial({color: 0x949494});
+const planeGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
+const planeMesh = new THREE.MeshStandardMaterial();
+planeMesh.color = new THREE.Color(0x808080);
 const plane = new THREE.Mesh(planeGeometry, planeMesh);
 plane.castShadow = false;
 plane.receiveShadow = true;
@@ -34,9 +35,9 @@ const boxDimensions = 5;
 const geometry = new THREE.BoxGeometry(boxDimensions, boxDimensions, boxDimensions);
 // creating AI
 var aiPosition = {
-    x: 555, 
-    y: 75, 
-    z: GROUND,
+    x: 50,
+    y: 75,
+    z: 0,
 };
 
 var aiSize = {
@@ -53,10 +54,12 @@ let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition);
 // playerMaterials
 const playerMaterial = new THREE.MeshBasicMaterial();
 playerMaterial.color = new THREE.Color(0xff0000);
-const playerSquare = new THREE.Mesh(geometry,playerMaterial)
+const playerSquare = new THREE.Mesh(geometry, playerMaterial)
+playerSquare.castShadow = true;
+
 const testObj1 = gui.addFolder('Player Object');
 
-let grid = new NodeGrid(16, 31, scene, {x: -605, y: 425, z: GROUND}, boxDimensions);
+let grid = new NodeGrid(16, 31, scene, { x: -605, y: 425, z: GROUND }, boxDimensions);
 
 // PLAYER
 playerSquare.position.set(0, 0, 0);
@@ -72,7 +75,7 @@ console.log(playerSquare);
 scene.add(playerSquare)
 scene.add(aiSquare.renderObj);
 
-// Lights
+// POINT LIGHT
 const light1 = gui.addFolder('Light 1');
 
 const pointLight = new THREE.PointLight(0xffffff, 0.1)
@@ -90,6 +93,10 @@ light1.addColor(lightColor, 'color').onChange(() => {
     pointLight.color.set(lightColor.color);
 });
 
+// AMBIENT LIGHT
+const ambientLight = new THREE.AmbientLight(0x404040);
+
+scene.add(ambientLight);
 scene.add(pointLight)
 scene.add(pointLightHelper);
 
@@ -101,8 +108,7 @@ const sizes = {
     height: window.innerHeight
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -209,8 +215,8 @@ var lastUpdate = Date.now();
 // var myInterval = setInterval(tick, 0);
 
 function buttonClick() {
-    playerSquare.material.color.setHex( Math.random() * 0xffffff );
-    aiSquare.renderObj.material.color.setHex( Math.random() * 0xffffff );
+    playerSquare.material.color.setHex(Math.random() * 0xffffff);
+    aiSquare.renderObj.material.color.setHex(Math.random() * 0xffffff);
 }
 
 document.getElementById("changeColor").addEventListener("click", buttonClick);
@@ -227,8 +233,7 @@ function resizeCanvasToDiv() {
     }
 }
 
-const tick = () =>
-{
+const tick = () => {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
     var now = Date.now();
