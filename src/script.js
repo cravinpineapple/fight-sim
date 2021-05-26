@@ -78,7 +78,7 @@ scene.add(aiSquare.renderObj);
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
 
-const pointLight = new THREE.PointLight(0xffffff, 0.1)
+const pointLight = new THREE.PointLight(0xffffff, 0.3)
 pointLight.position.set(0, 0, 40);
 light1.add(pointLight.position, 'x').min(-500).max(500).step(0.001);
 light1.add(pointLight.position, 'y').min(-500).max(500).step(0.001);
@@ -232,6 +232,20 @@ function resizeCanvasToDiv() {
         camera.updateProjectionMatrix();
     }
 }
+var vec = new THREE.Vector3();
+var pos = new THREE.Vector3();
+// convert click cords to Three.js 3D coordinates
+canvas.addEventListener("click", (e) => {
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.unproject(camera);
+    vec.sub(camera.position).normalize();
+
+    var distance = - camera.position.z / vec.z;
+
+    pos.copy(camera.position).add(vec.multiplyScalar(distance));
+
+    console.log(pos);
+});
 
 const tick = () => {
     resizeCanvasToDiv();
@@ -254,4 +268,4 @@ const tick = () => {
     window.requestAnimationFrame(tick)
 }
 
-tick()
+tick();
