@@ -15,8 +15,6 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-
-
 // making floor
 const planeGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
 const planeMesh = new THREE.MeshStandardMaterial();
@@ -27,8 +25,6 @@ plane.receiveShadow = true;
 // plane.rotation.x = -Math.PI / 2;
 plane.position.set(0, 0, 0);
 scene.add(plane);
-
-
 
 const boxDimensions = 5;
 // Objects
@@ -157,10 +153,54 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 
-const clock = new THREE.Clock()
 
 var delta;
 var speed = 0.05;
+
+
+// building line from AI to clicked point
+var vec = new THREE.Vector3();
+var pos = new THREE.Vector3();
+var path = new THREE.Line();
+let fraction = 0;
+let lineInfo = {
+    lineLength: null, 
+    pointsPath: null, 
+    fraction: null
+};
+
+// convert click cords to Three.js 3D coordinates
+canvas.addEventListener("click", (e) => {
+    // remove old line
+    scene.remove(path);
+
+    lineInfo.fraction = 0;
+    let tempPointsPath = new THREE.CurvePath();
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.unproject(camera);
+    vec.sub(camera.position).normalize();
+
+    var distance = - camera.position.z / vec.z;
+
+    pos.copy(camera.position).add(vec.multiplyScalar(distance));
+
+    const line = new THREE.LineCurve3(
+        new THREE.Vector3(aiSquare.renderObj.position.x, aiSquare.renderObj.position.y, aiSquare.renderObj.position.z),
+        pos
+    );
+
+    lineInfo.lineLength = line.getLength();
+    console.log(lineInfo.lineLength);
+
+    tempPointsPath.add(line);
+    lineInfo.pointsPath = tempPointsPath;
+
+    const lineMaterial = new THREE.LineBasicMaterial({color: 0xFFFF00});
+    const points = lineInfo.pointsPath.curves.reduce((p, d)=> [...p, ...d.getPoints(20)], []);
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    path = new THREE.Line(lineGeometry, lineMaterial);
+    scene.add(path);
+});
 
 var up = false, down = false, left = false, right = false;
 
@@ -232,20 +272,6 @@ function resizeCanvasToDiv() {
         camera.updateProjectionMatrix();
     }
 }
-var vec = new THREE.Vector3();
-var pos = new THREE.Vector3();
-// convert click cords to Three.js 3D coordinates
-canvas.addEventListener("click", (e) => {
-    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
-    vec.unproject(camera);
-    vec.sub(camera.position).normalize();
-
-    var distance = - camera.position.z / vec.z;
-
-    pos.copy(camera.position).add(vec.multiplyScalar(distance));
-
-    console.log(pos);
-});
 
 const tick = () => {
     resizeCanvasToDiv();
@@ -254,8 +280,14 @@ const tick = () => {
     delta = now - lastUpdate;
     lastUpdate = now;
 
-    movement();
 
+    movement();
+    if (lineInfo.pointsPath != null)
+        aiSquare.move(lineInfo);
+    else
+        lineInfo.fraction = 0;
+
+        
     // Update objects
     // playerSquare.rotation.y = .5 * elapsedTime
 
