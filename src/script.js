@@ -55,7 +55,16 @@ playerSquare.castShadow = true;
 
 const testObj1 = gui.addFolder('Player Object');
 
-let grid = new NodeGrid(16, 31, scene, { x: -605, y: 425, z: GROUND }, boxDimensions);
+
+let topLeft = {
+    x: Math.round( -canvas.clientWidth / 2),
+    y: Math.round(canvas.clientHeight / 2),
+};
+console.log("topLeftX: " + topLeft.x);
+console.log("topLeftY: " + topLeft.y);
+const gWidth = 76;
+const gHeight = 30;
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: topLeft.x, y: topLeft.y, z: 0 }, boxDimensions);
 
 // PLAYER
 playerSquare.position.set(0, 0, 0);
@@ -179,10 +188,11 @@ canvas.addEventListener("click", (e) => {
     vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
-
+    
     var distance = - camera.position.z / vec.z;
-
+    
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
+    console.log(pos);
 
     const line = new THREE.LineCurve3(
         new THREE.Vector3(aiSquare.renderObj.position.x, aiSquare.renderObj.position.y, aiSquare.renderObj.position.z),

@@ -26,7 +26,6 @@ export default class Entity {
 
     // vector = {x, y, z}
     copyPos(vector) {
-        console.log(vector);
         this.position.x = vector.x;
         this.position.y = vector.y;
         this.position.z = vector.z;
