@@ -15,7 +15,6 @@ export default class Entity {
         // get point along line
         const newPos = lineInfo.pointsPath.getPoint(lineInfo.fraction);
         // move ai to that point
-        // aiSquare.renderObj.position.copy(newPos);
         this.copyPos(newPos);
 
         lineInfo.fraction += 0.5 / lineInfo.lineLength;
@@ -32,5 +31,4 @@ export default class Entity {
 
         this.renderObj.position.copy(vector);
     }
-
 }
