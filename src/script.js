@@ -212,7 +212,8 @@ canvas.addEventListener("click", (e) => {
     scene.add(path);
 });
 
-var up = false, down = false, left = false, right = false;
+var up = false, down = false, left = false, right = false; // WASD
+var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
 
 document.onkeydown = () => {
     var e = e || window.event;
@@ -231,6 +232,23 @@ document.onkeydown = () => {
     // right
     if (e.keyCode == 68) {
         right = true;
+    }
+
+    // arrow keys
+    if (e.keyCode == 38) {
+        aUp = true;
+    }
+    // left
+    if (e.keyCode == 37) {
+        aLeft = true;
+    }
+    // down
+    if (e.keyCode == 40) {
+        aDown = true;
+    }
+    // right
+    if (e.keyCode == 39) {
+        aRight = true;
     }
 }
 
@@ -252,6 +270,22 @@ document.onkeyup = () => {
     if (e.keyCode == 68) {
         right = false;
     }
+
+    if (e.keyCode == 38) {
+        aUp = false;
+    }
+    // left
+    if (e.keyCode == 37) {
+        aLeft = false;
+    }
+    // down
+    if (e.keyCode == 40) {
+        aDown = false;
+    }
+    // right
+    if (e.keyCode == 39) {
+        aRight = false;
+    }
 }
 
 const movement = () => {
@@ -259,6 +293,13 @@ const movement = () => {
     if (left) playerSquare.position.x -= speed * delta;
     if (down) playerSquare.position.y -= speed * delta;
     if (right) playerSquare.position.x += speed * delta;
+}
+
+const moveCamera = () => {
+    if (aUp) camera.position.y += speed * delta;
+    if (aLeft) camera.position.x -= speed * delta;
+    if (aDown) camera.position.y -= speed * delta;
+    if (aRight) camera.position.x += speed * delta;
 }
 
 var lastUpdate = Date.now();
@@ -292,6 +333,7 @@ const tick = () => {
 
 
     movement();
+    moveCamera();
     if (lineInfo.pointsPath != null)
         aiSquare.move(lineInfo);
     else
