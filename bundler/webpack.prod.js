@@ -7,8 +7,8 @@ module.exports = merge(
     {
         mode: 'production',
         plugins:
-        [
-            new CleanWebpackPlugin()
-        ]
+            [
+                new CleanWebpackPlugin()
+            ]
     }
 )
