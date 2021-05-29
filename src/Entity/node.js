@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import Entity from './entity';
 
 export default class Node extends Entity {
-        // color - Node is automatically black
-        // size = {width, height, depth}
-        // position = {x, y, z}
+    // color - Node is automatically black
+    // size = {width, height, depth}
+    // position = {x, y, z}
     constructor(size, pos) {
         super(0x000000, size, pos);
 
