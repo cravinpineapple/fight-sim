@@ -1,11 +1,18 @@
+import * as THREE from 'three';
+
 export default class Entity {
-    constructor(color, size, position) {
+    constructor(color, size, position, scene) {
+        this.debugMode = true;
+        this.scene = scene;
         this.entityID = this.id++;
         this.color = color;
         this.size = size;
         this.position = position;
         this.renderObj = null;
-        // throw new Error("Cannot create an instance of an abstract class");
+        this.rays = [];
+
+        // group for line helpers and render object
+        this.group = new THREE.Group();
     }
     // static id = 0;
 
@@ -29,6 +36,39 @@ export default class Entity {
         this.position.y = vector.y;
         this.position.z = vector.z;
 
-        this.renderObj.position.copy(vector);
+        this.group.position.copy(vector);
     }
+
+    checkCollision() {
+        var intersections = [];
+
+        for (let i = 0; i < this.rays.length; i++) {
+            intersections.push(this.rays[i].intersectObjects(this.scene.children));
+        }
+
+        for (let i = 0; i < intersections.length; i++) {
+            for (let j = 0; j < intersections[i].length; j++) {
+                intersections[i][j].object.material.color.set(0xffff00);
+            }
+        }
+    }
+
+    // origin (vector3) = {x, y, z}
+    // direction (vector3) = {x, y, z}
+    addRay(origin, direction) {
+        const far = 5;
+        const raycaster = new THREE.Raycaster(origin, direction, 0, far);
+        this.rays.push(raycaster);
+
+        // testing
+        if (this.debugMode) {
+            // for some reason, the origin is relative to the center of the group.
+            const arrowHelper = new THREE.ArrowHelper(direction, new THREE.Vector3(0, 0, 0), far, 0x00FF00);
+            console.log(arrowHelper.position);
+            // this.scene.add(arrowHelper);
+            this.group.add(arrowHelper);
+        }
+    }
+
+
 }
