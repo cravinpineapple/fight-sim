@@ -31,8 +31,8 @@ const boxDimensions = 5;
 const geometry = new THREE.BoxGeometry(boxDimensions, boxDimensions, boxDimensions);
 // creating AI
 var aiPosition = {
-    x: 50,
-    y: 75,
+    x: 25,
+    y: 25,
     z: 0,
 };
 
@@ -45,7 +45,7 @@ var aiSize = {
 //aiMaterial
 const aiMaterial = new THREE.MeshBasicMaterial();
 aiMaterial.color = new THREE.Color(0x0000ff);
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition);
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene);
 
 // playerMaterials
 const playerMaterial = new THREE.MeshBasicMaterial();
@@ -57,7 +57,7 @@ const testObj1 = gui.addFolder('Player Object');
 
 
 let topLeft = {
-    x: Math.round( -canvas.clientWidth / 2),
+    x: Math.round(-canvas.clientWidth / 2),
     y: Math.round(canvas.clientHeight / 2),
 };
 console.log("topLeftX: " + topLeft.x);
@@ -78,7 +78,8 @@ testObj1.add(playerSquare.position, 'z').step(2);
 console.log(aiSquare.renderObj);
 console.log(playerSquare);
 scene.add(playerSquare)
-scene.add(aiSquare.renderObj);
+// scene.add(aiSquare.renderObj);
+scene.add(aiSquare.group);
 
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
@@ -135,7 +136,7 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(0, 0, 150); // 0, 0, 0
+camera.position.set(0, 0, 75); // 0, 0, 150
 
 const perpCam = gui.addFolder('Orth Cam 1');
 
@@ -173,8 +174,8 @@ var pos = new THREE.Vector3();
 var path = new THREE.Line();
 let fraction = 0;
 let lineInfo = {
-    lineLength: null, 
-    pointsPath: null, 
+    lineLength: null,
+    pointsPath: null,
     fraction: null
 };
 
@@ -188,25 +189,23 @@ canvas.addEventListener("click", (e) => {
     vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
-    
+
     var distance = - camera.position.z / vec.z;
-    
+
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    console.log(pos);
 
     const line = new THREE.LineCurve3(
-        new THREE.Vector3(aiSquare.renderObj.position.x, aiSquare.renderObj.position.y, aiSquare.renderObj.position.z),
+        new THREE.Vector3(aiSquare.group.position.x, aiSquare.group.position.y, aiSquare.group.position.z),
         pos
     );
 
     lineInfo.lineLength = line.getLength();
-    console.log(lineInfo.lineLength);
 
     tempPointsPath.add(line);
     lineInfo.pointsPath = tempPointsPath;
 
-    const lineMaterial = new THREE.LineBasicMaterial({color: 0xFFFF00});
-    const points = lineInfo.pointsPath.curves.reduce((p, d)=> [...p, ...d.getPoints(20)], []);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFFFF00 });
+    const points = lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
     path = new THREE.Line(lineGeometry, lineMaterial);
     scene.add(path);
@@ -331,6 +330,7 @@ const tick = () => {
     delta = now - lastUpdate;
     lastUpdate = now;
 
+    aiSquare.checkCollision();
 
     movement();
     moveCamera();
@@ -339,7 +339,7 @@ const tick = () => {
     else
         lineInfo.fraction = 0;
 
-        
+
     // Update objects
     // playerSquare.rotation.y = .5 * elapsedTime
 
