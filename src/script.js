@@ -43,14 +43,15 @@ var aiSize = {
 };
 
 //aiMaterial
-const aiMaterial = new THREE.MeshBasicMaterial();
-aiMaterial.color = new THREE.Color(0x0000ff);
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1);
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 5);
+// let aiSquare2 = new SquareAI(0x00FFFF, aiSize, { x: 25, y: 0, z: 0 }, scene, 1);
+
 
 // playerMaterials
 const playerMaterial = new THREE.MeshBasicMaterial();
 playerMaterial.color = new THREE.Color(0xff0000);
 const playerSquare = new THREE.Mesh(geometry, playerMaterial)
+playerSquare.name = "playersquare";
 playerSquare.castShadow = true;
 
 const testObj1 = gui.addFolder('Player Object');
@@ -60,8 +61,6 @@ let topLeft = {
     x: Math.round(-canvas.clientWidth / 2),
     y: Math.round(canvas.clientHeight / 2),
 };
-console.log("topLeftX: " + topLeft.x);
-console.log("topLeftY: " + topLeft.y);
 const gWidth = 76;
 const gHeight = 30;
 const grid = new NodeGrid(gHeight, gWidth, scene, { x: topLeft.x, y: topLeft.y, z: 0 }, boxDimensions);
@@ -74,12 +73,10 @@ testObj1.add(playerSquare.position, 'x').step(0.5);
 testObj1.add(playerSquare.position, 'y').step(0.5);
 testObj1.add(playerSquare.position, 'z').step(2);
 
-
-console.log(aiSquare.renderObj);
-console.log(playerSquare);
 scene.add(playerSquare)
 // scene.add(aiSquare.renderObj);
 scene.add(aiSquare.group);
+// scene.add(aiSquare2.group);
 
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
@@ -213,6 +210,7 @@ canvas.addEventListener("click", (e) => {
 
 var up = false, down = false, left = false, right = false; // WASD
 var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
+var zoomOut = false, zoomIn = false;
 
 document.onkeydown = () => {
     var e = e || window.event;
@@ -248,6 +246,16 @@ document.onkeydown = () => {
     // right
     if (e.keyCode == 39) {
         aRight = true;
+    }
+
+    // zoom out
+    if (e.keyCode == 81) {
+        zoomOut = true;
+    }
+
+    // zoom in
+    if (e.keyCode == 69) {
+        zoomIn = true;
     }
 }
 
@@ -285,6 +293,16 @@ document.onkeyup = () => {
     if (e.keyCode == 39) {
         aRight = false;
     }
+
+    // zoom out
+    if (e.keyCode == 81) {
+        zoomOut = false;
+    }
+
+    // zoom in
+    if (e.keyCode == 69) {
+        zoomIn = false;
+    }
 }
 
 const movement = () => {
@@ -299,6 +317,8 @@ const moveCamera = () => {
     if (aLeft) camera.position.x -= speed * delta;
     if (aDown) camera.position.y -= speed * delta;
     if (aRight) camera.position.x += speed * delta;
+    if (zoomIn) camera.position.z -= speed * delta;
+    if (zoomOut) camera.position.z += speed * delta;
 }
 
 var lastUpdate = Date.now();
