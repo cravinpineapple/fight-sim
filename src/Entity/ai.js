@@ -20,6 +20,9 @@ export default class SquareAI extends Entity {
         this.group.position.z = pos.z;
         this.group.add(this.renderObj);
 
+        // currentNodeRay
+        this.addCurrentNodeRay(this.group.position);
+
         // adding rays to object
         this.addRay(this.group.position, new THREE.Vector3(0, 1, 0)); // up
         this.addRay(this.group.position, new THREE.Vector3(1, 1, 0)); // up right
