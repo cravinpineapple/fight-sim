@@ -45,7 +45,7 @@ var aiSize = {
 //aiMaterial
 const aiMaterial = new THREE.MeshBasicMaterial();
 aiMaterial.color = new THREE.Color(0x0000ff);
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene);
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1);
 
 // playerMaterials
 const playerMaterial = new THREE.MeshBasicMaterial();
@@ -136,7 +136,8 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(0, 0, 75); // 0, 0, 150
+camera.position.set(25, 25, 50); // 0, 0, 150
+// camera.lookAt(aiSquare.renderObj.position); // playerSquare.position
 
 const perpCam = gui.addFolder('Orth Cam 1');
 
@@ -144,7 +145,6 @@ perpCam.add(camera.position, 'x').step(0.5);
 perpCam.add(camera.position, 'y').step(0.5);
 perpCam.add(camera.position, 'z').step(0.5);
 scene.add(camera)
-camera.lookAt(playerSquare.position);
 
 // Controls
 // const controls = new OrbitControls(camera, canvas)
