@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 
 export default class Entity {
-    constructor(color, size, position, scene) {
+    // color = 0x000000
+    // size = {width, height, depth}
+    // position = {x, y, z}
+    constructor(color, size, position, scene, speed) {
         this.debugMode = true;
         this.scene = scene;
         this.entityID = this.id++;
@@ -10,6 +13,7 @@ export default class Entity {
         this.position = position;
         this.renderObj = null;
         this.rays = [];
+        this.speed = speed;
 
         // group for line helpers and render object
         this.group = new THREE.Group();
@@ -24,7 +28,7 @@ export default class Entity {
         // move ai to that point
         this.copyPos(newPos);
 
-        lineInfo.fraction += 0.5 / lineInfo.lineLength;
+        lineInfo.fraction += (0.5 / lineInfo.lineLength) * this.speed;
         if (lineInfo.fraction > 1) {
             lineInfo.pointsPath = null;
         }
@@ -56,7 +60,7 @@ export default class Entity {
     // origin (vector3) = {x, y, z}
     // direction (vector3) = {x, y, z}
     addRay(origin, direction) {
-        const far = 5;
+        const far = this.size.width / 2;
         const raycaster = new THREE.Raycaster(origin, direction, 0, far);
         this.rays.push(raycaster);
 
