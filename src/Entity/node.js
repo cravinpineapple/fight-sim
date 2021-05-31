@@ -14,6 +14,7 @@ export default class Node extends Entity {
         aiMaterial.color = new THREE.Color(0x000000);
 
         this.renderObj = new THREE.Mesh(aiGeometry, aiMaterial);
+        this.renderObj.name = "node";
         this.renderObj.position.x = pos.x;
         this.renderObj.position.y = pos.y;
         this.renderObj.position.z = pos.z;
