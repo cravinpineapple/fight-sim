@@ -13,6 +13,7 @@ export default class Entity {
         this.position = position;
         this.renderObj = null;
         this.rays = [];
+        this.currentNodeRay = null;
         this.speed = speed;
 
         // group for line helpers and render object
@@ -52,7 +53,10 @@ export default class Entity {
 
         for (let i = 0; i < intersections.length; i++) {
             for (let j = 0; j < intersections[i].length; j++) {
-                intersections[i][j].object.material.color.set(0xffff00);
+                if (intersections[i][j].object.name == "playersquare") {
+                    intersections[i][j].object.material.color.set(0xffff00);
+                    this.speed = 0;
+                }
             }
         }
     }
@@ -60,7 +64,7 @@ export default class Entity {
     // origin (vector3) = {x, y, z}
     // direction (vector3) = {x, y, z}
     addRay(origin, direction) {
-        const far = this.size.width / 2;
+        const far = this.size.width; // this.size.width / 2
         const raycaster = new THREE.Raycaster(origin, direction, 0, far);
         this.rays.push(raycaster);
 
@@ -68,7 +72,20 @@ export default class Entity {
         if (this.debugMode) {
             // for some reason, the origin is relative to the center of the group.
             const arrowHelper = new THREE.ArrowHelper(direction, new THREE.Vector3(0, 0, 0), far, 0x00FF00);
-            console.log(arrowHelper.position);
+            // this.scene.add(arrowHelper);
+            this.group.add(arrowHelper);
+        }
+    }
+
+    addCurrentNodeRay(origin) {
+        const far = 1;
+        const direction = new THREE.Vector3(0, 1, 0);
+        this.currentNodeRay = new THREE.Raycaster(origin, direction, 0, far);
+
+        // testing
+        if (this.debugMode) {
+            // for some reason, the origin is relative to the center of the group.
+            const arrowHelper = new THREE.ArrowHelper(direction, new THREE.Vector3(0, 0, 0), far, 0x00FFFF);
             // this.scene.add(arrowHelper);
             this.group.add(arrowHelper);
         }
