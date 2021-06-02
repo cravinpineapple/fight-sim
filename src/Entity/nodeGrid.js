@@ -7,7 +7,7 @@ export default class NodeGrid {
         // size = {width, height, depth}
         // position = {x, y, z}
     constructor(gridHeight, gridWidth, scene, pos, nodeWidth) {
-
+        this.nodeWidth = nodeWidth;
         this.gridHeight = gridHeight;
         this.gridWidth = gridWidth;
 
@@ -29,7 +29,13 @@ export default class NodeGrid {
                 scene.add(this.grid[i][j].renderObj);
             }
         } 
+    }
 
-
+    // vector = {x, y, z}
+    //  gets node from give position
+    getNode(vector) {
+        let x = Math.floor(vector.x / this.nodeWidth);
+        let y = Math.floor(Math.abs(vector.y / this.nodeWidth));
+        return this.grid[y][x];
     }
 }
