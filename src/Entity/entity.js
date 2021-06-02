@@ -64,8 +64,8 @@ export default class Entity {
     // origin (vector3) = {x, y, z}
     // direction (vector3) = {x, y, z}
     addRay(origin, direction) {
-        const far = this.size.width; // this.size.width / 2
-        const raycaster = new THREE.Raycaster(origin, direction, 0, far);
+        const far = this.size.width / 2; // this.size.width / 2
+        const raycaster = new THREE.Ray(origin, direction, 0, far);
         this.rays.push(raycaster);
 
         // testing
