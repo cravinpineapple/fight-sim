@@ -18,14 +18,14 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // making floor
-const planeGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
+const planeGeometry = new THREE.PlaneGeometry(1000, 400, 1, 1);
 const planeMesh = new THREE.MeshStandardMaterial();
 planeMesh.color = new THREE.Color(0x808080);
 const plane = new THREE.Mesh(planeGeometry, planeMesh);
 plane.castShadow = false;
 plane.receiveShadow = true;
 // plane.rotation.x = -Math.PI / 2;
-plane.position.set(0, 0, 0);
+plane.position.set(200, -75, -10);
 scene.add(plane);
 
 const boxDimensions = 5;
@@ -33,8 +33,8 @@ const boxDimensions = 5;
 const geometry = new THREE.BoxGeometry(boxDimensions, boxDimensions, boxDimensions);
 // creating AI
 var aiPosition = {
-    x: 25,
-    y: 25,
+    x: 176,
+    y: -66,
     z: 0,
 };
 
@@ -45,7 +45,7 @@ var aiSize = {
 };
 
 //aiMaterial
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 5);
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 0.2);
 entities.push(aiSquare);
 // let aiSquare2 = new SquareAI(0x00FFFF, aiSize, { x: 25, y: 0, z: 0 }, scene, 1);
 
@@ -67,7 +67,7 @@ let topLeft = {
 };
 const gWidth = 76;
 const gHeight = 30;
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: topLeft.x, y: topLeft.y, z: 0 }, boxDimensions);
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: 0 }, boxDimensions);
 for (let i = 0; i < grid.grid.length; i++) {
     for (let j = 0; j < grid.grid[i].length; j++) {
         entities.push(grid.grid[i][j]);
@@ -75,7 +75,7 @@ for (let i = 0; i < grid.grid.length; i++) {
 }
 
 // PLAYER
-playerSquare.position.set(0, 0, 0);
+playerSquare.position.set(125, -70, 0);
 
 // AI 
 testObj1.add(playerSquare.position, 'x').step(0.5);
@@ -143,7 +143,7 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(25, 25, 50); // 0, 0, 150
+camera.position.set(175, -65, 50); // 0, 0, 150
 // camera.lookAt(aiSquare.renderObj.position); // playerSquare.position
 
 const perpCam = gui.addFolder('Orth Cam 1');
@@ -200,6 +200,8 @@ canvas.addEventListener("click", (e) => {
     var distance = - camera.position.z / vec.z;
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
+    // prints click coordinates
+    console.log(pos);
 
     const line = new THREE.LineCurve3(
         new THREE.Vector3(aiSquare.group.position.x, aiSquare.group.position.y, aiSquare.group.position.z),
@@ -376,10 +378,15 @@ const tick = () => {
     // Update Orbital Controls
     // update(delta)
     // Render
-    renderer.render(scene, camera)
+    renderer.render(scene, camera);
+
+    // TODO: test code
+    let test = grid.getNode(aiSquare.group.position);
+    test.renderObj.visible = true;
 
     // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+    window.requestAnimationFrame(tick);
 }
 
 tick();
+
