@@ -44,18 +44,34 @@ export default class Entity {
         this.group.position.copy(vector);
     }
 
+    objCopyPos(vector) {
+        this.position.x = vector.x;
+        this.position.y = vector.y;
+        this.position.z = vector.z;
+
+        this.renderObj.position.copy(vector);
+    }
+
     checkCollision() {
         var intersections = [];
+
+        let currNode = this.currentNodeRay.intersectObjects(this.scene.children);
+        for (let i = 0; i < currNode.length; i++) {
+            // currNode[i].object.visible = true;
+        }
+        // currNode[0].object.material.color.set(0xffff00);
 
         for (let i = 0; i < this.rays.length; i++) {
             intersections.push(this.rays[i].intersectObjects(this.scene.children));
         }
+
 
         for (let i = 0; i < intersections.length; i++) {
             for (let j = 0; j < intersections[i].length; j++) {
                 if (intersections[i][j].object.name == "playersquare") {
                     intersections[i][j].object.material.color.set(0xffff00);
                     this.speed = 0;
+                    console.log("test");
                 }
             }
         }
@@ -65,8 +81,8 @@ export default class Entity {
     // direction (vector3) = {x, y, z}
     addRay(origin, direction) {
         const far = this.size.width / 2; // this.size.width / 2
-        const raycaster = new THREE.Ray(origin, direction, 0, far);
-        this.rays.push(raycaster);
+        const ray = new THREE.Raycaster(origin, direction, 0, far);
+        this.rays.push(ray);
 
         // testing
         if (this.debugMode) {
@@ -78,7 +94,7 @@ export default class Entity {
     }
 
     addCurrentNodeRay(origin) {
-        const far = 1;
+        const far = 2;
         const direction = new THREE.Vector3(0, 1, 0);
         this.currentNodeRay = new THREE.Raycaster(origin, direction, 0, far);
 
