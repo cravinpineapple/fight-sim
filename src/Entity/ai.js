@@ -24,13 +24,21 @@ export default class SquareAI extends Entity {
         this.addCurrentNodeRay(this.group.position);
 
         // adding rays to object
-        this.addRay(this.group.position, new THREE.Vector3(0, 1, 0)); // up
-        this.addRay(this.group.position, new THREE.Vector3(1, 1, 0)); // up right
-        this.addRay(this.group.position, new THREE.Vector3(1, 0, 0)); // right
-        this.addRay(this.group.position, new THREE.Vector3(1, -1, 0)); // down right
-        this.addRay(this.group.position, new THREE.Vector3(0, -1, 0)); // down 
-        this.addRay(this.group.position, new THREE.Vector3(-1, -1, 0)); // down left
-        this.addRay(this.group.position, new THREE.Vector3(-1, 0, 0)); // left
-        this.addRay(this.group.position, new THREE.Vector3(-1, 1, 0)); // up left
+        // this.addRay(this.group.position, new THREE.Vector3(0, 1, 0)); // up
+        // this.addRay(this.group.position, new THREE.Vector3(1, 1, 0)); // up right
+        // this.addRay(this.group.position, new THREE.Vector3(1, 0, 0)); // right
+        // this.addRay(this.group.position, new THREE.Vector3(1, -1, 0)); // down right
+        // this.addRay(this.group.position, new THREE.Vector3(0, -1, 0)); // down 
+        // this.addRay(this.group.position, new THREE.Vector3(-1, -1, 0)); // down left
+        // this.addRay(this.group.position, new THREE.Vector3(-1, 0, 0)); // left
+        // this.addRay(this.group.position, new THREE.Vector3(-1, 1, 0)); // up left
+
+        for (let i = 0; i < this.renderObj.geometry.vertices.length; i++) {
+            var localVertex = this.renderObj.geometry.geometry.vertices[i].clone();
+            var globalVertex = this.renderObj.matrix.multiplyVector3(localVertex);
+            var directionVector = globalVertex.subSelf(this.renderObj.position);
+
+            this.addRay(this.renderObj.position, directionVector.clone().normalize());
+        }
     }
 }
