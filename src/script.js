@@ -8,6 +8,8 @@ import { GridHelper } from 'three';
 
 const GROUND = -250
 
+const entities = [];
+
 // Debug
 const gui = new dat.GUI()
 // Canvas
@@ -44,6 +46,7 @@ var aiSize = {
 
 //aiMaterial
 let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 5);
+entities.push(aiSquare);
 // let aiSquare2 = new SquareAI(0x00FFFF, aiSize, { x: 25, y: 0, z: 0 }, scene, 1);
 
 
@@ -51,6 +54,7 @@ let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 5);
 const playerMaterial = new THREE.MeshBasicMaterial();
 playerMaterial.color = new THREE.Color(0xff0000);
 const playerSquare = new THREE.Mesh(geometry, playerMaterial)
+entities.push(playerSquare);
 playerSquare.name = "playersquare";
 playerSquare.castShadow = true;
 
@@ -64,6 +68,11 @@ let topLeft = {
 const gWidth = 76;
 const gHeight = 30;
 const grid = new NodeGrid(gHeight, gWidth, scene, { x: topLeft.x, y: topLeft.y, z: 0 }, boxDimensions);
+for (let i = 0; i < grid.grid.length; i++) {
+    for (let j = 0; j < grid.grid[i].length; j++) {
+        entities.push(grid.grid[i][j]);
+    }
+}
 
 // PLAYER
 playerSquare.position.set(0, 0, 0);
@@ -92,6 +101,7 @@ const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
 const lightColor = {
     color: 0x7cc8ed,
 }
+
 light1.addColor(lightColor, 'color').onChange(() => {
     pointLight.color.set(lightColor.color);
 });
