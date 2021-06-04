@@ -14,7 +14,3 @@ The following features are *hopefully* going to be added as development continue
  - Real-time graph showing group entity count as simulator progresses
  - End game statistics (i.e., Survival time of a certain entity group, number of defeats a group had, etc.)
  - Camera/Controls
-
-
-
-Three.js starter courtesy of Bruno Simon of https://threejs-journey.xyz/
