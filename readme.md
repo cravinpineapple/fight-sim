@@ -1,17 +1,20 @@
-# Three.js Starter
-Courtesy of Bruno Simon of https://threejs-journey.xyz/
+## Fight-Sim!
 
-## Setup
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
+Fight-Sim is work-in-progress rock-paper-scissors like simulator. A user is able to create custom entities (i.e., spheres, cubes, etc.) that can either beat, or be beaten by other entities.
 
-``` bash
-# Install dependencies (only the first time)
-npm install
+The following features are *hopefully* going to be added as development continues:
+ - Custom entity creation
+ - Pathing for entities
+     - *towards* others entities
+     - *away* from entities
+ - Moveable/Viewable 3D arena
+ - Arena editor
+     - Obstacles
+     - Terrain adjusters (i.e. slowed areas, speed boosted areas)
+ - Real-time graph showing group entity count as simulator progresses
+ - End game statistics (i.e., Survival time of a certain entity group, number of defeats a group had, etc.)
+ - Camera/Controls
 
-# Run the local server at localhost:8080
-npm run dev
 
-# Build for production in the dist/ directory
-npm run build
-```
+
+Three.js starter courtesy of Bruno Simon of https://threejs-journey.xyz/
