@@ -46,6 +46,7 @@ export default class SquareAI extends Entity {
 
     getCenter()
     {
-        return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0);
+        return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
+        );
     }
 }
