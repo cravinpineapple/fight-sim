@@ -33,7 +33,6 @@ export default class SquareAI extends Entity {
         this.addRay(this.group.position, new THREE.Vector3(-1, 0, 0)); // left
         this.addRay(this.group.position, new THREE.Vector3(-1, 1, 0)); // up left
 
-
         // let vertices = this.renderObj.geometry.attributes.position.array;
         // for (let i = 0; i < vertices.length; i += 3) {
         //     let vertex = new THREE.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]);
@@ -43,5 +42,10 @@ export default class SquareAI extends Entity {
         //     console.log(vertex);
         //     this.addRay(currPos, temp.subVectors(currPos, vertex).normalize());
         // }
+    }
+
+    getCenter()
+    {
+        return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0);
     }
 }

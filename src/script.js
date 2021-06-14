@@ -355,6 +355,8 @@ function resizeCanvasToDiv() {
     }
 }
 
+aiSquare.getCenter();
+
 const tick = () => {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
@@ -381,7 +383,10 @@ const tick = () => {
     renderer.render(scene, camera);
 
     // TODO: test code
-    let test = grid.getNode(aiSquare.group.position);
+    // let test = grid.getNode(aiSquare.group.position);
+    let vector = aiSquare.getCenter();
+    console.log(vector); 
+    let test = grid.getNode(vector);
     test.renderObj.visible = true;
 
     // Call tick again on the next frame
