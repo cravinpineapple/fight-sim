@@ -25,7 +25,7 @@ export default class NodeGrid {
                     y: pos.y + nodeWidth * -i,
                     z: pos.z,
                 }
-                this.grid[i][j] = new Node({width: nodeWidth, height: nodeWidth, depth: nodeWidth}, tempPos);
+                this.grid[i][j] = new Node({width: nodeWidth, height: nodeWidth, depth: 0.005}, tempPos);
                 scene.add(this.grid[i][j].renderObj);
             }
         } 

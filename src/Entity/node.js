@@ -18,7 +18,7 @@ export default class Node extends Entity {
         this.renderObj.position.x = pos.x;
         this.renderObj.position.y = pos.y;
         this.renderObj.position.z = pos.z;
-        this.renderObj.visible = false;
+        this.renderObj.visible = true; // should be false
 
         this.walkable = true;
 
