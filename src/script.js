@@ -410,7 +410,7 @@ const tick = () => {
         newNode.renderObj.material.color = colorAqua;
         currNode = newNode;
 
-        let heur = calcHeuristic(goalNode, currNode);
+        let heur = grid.calcHeuristic(goalNode, currNode);
         console.log(heur);
     }
 
