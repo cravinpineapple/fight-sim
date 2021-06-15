@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+import { GridHelper } from 'three';
 import Entity from './entity';
+import NodeGrid from './nodeGrid.js';
 
 export default class SquareAI extends Entity {
     // color = 0x000000
@@ -44,8 +46,7 @@ export default class SquareAI extends Entity {
         // }
     }
 
-    getCenter()
-    {
+    getCenter() {
         return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
         );
     }
