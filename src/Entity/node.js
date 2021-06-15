@@ -20,6 +20,11 @@ export default class Node extends Entity {
         this.renderObj.position.z = pos.z;
         this.renderObj.visible = true; // should be false
 
+        // A* Stuff
+        this.hval = 0;
+        this.gval = 0;
+        this.closed = false;
+
         this.walkable = true;
 
     }
