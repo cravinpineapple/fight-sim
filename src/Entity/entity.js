@@ -71,7 +71,7 @@ export default class Entity {
                 if (intersections[i][j].object.name == "playersquare") {
                     intersections[i][j].object.material.color.set(0xffff00);
                     this.speed = 0;
-                    console.log("test");
+                    // console.log("test");
                 }
             }
         }
