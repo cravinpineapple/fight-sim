@@ -5,8 +5,7 @@ import NodeGrid from './Entity/nodeGrid.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GridHelper } from 'three';
-
-const GROUND = -250
+import Utility from './utility/aStar.js';
 
 const entities = [];
 
@@ -45,7 +44,7 @@ var aiSize = {
 };
 
 //aiMaterial
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 0.2);
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1);
 entities.push(aiSquare);
 // let aiSquare2 = new SquareAI(0x00FFFF, aiSize, { x: 25, y: 0, z: 0 }, scene, 1);
 
@@ -53,6 +52,7 @@ entities.push(aiSquare);
 // playerMaterials
 const playerMaterial = new THREE.MeshBasicMaterial();
 playerMaterial.color = new THREE.Color(0xff0000);
+playerMaterial.wireframe = true;
 const playerSquare = new THREE.Mesh(geometry, playerMaterial)
 entities.push(playerSquare);
 playerSquare.name = "playersquare";
@@ -67,7 +67,8 @@ let topLeft = {
 };
 const gWidth = 76;
 const gHeight = 30;
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: 0 }, boxDimensions);
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSquare.size.depth / 2 }, 5);
+
 for (let i = 0; i < grid.grid.length; i++) {
     for (let j = 0; j < grid.grid[i].length; j++) {
         entities.push(grid.grid[i][j]);
@@ -200,8 +201,12 @@ canvas.addEventListener("click", (e) => {
     var distance = - camera.position.z / vec.z;
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    // prints click coordinates
-    console.log(pos);
+
+    if (ctrl) {
+        // prints click coordinates
+        console.log(pos);
+        return;
+    }
 
     const line = new THREE.LineCurve3(
         new THREE.Vector3(aiSquare.group.position.x, aiSquare.group.position.y, aiSquare.group.position.z),
@@ -223,6 +228,7 @@ canvas.addEventListener("click", (e) => {
 var up = false, down = false, left = false, right = false; // WASD
 var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
 var zoomOut = false, zoomIn = false;
+var ctrl = false;
 
 document.onkeydown = () => {
     var e = e || window.event;
@@ -268,6 +274,11 @@ document.onkeydown = () => {
     // zoom in
     if (e.keyCode == 69) {
         zoomIn = true;
+    }
+
+    // control
+    if (e.keyCode == 17) {
+        ctrl = true;
     }
 }
 
@@ -315,6 +326,10 @@ document.onkeyup = () => {
     if (e.keyCode == 69) {
         zoomIn = false;
     }
+
+    if (e.keyCode == 17) {
+        ctrl = false;
+    }
 }
 
 const movement = () => {
@@ -355,7 +370,16 @@ function resizeCanvasToDiv() {
     }
 }
 
-aiSquare.getCenter();
+
+const colorAqua = new THREE.Color(0x00FFFF);
+const colorBlack = new THREE.Color(0x000000);
+const colorRed = new THREE.Color(0xFF0000);
+
+let goalNode = grid.getNode(playerSquare.position);
+let currNode = grid.getNode(aiSquare.getCenter());
+
+goalNode.renderObj.material.color = colorRed; 
+currNode.renderObj.material.color = colorAqua;
 
 const tick = () => {
     resizeCanvasToDiv();
@@ -368,26 +392,27 @@ const tick = () => {
 
     movement();
     moveCamera();
+
     if (lineInfo.pointsPath != null)
         aiSquare.move(lineInfo);
     else
         lineInfo.fraction = 0;
 
-
-    // Update objects
-    // playerSquare.rotation.y = .5 * elapsedTime
-
-    // Update Orbital Controls
-    // update(delta)
     // Render
     renderer.render(scene, camera);
 
     // TODO: test code
-    // let test = grid.getNode(aiSquare.group.position);
-    let vector = aiSquare.getCenter();
-    console.log(vector); 
-    let test = grid.getNode(vector);
-    test.renderObj.visible = true;
+    // let test = aiSquare.getCenter();
+    let newNode = grid.getNode(aiSquare.getCenter());
+    
+    if (newNode.position != currNode.position) {
+        currNode.renderObj.material.color = colorBlack;
+        newNode.renderObj.material.color = colorAqua;
+        currNode = newNode;
+
+        let heur = calcHeuristic(goalNode, currNode);
+        console.log(heur);
+    }
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick);
