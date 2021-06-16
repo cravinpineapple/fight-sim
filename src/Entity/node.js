@@ -21,12 +21,10 @@ export default class Node extends Entity {
         this.renderObj.visible = true; // should be false
 
         // A* Stuff
-        this.hval = 0;
-        this.gval = 0;
-        this.closed = false;
-
+        this.fval = 0;
         this.neighbors = null;
         this.walkable = true;
+        this.parent = null;
     }
 
     // bool isHighlighted
