@@ -92,9 +92,38 @@ export default class NodeGrid {
     }
 
     getPath(currNode, goalNode) {
-        var queue = new PriorityQueue({comparator: function(a, b) {return b - a}});
+        // var open = [currNode];
+        var open = new PriorityQueue({comparator: function(a, b) {return b.fval - a.fval}});
+        open.queue(currNode);
+        var closed = [];
 
-        // currNode
+        var current;
+        while (true) {
+            current = open.dequeue();
+            closed.push(current);
+
+            if (current == goalNode)
+                return current;
+
+            // for each neighbor or current
+            for (let i = 0; i < current.neighbors.length; i++) {
+                let n = current.neighbors[i];
+
+                if (!n.walkable || closed.includes(n)) {
+                    continue;
+                }
+
+                /*
+                if (new n fval < prev n fval || !open.includes(n)) {
+                    n.fval = new n fval
+                    n.parent = current
+
+                    if (!open.includes(n))
+                        open.queue(n)
+                }
+                */
+            }
+        }
     }
 
 
