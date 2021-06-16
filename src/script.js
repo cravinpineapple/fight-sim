@@ -5,7 +5,6 @@ import NodeGrid from './Entity/nodeGrid.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GridHelper } from 'three';
-import Utility from './utility/aStar.js';
 
 const entities = [];
 
@@ -407,7 +406,9 @@ const tick = () => {
     
     if (newNode.position != currNode.position) {
         currNode.renderObj.material.color = colorBlack;
+        currNode.highlight(false);
         newNode.renderObj.material.color = colorAqua;
+        newNode.highlight(true);
         currNode = newNode;
 
         let heur = grid.calcHeuristic(goalNode, currNode);
