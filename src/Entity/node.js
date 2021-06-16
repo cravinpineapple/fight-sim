@@ -25,7 +25,19 @@ export default class Node extends Entity {
         this.gval = 0;
         this.closed = false;
 
+        this.neighbors = null;
         this.walkable = true;
+    }
 
+    // bool isHighlighted
+    highlight(isHighlighted) {
+        const nodeColor = isHighlighted ? new THREE.Color(0x00FFFF) : new THREE.Color(0x000000);
+        const neighborColor = isHighlighted ? new THREE.Color(0xFFFF00) : new THREE.Color(0x000000);
+        
+        // un/highlight current node
+        this.renderObj.material.color = nodeColor;
+        // un/highlight neighbors
+        console.log(this.neighbors.length);
+        this.neighbors.forEach(e => e.renderObj.material.color = neighborColor);
     }
 }
