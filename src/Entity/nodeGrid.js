@@ -20,6 +20,16 @@ export default class NodeGrid {
         let tempPos;
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
+                // reset neighbors
+                
+                // getting neighbors
+
+                // if (i != 0 && i != this.grid.length - 2 && j != 1 && j != this.grid[i].length - 2) {
+                //     
+                //     neighbors.push(this.grid[i + 1][j - 1]); // bottom left
+                //     neighbors.push(this.grid[i + 1][j + 1]); // bottom right
+                // }
+
                 tempPos = {
                     x: pos.x + nodeWidth * j,
                     y: pos.y + nodeWidth * -i,
@@ -28,7 +38,49 @@ export default class NodeGrid {
                 this.grid[i][j] = new Node({width: nodeWidth, height: nodeWidth, depth: 0.005}, tempPos);
                 scene.add(this.grid[i][j].renderObj);
             }
-        } 
+        }
+        
+        let neighbors = [];
+        // add neighbors too all nodes
+        for (let i = 0; i < this.grid.length; i++) {
+            for (let j = 0; j < this.grid[i].length; j++) {
+                neighbors = [];
+
+                if (i > 0) {
+                    neighbors.push(this.grid[i - 1][j]); // top
+
+                    if (j > 0) {
+                        neighbors.push(this.grid[i - 1][j - 1]); // top left
+                    } 
+                    if (j < this.grid[i].length - 2) {
+                        neighbors.push(this.grid[i - 1][j + 1]); // top right
+                    }
+                }
+
+                if (i <= this.grid.length - 2) {
+                    neighbors.push(this.grid[i + 1][j]); // bottom
+
+                    if (j > 0) {
+                        neighbors.push(this.grid[i + 1][j - 1]); // bottom left
+                    } 
+                    if (j < this.grid[i].length - 2) {
+                        neighbors.push(this.grid[i + 1][j + 1]); // bottom right
+                    }
+                }
+
+                if (j > 0) {
+                    neighbors.push(this.grid[i][j - 1]); // left
+                } 
+
+                if (j < this.grid[i].length - 2) {
+                    neighbors.push(this.grid[i][j + 1]); // right
+                }
+
+
+
+                this.grid[i][j].neighbors = neighbors;
+            }
+        }
     }
 
     // vector = {x, y, z}
@@ -40,9 +92,11 @@ export default class NodeGrid {
     }
 
     getPath(currNode, goalNode) {
-        
-        // A* ALGO GO HERE
+        var queue = new PriorityQueue({comparator: function(a, b) {return b - a}});
+
+        // currNode
     }
+
 
     calcHeuristic(currNode, goalNode) {
         const D = 10; // non-diagonal move cost
