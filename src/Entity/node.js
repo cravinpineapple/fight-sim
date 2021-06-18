@@ -28,6 +28,7 @@ export default class Node extends Entity {
         // this.fval = 0;
         this.gval = 0;
         this.hval = 0;
+        this.fval = 0;
         this.neighbors = null;
         this.walkable = true;
         this.parent = null;
@@ -45,3 +46,7 @@ export default class Node extends Entity {
         this.neighbors.forEach(e => e.renderObj.material.color = neighborColor);
     }
 }
+
+// TODO: Do pathing to goal node
+// TODO: Do pathing to moving target
+// TODO: Create obstacles
