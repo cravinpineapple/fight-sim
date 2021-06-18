@@ -95,12 +95,28 @@ export default class NodeGrid {
     getPath(start, end) {
         // var open = new PriorityQueue({comparator: function(a, b) {return b.fval - a.fval}});
         // open.queue(currNode);
-        let gridCopy = this.grid;
+        let gridCopy = Object.assign(this.grid);
         let currNode = gridCopy[start.row][start.col];
         let goalNode = gridCopy[end.row][end.col];
         let open = [currNode];
         let closed = [];
 
+        // resets the grid
+        for (let i = 0; i < gridCopy.length; i++) {
+            for (let j = 0; j < gridCopy[i].length; j++) {
+                gridCopy[i][j].gval = 0;
+                gridCopy[i][j].hval = 0;
+                gridCopy[i][j].fval = 0;
+            }
+            console.log("========================");
+        }
+
+        for (let i = 0; i < gridCopy.length; i++) {
+            for (let j = 0; j < gridCopy[i].length; j++) {
+                console.log(gridCopy[i][j].gval);
+            }
+            console.log("========================");
+        }
 
         let current;
         let count = 0;
@@ -116,7 +132,11 @@ export default class NodeGrid {
                 let path = [current];
                 console.log(current);
                 current = current.parent;
+                let count = 0;
                 while (current != null) {
+                    count++
+                    if (count > 100) break;
+
                     path.push(current);
                     current = current.parent;
                     console.log(current);
