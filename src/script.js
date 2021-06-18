@@ -423,9 +423,9 @@ const tick = () => {
     
     if (newNode.position != currNode.position) {
         currNode.renderObj.material.color = colorBlack;
-        currNode.highlight(false);
+        // currNode.highlight(false);
         newNode.renderObj.material.color = colorAqua;
-        newNode.highlight(true);
+        // newNode.highlight(true);
         currNode = newNode;
 
         let heur = grid.calcHeuristic(goalNode, currNode);
