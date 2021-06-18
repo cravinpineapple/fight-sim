@@ -92,16 +92,17 @@ export default class NodeGrid {
     //     return 14 * dx + 10 * (dy - dx);
     // }
 
-    getPath(currNode, goalNode) {
+    getPath(start, end) {
         // var open = new PriorityQueue({comparator: function(a, b) {return b.fval - a.fval}});
         // open.queue(currNode);
+        let gridCopy = this.grid;
+        let currNode = gridCopy[start.row][start.col];
+        let goalNode = gridCopy[end.row][end.col];
         let open = [currNode];
         let closed = [];
-        // let gridCopy = this.grid;
+
 
         let current;
-        let gval = 0;
-
         let count = 0;
         while (true) {
             // console.log(open);
