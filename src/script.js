@@ -217,7 +217,7 @@ canvas.addEventListener("click", (e) => {
     tempPointsPath.add(line);
     lineInfo.pointsPath = tempPointsPath;
 
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFFFF00 });
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFF69B4 });
     const points = lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
     path = new THREE.Line(lineGeometry, lineMaterial);
@@ -229,8 +229,23 @@ var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
 var zoomOut = false, zoomIn = false;
 var ctrl = false;
 
+let goalNode = grid.getNode(playerSquare.position);
+let currNode = grid.getNode(aiSquare.getCenter());
+
 document.onkeydown = () => {
     var e = e || window.event;
+
+    //f (find path)
+    if (e.keyCode == 70) {
+        let goalNode = grid.getNode(playerSquare.position);
+        let currNode = grid.getNode(aiSquare.getCenter());
+
+        let pathFound = grid.getPath(currNode, goalNode);
+        console.log(pathFound);
+        highlightPath(pathFound, true);
+        return;
+    }
+
     // up
     if (e.keyCode == 87) {
         up = true;
@@ -369,13 +384,15 @@ function resizeCanvasToDiv() {
     }
 }
 
+function highlightPath(path, isHighlighted) {
+    const pathColor = isHighlighted ? new THREE.Color(0x32CD32) : new THREE.Color(0x000000);
+    
+    path.forEach(e => e.renderObj.material.color = pathColor);
+}
 
 const colorAqua = new THREE.Color(0x00FFFF);
 const colorBlack = new THREE.Color(0x000000);
 const colorRed = new THREE.Color(0xFF0000);
-
-let goalNode = grid.getNode(playerSquare.position);
-let currNode = grid.getNode(aiSquare.getCenter());
 
 goalNode.renderObj.material.color = colorRed; 
 currNode.renderObj.material.color = colorAqua;
@@ -420,4 +437,3 @@ const tick = () => {
 }
 
 tick();
-

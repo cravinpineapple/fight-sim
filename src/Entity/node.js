@@ -5,7 +5,7 @@ export default class Node extends Entity {
     // color - Node is automatically black
     // size = {width, height, depth}
     // position = {x, y, z}
-    constructor(size, pos) {
+    constructor(size, pos, nodeInfo) {
         super(0x000000, size, pos);
 
         const aiGeometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
@@ -20,8 +20,14 @@ export default class Node extends Entity {
         this.renderObj.position.z = pos.z;
         this.renderObj.visible = true; // should be false
 
+        this.row = nodeInfo.row;
+        this.col = nodeInfo.col;
+        this.id = nodeInfo.id; 
+
         // A* Stuff
-        this.fval = 0;
+        // this.fval = 0;
+        this.gval = 0;
+        this.hval = 0;
         this.neighbors = null;
         this.walkable = true;
         this.parent = null;

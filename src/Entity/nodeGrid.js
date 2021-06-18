@@ -18,25 +18,17 @@ export default class NodeGrid {
         }
 
         let tempPos;
+        let idCount = 0;
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
-                // reset neighbors
-                
-                // getting neighbors
-
-                // if (i != 0 && i != this.grid.length - 2 && j != 1 && j != this.grid[i].length - 2) {
-                //     
-                //     neighbors.push(this.grid[i + 1][j - 1]); // bottom left
-                //     neighbors.push(this.grid[i + 1][j + 1]); // bottom right
-                // }
-
                 tempPos = {
                     x: pos.x + nodeWidth * j,
                     y: pos.y + nodeWidth * -i,
                     z: pos.z,
                 }
-                this.grid[i][j] = new Node({width: nodeWidth, height: nodeWidth, depth: 0.005}, tempPos);
+                this.grid[i][j] = new Node({width: nodeWidth, height: nodeWidth, depth: 0.005}, tempPos, {row: i, col: j, id: idCount});
                 scene.add(this.grid[i][j].renderObj);
+                idCount++;
             }
         }
         
@@ -91,19 +83,46 @@ export default class NodeGrid {
         return this.grid[y][x];
     }
 
-    getPath(currNode, goalNode) {
-        // var open = [currNode];
-        var open = new PriorityQueue({comparator: function(a, b) {return b.fval - a.fval}});
-        open.queue(currNode);
-        var closed = [];
+    // getDistance(nodeA, nodeB) {
+    //     let dx = Math.abs(nodeA.col - nodeB.col);
+    //     let dy = Math.abs(nodeA.row - nodeB.row);
 
-        var current;
+    //     if (dx > dy) return 14 * dy + 10 * (dx - dy);
+
+    //     return 14 * dx + 10 * (dy - dx);
+    // }
+
+    getPath(currNode, goalNode) {
+        // var open = new PriorityQueue({comparator: function(a, b) {return b.fval - a.fval}});
+        // open.queue(currNode);
+        let open = [currNode];
+        let closed = [];
+        // let gridCopy = this.grid;
+
+        let current;
+        let gval = 0;
+
+        let count = 0;
         while (true) {
-            current = open.dequeue();
+            // console.log(open);
+            current = open[0];
+            open.splice(0, 1);
             closed.push(current);
 
-            if (current == goalNode)
-                return current;
+            if (current == goalNode) {
+                console.log("goal found");
+                // return [];
+                let path = [current];
+                console.log(current);
+                current = current.parent;
+                while (current != null) {
+                    path.push(current);
+                    current = current.parent;
+                    console.log(current);
+                }
+
+                return path;
+            }
 
             // for each neighbor or current
             for (let i = 0; i < current.neighbors.length; i++) {
@@ -113,15 +132,29 @@ export default class NodeGrid {
                     continue;
                 }
 
-                /*
-                if (new n fval < prev n fval || !open.includes(n)) {
-                    n.fval = new n fval
-                    n.parent = current
+                let costToNeighbor = current.gval + this.calcHeuristic(current, n);
 
-                    if (!open.includes(n))
-                        open.queue(n)
+                if (costToNeighbor < n.gval || !open.includes(n)) {
+                    n.gval = costToNeighbor
+                    n.hval = this.calcHeuristic(n, goalNode);
+                    n.fval = costToNeighbor + n.hval;
+                    n.parent = current;
+                    
+                    if (!open.includes(n)) {
+                        // inserts n depending on it's fval
+                        if (open.length == 0) {
+                            open.push(n);
+                        }
+                        else {
+                            for (let i = 0; i < open.length; i++) {
+                                if (n.fval < open[i].fval) {
+                                    open.splice(i, 0, n);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
-                */
             }
         }
     }
