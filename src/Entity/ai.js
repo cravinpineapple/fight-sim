@@ -17,6 +17,30 @@ export default class SquareAI extends Entity {
 
         this.gridRef = gridRef;
 
+        this.pathingGrid = new Array(gridRef.gridHeight);
+        for (let i = 0; i < this.pathingGrid.length; i++) {
+            this.pathingGrid[i] = new Array(gridRef.gridWidth);
+            for (let j = 0; j < this.pathingGrid[i].length; j++) {
+                let n = this.gridRef.grid[i][j];
+                this.pathingGrid[i][j] = {
+                    row: i,
+                    col: j,
+                    id: n.id,
+                    pos: {
+                        x: n.renderObj.position.x,
+                        y: n.renderObj.position.y,
+                        z: n.renderObj.position.z,
+                    },
+                    gval: 0,
+                    fval: 0,
+                    hval: 0,
+                    parent: null,
+                    walkable: n.walkable,
+                    neighborCords: this.getNeighborCords(n),
+                };
+            }
+        }
+
         // entities this entity beats
         this.preys = [];
         // entities this entity loses to 
@@ -57,8 +81,22 @@ export default class SquareAI extends Entity {
         scene.add(this.group);
     }
 
+    // for creating pathingGrid in constructor
+    getNeighborCords(node) {
+        let neighborCords = [];
+        for (let i = 0; i < node.neighborCords.length; i++) {
+            neighborCords.push({ row: node.neighborCords[i].row, col: node.neighborCords[i].col });
+        }
+        return neighborCords;
+    }
+
     getCenter() {
         return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
+        );
+    }
+
+    getCenterForPath() {
+        return new THREE.Vector3(this.group.position.x, this.group.position.y, 0
         );
     }
 
@@ -66,6 +104,23 @@ export default class SquareAI extends Entity {
         const pathColor = isHighlighted ? new THREE.Color(0x32CD32) : new THREE.Color(0x000000);
 
         this.currentPath.forEach(e => this.gridRef.grid[e.row][e.col].renderObj.material.color = pathColor);
+    }
+
+    buildFollowPath() {
+        let tempPointsPath = new THREE.CurvePath();
+
+        for (let i = 1; i < this.currentPath.length; i++) {
+            const p1 = i == 1 ? this.getCenterForPath() : this.gridRef.grid[this.currentPath[i - 1].row][this.currentPath[i - 1].col].getCenter();
+            const p2 = this.gridRef.grid[this.currentPath[i].row][this.currentPath[i].col].getCenter();
+
+            const line = new THREE.LineCurve3(
+                p1,
+                p2,
+            );
+            tempPointsPath.add(line);
+        }
+
+        return tempPointsPath;
     }
 
     // returns the node of the closest prey
@@ -88,5 +143,102 @@ export default class SquareAI extends Entity {
         }
 
         return closestNode;
+    }
+
+    calcHeuristic(currNode, goalNode) {
+        const D = 10; // non-diagonal move cost
+        const D2 = 14; // diagonal move cost
+
+        let dx = Math.abs(currNode.pos.x - goalNode.pos.x);
+        let dy = Math.abs(currNode.pos.y - goalNode.pos.y);
+
+        return D * (dx + dy) + (D2 - 2 * D) * Math.min(dx, dy);
+    }
+
+    updatePath(end) {
+        let start = this.gridRef.getNode(this.getCenter());
+        let currNode = this.pathingGrid[start.row][start.col];
+        let goalNode = this.pathingGrid[end.row][end.col];
+        let open = [currNode];
+        let closed = [];
+
+        // list of changed nodes so we can reset them when goal node found
+        let changed = [currNode];
+
+        let current;
+        let count = 0;
+        while (true) {
+            current = open[0];
+
+            // let less = 0;
+            // for (; less < open.length; less++) {
+            //     if (open[less].fval <= current.fval) {
+            //         if (open[less].hval < current.hval)
+            //             current = open[less];
+            //     }
+            // }
+
+            open.splice(0, 1);
+            closed.push(current);
+
+            if (current.id == goalNode.id) {
+                let path = [current];
+                current = current.parent;
+                let count = 0;
+
+                while (current != null) {
+                    count++;
+                    if (count > 100) return;
+                    path.splice(0, 0, current);
+                    current = current.parent;
+                }
+
+                // resetting affected nodes
+                for (let i = 0; i < changed.length; i++) {
+                    this.pathingGrid[changed[i].row][changed[i].col].gval = 0;
+                    this.pathingGrid[changed[i].row][changed[i].col].fval = 0;
+                    this.pathingGrid[changed[i].row][changed[i].col].hval = 0;
+                    this.pathingGrid[changed[i].row][changed[i].col].parent = null;
+                }
+
+                this.currentPath = path;
+                return;
+            }
+
+            // for each neighbor of current
+            for (let i = 0; i < current.neighborCords.length; i++) {
+                let n = this.pathingGrid[current.neighborCords[i].row][current.neighborCords[i].col];
+
+                if (!n.walkable || closed.includes(n)) {
+                    continue;
+                }
+
+                changed.push({ row: current.neighborCords[i].row, col: current.neighborCords[i].col });
+
+                let costToNeighbor = current.gval + this.calcHeuristic(current, n);
+
+                if (costToNeighbor < n.gval || !open.includes(n)) {
+                    n.gval = costToNeighbor
+                    n.hval = this.calcHeuristic(n, goalNode);
+                    n.fval = costToNeighbor + n.hval;
+                    n.parent = current;
+
+                    if (!open.includes(n)) {
+                        // inserts n depending on it's fval
+                        if (open.length == 0) {
+                            open.push(n);
+                        }
+                        else {
+                            for (let i = 0; i < open.length; i++) {
+                                if (n.fval < open[i].fval) {
+                                    open.splice(i, 0, n);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

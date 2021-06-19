@@ -52,7 +52,7 @@ const gWidth = 76;
 const gHeight = 30;
 const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, 5);
 
-let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 1, grid);
+let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.04, grid);
 playerSquare.renderObj.name = "playersquare";
 // AI Square
 let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1, grid);
@@ -182,7 +182,7 @@ let lineInfo = {
     fraction: null
 };
 
-// convert click cords to Three.js 3D coordinates
+// convert click cords to Three.js 3D coordinates and makes aiSquare follow path
 canvas.addEventListener("click", (e) => {
     // remove old line
     scene.remove(path);
@@ -220,21 +220,40 @@ canvas.addEventListener("click", (e) => {
     scene.add(path);
 });
 
+// builds a line from aiSquare's currentPath 
+function aiSquareCurrentPathLine() {
+    // remove old line
+    scene.remove(path);
+
+    let tempPointsPath = aiSquare.buildFollowPath();
+    const lineLengths = tempPointsPath.getCurveLengths();
+
+    lineInfo.fraction = 0;
+    lineInfo.lineLength = lineLengths[lineLengths.length - 1];
+    lineInfo.pointsPath = tempPointsPath;
+
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFF69B4 });
+    const points = lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    path = new THREE.Line(lineGeometry, lineMaterial);
+    scene.add(path);
+}
+
+
 var up = false, down = false, left = false, right = false; // WASD
 var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
 var zoomOut = false, zoomIn = false;
 var ctrl = false;
 
-let goalNode = grid.getNode(playerSquare.position);
+let goalNode = grid.getNode(playerSquare.getCenter());
 let currNode = grid.getNode(aiSquare.getCenter());
-let pathfound = [];
 
 document.onkeydown = () => {
     var e = e || window.event;
 
     //f (find path)
     if (e.keyCode == 70) {
-        let goalNode = grid.getNode(playerSquare.position);
+        let goalNode = grid.getNode(playerSquare.getCenter());
         let currNode = grid.getNode(aiSquare.getCenter());
 
         aiSquare.highlightPath(false);
@@ -344,10 +363,10 @@ document.onkeyup = () => {
 }
 
 const movement = () => {
-    if (up) playerSquare.group.position.y += speed * delta;
-    if (left) playerSquare.group.position.x -= speed * delta;
-    if (down) playerSquare.group.position.y -= speed * delta;
-    if (right) playerSquare.group.position.x += speed * delta;
+    if (up) playerSquare.group.position.y += playerSquare.speed * delta;
+    if (left) playerSquare.group.position.x -= playerSquare.speed * delta;
+    if (down) playerSquare.group.position.y -= playerSquare.speed * delta;
+    if (right) playerSquare.group.position.x += playerSquare.speed * delta;
 }
 
 const moveCamera = () => {
@@ -400,6 +419,17 @@ const tick = () => {
     movement();
     moveCamera();
 
+    let newGoalNode = grid.getNode(playerSquare.getCenter());
+    if (newGoalNode.position != goalNode.position) {
+        goalNode = newGoalNode;
+        let currNode = grid.getNode(aiSquare.getCenter());
+
+        // aiSquare.highlightPath(false);
+        aiSquare.updatePath(goalNode);
+        // aiSquare.highlightPath(true);
+        aiSquareCurrentPathLine();
+    }
+
     if (lineInfo.pointsPath != null)
         aiSquare.move(lineInfo);
     else
@@ -407,13 +437,6 @@ const tick = () => {
 
     // Render
     renderer.render(scene, camera);
-
-    // let newNode = grid.getNode(aiSquare.getCenter());
-    // if (newNode.position != currNode.position) {
-    //     currNode.renderObj.material.color = colorBlack;
-    //     newNode.renderObj.material.color = colorAqua;
-    //     currNode = newNode;
-    // }
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick);

@@ -39,6 +39,11 @@ export default class Node extends Entity {
         this.parent = null;
     }
 
+    getCenter() {
+        return new THREE.Vector3(this.renderObj.position.x, this.renderObj.position.y, 0
+        );
+    }
+
     // bool isHighlighted
     highlight(isHighlighted) {
         const nodeColor = isHighlighted ? new THREE.Color(0x00FFFF) : new THREE.Color(0x000000);
