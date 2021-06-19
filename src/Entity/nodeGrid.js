@@ -136,16 +136,12 @@ export default class NodeGrid {
         let current;
         let count = 0;
         while (true) {
-            // console.log(open);
             current = open[0];
             open.splice(0, 1);
             closed.push(current);
 
             if (current.id == goalNode.id) {
-                console.log("goal found");
-                // return [];
                 let path = [current];
-                console.log(current);
                 current = current.parent;
                 let count = 0;
                 while (current != null) {
@@ -154,7 +150,6 @@ export default class NodeGrid {
 
                     path.push(current);
                     current = current.parent;
-                    console.log(current);
                 }
 
                 return path;
