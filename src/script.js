@@ -4,7 +4,6 @@ import SquareAI from './Entity/ai.js';
 import NodeGrid from './Entity/nodeGrid.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
-import { GridHelper } from 'three';
 
 const entities = [];
 
@@ -42,24 +41,25 @@ var aiSize = {
     depth: boxDimensions,
 };
 
+var playerPosition = {
+    x: 125,
+    y: -70,
+    z: 0,
+};
+
+
 const gWidth = 76;
 const gHeight = 30;
 const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, 5);
 
+let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 1, grid);
+playerSquare.renderObj.name = "playersquare";
 // AI Square
 let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1, grid);
-entities.push(aiSquare);
-// let aiSquare2 = new SquareAI(0x00FFFF, aiSize, { x: 25, y: 0, z: 0 }, scene, 1);
 
+playerSquare.predators.push(aiSquare);
+aiSquare.preys.push(playerSquare);
 
-// playerMaterials
-const playerMaterial = new THREE.MeshBasicMaterial();
-playerMaterial.color = new THREE.Color(0xff0000);
-playerMaterial.wireframe = true;
-const playerSquare = new THREE.Mesh(geometry, playerMaterial)
-entities.push(playerSquare);
-playerSquare.name = "playersquare";
-playerSquare.castShadow = true;
 
 const testObj1 = gui.addFolder('Player Object');
 
@@ -75,17 +75,12 @@ for (let i = 0; i < grid.grid.length; i++) {
     }
 }
 
-// PLAYER
-playerSquare.position.set(125, -70, 0);
-
 // AI 
-testObj1.add(playerSquare.position, 'x').step(0.5);
-testObj1.add(playerSquare.position, 'y').step(0.5);
-testObj1.add(playerSquare.position, 'z').step(2);
+testObj1.add(playerSquare.renderObj.position, 'x').step(0.5);
+testObj1.add(playerSquare.renderObj.position, 'y').step(0.5);
+testObj1.add(playerSquare.renderObj.position, 'z').step(2);
 
-scene.add(playerSquare)
-// scene.add(aiSquare.renderObj);
-scene.add(aiSquare.group);
+// scene.add(aiSquare.group);
 // scene.add(aiSquare2.group);
 
 // POINT LIGHT
@@ -232,6 +227,7 @@ var ctrl = false;
 
 let goalNode = grid.getNode(playerSquare.position);
 let currNode = grid.getNode(aiSquare.getCenter());
+let pathfound = [];
 
 document.onkeydown = () => {
     var e = e || window.event;
@@ -241,9 +237,9 @@ document.onkeydown = () => {
         let goalNode = grid.getNode(playerSquare.position);
         let currNode = grid.getNode(aiSquare.getCenter());
 
-        let pathFound = grid.getPath(currNode, goalNode);
-        console.log(pathFound);
-        highlightPath(pathFound, true);
+        aiSquare.highlightPath(false);
+        aiSquare.currentPath = grid.getPath(currNode, goalNode);
+        aiSquare.highlightPath(true);
         return;
     }
 
@@ -348,10 +344,10 @@ document.onkeyup = () => {
 }
 
 const movement = () => {
-    if (up) playerSquare.position.y += speed * delta;
-    if (left) playerSquare.position.x -= speed * delta;
-    if (down) playerSquare.position.y -= speed * delta;
-    if (right) playerSquare.position.x += speed * delta;
+    if (up) playerSquare.group.position.y += speed * delta;
+    if (left) playerSquare.group.position.x -= speed * delta;
+    if (down) playerSquare.group.position.y -= speed * delta;
+    if (right) playerSquare.group.position.x += speed * delta;
 }
 
 const moveCamera = () => {
@@ -385,18 +381,12 @@ function resizeCanvasToDiv() {
     }
 }
 
-function highlightPath(path, isHighlighted) {
-    const pathColor = isHighlighted ? new THREE.Color(0x32CD32) : new THREE.Color(0x000000);
+// const colorAqua = new THREE.Color(0x00FFFF);
+// const colorBlack = new THREE.Color(0x000000);
+// const colorRed = new THREE.Color(0xFF0000);
 
-    path.forEach(e => grid.grid[e.row][e.col].renderObj.material.color = pathColor);
-}
-
-const colorAqua = new THREE.Color(0x00FFFF);
-const colorBlack = new THREE.Color(0x000000);
-const colorRed = new THREE.Color(0xFF0000);
-
-goalNode.renderObj.material.color = colorRed;
-currNode.renderObj.material.color = colorAqua;
+// goalNode.renderObj.material.color = colorRed;
+// currNode.renderObj.material.color = colorAqua;
 
 const tick = () => {
     resizeCanvasToDiv();
@@ -418,20 +408,12 @@ const tick = () => {
     // Render
     renderer.render(scene, camera);
 
-    // TODO: test code
-    // let test = aiSquare.getCenter();
-    let newNode = grid.getNode(aiSquare.getCenter());
-
-    if (newNode.position != currNode.position) {
-        currNode.renderObj.material.color = colorBlack;
-        // currNode.highlight(false);
-        newNode.renderObj.material.color = colorAqua;
-        // newNode.highlight(true);
-        currNode = newNode;
-
-        let heur = grid.calcHeuristic(goalNode, currNode);
-        console.log(heur);
-    }
+    // let newNode = grid.getNode(aiSquare.getCenter());
+    // if (newNode.position != currNode.position) {
+    //     currNode.renderObj.material.color = colorBlack;
+    //     newNode.renderObj.material.color = colorAqua;
+    //     currNode = newNode;
+    // }
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick);
