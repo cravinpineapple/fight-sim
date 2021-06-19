@@ -3,9 +3,10 @@ import Entity from './entity';
 import Node from './node.js';
 
 export default class NodeGrid {
-        // color = 0x000000
-        // size = {width, height, depth}
-        // position = {x, y, z}
+    // color = 0x000000
+    // size = {width, height, depth}
+    // position = {x, y, z}
+
     constructor(gridHeight, gridWidth, scene, pos, nodeWidth) {
         this.nodeWidth = nodeWidth;
         this.gridHeight = gridHeight;
@@ -26,12 +27,12 @@ export default class NodeGrid {
                     y: pos.y + nodeWidth * -i,
                     z: pos.z,
                 }
-                this.grid[i][j] = new Node({width: nodeWidth, height: nodeWidth, depth: 0.005}, tempPos, {row: i, col: j, id: idCount});
+                this.grid[i][j] = new Node({ width: nodeWidth, height: nodeWidth, depth: 0.005 }, tempPos, { row: i, col: j, id: idCount });
                 scene.add(this.grid[i][j].renderObj);
                 idCount++;
             }
         }
-        
+
         let neighbors = [];
         // add neighbors too all nodes
         for (let i = 0; i < this.grid.length; i++) {
@@ -39,38 +40,38 @@ export default class NodeGrid {
                 neighbors = [];
 
                 if (i > 0) {
-                    neighbors.push(this.grid[i - 1][j]); // top
+                    neighbors.push({ row: i - 1, col: j }); // top
 
                     if (j > 0) {
-                        neighbors.push(this.grid[i - 1][j - 1]); // top left
-                    } 
+                        neighbors.push({ row: i - 1, col: j - 1 }); // top left
+                    }
                     if (j < this.grid[i].length - 2) {
-                        neighbors.push(this.grid[i - 1][j + 1]); // top right
+                        neighbors.push({ row: i - 1, col: j + 1 }); // top right
                     }
                 }
 
                 if (i <= this.grid.length - 2) {
-                    neighbors.push(this.grid[i + 1][j]); // bottom
+                    neighbors.push({ row: i + 1, col: j }); // bottom
 
                     if (j > 0) {
-                        neighbors.push(this.grid[i + 1][j - 1]); // bottom left
-                    } 
+                        neighbors.push({ row: i + 1, col: j - 1 }); // bottom left
+                    }
                     if (j < this.grid[i].length - 2) {
-                        neighbors.push(this.grid[i + 1][j + 1]); // bottom right
+                        neighbors.push({ row: i + 1, col: j + 1 }); // bottom right
                     }
                 }
 
                 if (j > 0) {
-                    neighbors.push(this.grid[i][j - 1]); // left
-                } 
+                    neighbors.push({ row: i, col: j - 1 }); // left
+                }
 
                 if (j < this.grid[i].length - 2) {
-                    neighbors.push(this.grid[i][j + 1]); // right
+                    neighbors.push({ row: i, col: j + 1 }); // right
                 }
 
 
 
-                this.grid[i][j].neighbors = neighbors;
+                this.grid[i][j].neighborCords = neighbors;
             }
         }
     }
@@ -92,31 +93,45 @@ export default class NodeGrid {
     //     return 14 * dx + 10 * (dy - dx);
     // }
 
+    getNeighborCords(node) {
+        let neighborCords = [];
+        for (let i = 0; i < node.neighborCords.length; i++) {
+            neighborCords.push({ row: node.neighborCords[i].row, col: node.neighborCords[i].col });
+        }
+        return neighborCords;
+    }
+
     getPath(start, end) {
-        // var open = new PriorityQueue({comparator: function(a, b) {return b.fval - a.fval}});
-        // open.queue(currNode);
-        let gridCopy = Object.assign(this.grid);
+        // TODO: Faster way to make copy
+        let gridCopy = new Array(this.gridHeight);
+        for (let i = 0; i < gridCopy.length; i++) {
+            gridCopy[i] = new Array(this.gridWidth);
+            for (let j = 0; j < gridCopy[i].length; j++) {
+                let n = this.grid[i][j];
+                gridCopy[i][j] = {
+                    row: i,
+                    col: j,
+                    id: n.id,
+                    pos: {
+                        x: n.renderObj.position.x,
+                        y: n.renderObj.position.y,
+                        z: n.renderObj.position.z,
+                    },
+                    gval: 0,
+                    fval: 0,
+                    hval: 0,
+                    parent: null,
+                    walkable: n.walkable,
+                    neighborCords: this.getNeighborCords(n),
+                };
+            }
+        }
+        // const _ = require('lodash');
+        // let gridCopy = _.cloneDeep(this.grid);
         let currNode = gridCopy[start.row][start.col];
         let goalNode = gridCopy[end.row][end.col];
         let open = [currNode];
         let closed = [];
-
-        // resets the grid
-        for (let i = 0; i < gridCopy.length; i++) {
-            for (let j = 0; j < gridCopy[i].length; j++) {
-                gridCopy[i][j].gval = 0;
-                gridCopy[i][j].hval = 0;
-                gridCopy[i][j].fval = 0;
-            }
-            console.log("========================");
-        }
-
-        for (let i = 0; i < gridCopy.length; i++) {
-            for (let j = 0; j < gridCopy[i].length; j++) {
-                console.log(gridCopy[i][j].gval);
-            }
-            console.log("========================");
-        }
 
         let current;
         let count = 0;
@@ -126,7 +141,7 @@ export default class NodeGrid {
             open.splice(0, 1);
             closed.push(current);
 
-            if (current == goalNode) {
+            if (current.id == goalNode.id) {
                 console.log("goal found");
                 // return [];
                 let path = [current];
@@ -145,9 +160,9 @@ export default class NodeGrid {
                 return path;
             }
 
-            // for each neighbor or current
-            for (let i = 0; i < current.neighbors.length; i++) {
-                let n = current.neighbors[i];
+            // for each neighbor of current
+            for (let i = 0; i < current.neighborCords.length; i++) {
+                let n = gridCopy[current.neighborCords[i].row][current.neighborCords[i].col];
 
                 if (!n.walkable || closed.includes(n)) {
                     continue;
@@ -160,7 +175,7 @@ export default class NodeGrid {
                     n.hval = this.calcHeuristic(n, goalNode);
                     n.fval = costToNeighbor + n.hval;
                     n.parent = current;
-                    
+
                     if (!open.includes(n)) {
                         // inserts n depending on it's fval
                         if (open.length == 0) {
@@ -180,14 +195,13 @@ export default class NodeGrid {
         }
     }
 
-
     calcHeuristic(currNode, goalNode) {
         const D = 10; // non-diagonal move cost
         const D2 = 14; // diagonal move cost
-    
-        let dx = Math.abs(currNode.renderObj.position.x - goalNode.renderObj.position.x);
-        let dy = Math.abs(currNode.renderObj.position.y - goalNode.renderObj.position.y);
-    
+
+        let dx = Math.abs(currNode.pos.x - goalNode.pos.x);
+        let dy = Math.abs(currNode.pos.y - goalNode.pos.y);
+
         return D * (dx + dy) + (D2 - 2 * D) * Math.min(dx, dy);
     }
 }
