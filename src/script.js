@@ -42,8 +42,8 @@ var aiSize = {
 };
 
 var playerPosition = {
-    x: 125,
-    y: -70,
+    x: 22,
+    y: -134,
     z: 0,
 };
 
@@ -52,14 +52,32 @@ const gWidth = 76;
 const gHeight = 30;
 const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, 5);
 
-let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.04, grid);
+function getRandomPosition() {
+    let minX = 1;
+    let maxX = 371;
+    let minY = -1;
+    let maxY = -144;
+
+    let randX = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+    let randY = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+
+    return { x: randX, y: randY, z: 0 };
+
+}
+
+let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.1, grid);
+let playerSquare2 = new SquareAI(0xFF00FF, aiSize, { x: 316, y: -15, z: 0 }, scene, 0.1, grid);
 playerSquare.renderObj.name = "playersquare";
+
 // AI Square
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1, grid);
+let ais = []
+let aiCount = 20;
 
-playerSquare.predators.push(aiSquare);
-aiSquare.preys.push(playerSquare);
-
+for (let i = 0; i < aiCount; i++) {
+    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 1, grid));
+    ais[i].preys.push(playerSquare);
+    ais[i].preys.push(playerSquare2);
+}
 
 const testObj1 = gui.addFolder('Player Object');
 
@@ -79,9 +97,6 @@ for (let i = 0; i < grid.grid.length; i++) {
 testObj1.add(playerSquare.renderObj.position, 'x').step(0.5);
 testObj1.add(playerSquare.renderObj.position, 'y').step(0.5);
 testObj1.add(playerSquare.renderObj.position, 'z').step(2);
-
-// scene.add(aiSquare.group);
-// scene.add(aiSquare2.group);
 
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
@@ -139,8 +154,7 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(175, -65, 50); // 0, 0, 150
-// camera.lookAt(aiSquare.renderObj.position); // playerSquare.position
+camera.position.set(190, -65, 150); // 0, 0, 150
 
 const perpCam = gui.addFolder('Orth Cam 1');
 
@@ -184,11 +198,6 @@ let lineInfo = {
 
 // convert click cords to Three.js 3D coordinates and makes aiSquare follow path
 canvas.addEventListener("click", (e) => {
-    // remove old line
-    scene.remove(path);
-
-    lineInfo.fraction = 0;
-    let tempPointsPath = new THREE.CurvePath();
     vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
@@ -202,41 +211,25 @@ canvas.addEventListener("click", (e) => {
         console.log(pos);
         return;
     }
-
-    const line = new THREE.LineCurve3(
-        new THREE.Vector3(aiSquare.group.position.x, aiSquare.group.position.y, aiSquare.group.position.z),
-        pos
-    );
-
-    lineInfo.lineLength = line.getLength();
-
-    tempPointsPath.add(line);
-    lineInfo.pointsPath = tempPointsPath;
-
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFF69B4 });
-    const points = lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
-    const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-    path = new THREE.Line(lineGeometry, lineMaterial);
-    scene.add(path);
 });
 
 // builds a line from aiSquare's currentPath 
-function aiSquareCurrentPathLine() {
+function aiSquareCurrentPathLine(ai) {
     // remove old line
-    scene.remove(path);
+    scene.remove(ai.visualLinePath);
 
-    let tempPointsPath = aiSquare.buildFollowPath();
+    let tempPointsPath = ai.buildFollowPath();
     const lineLengths = tempPointsPath.getCurveLengths();
 
-    lineInfo.fraction = 0;
-    lineInfo.lineLength = lineLengths[lineLengths.length - 1];
-    lineInfo.pointsPath = tempPointsPath;
+    ai.lineInfo.fraction = 0;
+    ai.lineInfo.lineLength = lineLengths[lineLengths.length - 1];
+    ai.lineInfo.pointsPath = tempPointsPath;
 
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFF69B4 });
-    const points = lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
+    const points = ai.lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-    path = new THREE.Line(lineGeometry, lineMaterial);
-    scene.add(path);
+    ai.visualLinePath = new THREE.Line(lineGeometry, lineMaterial);
+    scene.add(ai.visualLinePath);
 }
 
 
@@ -246,21 +239,10 @@ var zoomOut = false, zoomIn = false;
 var ctrl = false;
 
 let goalNode = grid.getNode(playerSquare.getCenter());
-let currNode = grid.getNode(aiSquare.getCenter());
+let goalNode2 = grid.getNode(playerSquare2.getCenter());
 
 document.onkeydown = () => {
     var e = e || window.event;
-
-    //f (find path)
-    if (e.keyCode == 70) {
-        let goalNode = grid.getNode(playerSquare.getCenter());
-        let currNode = grid.getNode(aiSquare.getCenter());
-
-        aiSquare.highlightPath(false);
-        aiSquare.currentPath = grid.getPath(currNode, goalNode);
-        aiSquare.highlightPath(true);
-        return;
-    }
 
     // up
     if (e.keyCode == 87) {
@@ -370,12 +352,21 @@ const movement = () => {
 }
 
 const moveCamera = () => {
-    if (aUp) camera.position.y += speed * delta;
-    if (aLeft) camera.position.x -= speed * delta;
-    if (aDown) camera.position.y -= speed * delta;
-    if (aRight) camera.position.x += speed * delta;
     if (zoomIn) camera.position.z -= speed * delta;
     if (zoomOut) camera.position.z += speed * delta;
+
+    if (ctrl) {
+        if (aUp) camera.position.y += speed * delta;
+        if (aLeft) camera.position.x -= speed * delta;
+        if (aDown) camera.position.y -= speed * delta;
+        if (aRight) camera.position.x += speed * delta;
+    }
+    else {
+        if (aUp) playerSquare2.group.position.y += playerSquare.speed * delta;
+        if (aLeft) playerSquare2.group.position.x -= playerSquare.speed * delta;
+        if (aDown) playerSquare2.group.position.y -= playerSquare.speed * delta;
+        if (aRight) playerSquare2.group.position.x += playerSquare.speed * delta;
+    }
 }
 
 var lastUpdate = Date.now();
@@ -383,7 +374,7 @@ var lastUpdate = Date.now();
 
 function buttonClick() {
     playerSquare.material.color.setHex(Math.random() * 0xffffff);
-    aiSquare.renderObj.material.color.setHex(Math.random() * 0xffffff);
+    // aiSquare.renderObj.material.color.setHex(Math.random() * 0xffffff);
 }
 
 document.getElementById("changeColor").addEventListener("click", buttonClick);
@@ -414,26 +405,33 @@ const tick = () => {
     delta = now - lastUpdate;
     lastUpdate = now;
 
-    aiSquare.checkCollision();
+    // aiSquare.checkCollision();
 
     movement();
     moveCamera();
 
-    let newGoalNode = grid.getNode(playerSquare.getCenter());
-    if (newGoalNode.position != goalNode.position) {
-        goalNode = newGoalNode;
-        let currNode = grid.getNode(aiSquare.getCenter());
+    ais.forEach(e => e.tryMove());
 
-        // aiSquare.highlightPath(false);
-        aiSquare.updatePath(goalNode);
-        // aiSquare.highlightPath(true);
-        aiSquareCurrentPathLine();
+    let newGoalNode1 = grid.getNode(playerSquare.getCenter());
+    let newGoalNode2 = grid.getNode(playerSquare2.getCenter());
+
+    if (newGoalNode1.position != goalNode.position) {
+        goalNode = newGoalNode1;
+
+        ais.forEach(e => {
+            e.updatePath();
+            aiSquareCurrentPathLine(e);
+        });
     }
 
-    if (lineInfo.pointsPath != null)
-        aiSquare.move(lineInfo);
-    else
-        lineInfo.fraction = 0;
+    if (newGoalNode2.position != goalNode2.position) {
+        goalNode2 = newGoalNode2;
+
+        ais.forEach(e => {
+            e.updatePath();
+            aiSquareCurrentPathLine(e);
+        });
+    }
 
     // Render
     renderer.render(scene, camera);

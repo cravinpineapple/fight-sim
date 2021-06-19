@@ -40,13 +40,22 @@ export default class SquareAI extends Entity {
                 };
             }
         }
+        this.currentPath = [];
+        this.lineInfo = {
+            fraction: 0,
+            pointsPath: null,
+            lineLength: 0,
+        };
+
+        // line path for testing
+        this.visualLinePath = null
+
 
         // entities this entity beats
         this.preys = [];
         // entities this entity loses to 
         this.predators = [];
 
-        this.currentPath = [];
 
         this.renderObj = new THREE.Mesh(aiGeometry, aiMaterial);
         this.renderObj.name = "aisquare";
@@ -128,16 +137,16 @@ export default class SquareAI extends Entity {
         if (this.preys.length == 0)
             return null;
 
-        startNode = this.gridRef.getNode(this.getCenter());
+        let startNode = this.gridRef.getNode(this.getCenter());
 
         let closestNode = this.gridRef.getNode(this.preys[0].getCenter());
-        let closestNum = this.gridRef.calcHeuristic(startNode, closestNode);
+        let closestNum = this.calcHeuristic(startNode, closestNode);
 
-        for (let i = 1; i < this.beats.length; i++) {
-            let newClosestNode = this.gridRef.getNode(preys[i].getCenter());
-            let newClosestNum = this.gridRef.calcHeuristic(startNode, newClosestNode);
+        for (let i = 1; i < this.preys.length; i++) {
+            let newClosestNode = this.gridRef.getNode(this.preys[i].getCenter());
+            let newClosestNum = this.calcHeuristic(startNode, newClosestNode);
             if (newClosestNum < closestNum) {
-                closest = newClosestNode;
+                closestNode = newClosestNode;
                 closestNum = newClosestNum;
             }
         }
@@ -155,7 +164,18 @@ export default class SquareAI extends Entity {
         return D * (dx + dy) + (D2 - 2 * D) * Math.min(dx, dy);
     }
 
-    updatePath(end) {
+    tryMove() {
+        if (this.lineInfo.pointsPath != null)
+            this.move(this.lineInfo);
+        else
+            this.lineInfo.fraction = 0;
+    }
+
+    updatePath() {
+        this.getPath(this.getClosestPreyNode());
+    }
+
+    getPath(end) {
         let start = this.gridRef.getNode(this.getCenter());
         let currNode = this.pathingGrid[start.row][start.col];
         let goalNode = this.pathingGrid[end.row][end.col];
