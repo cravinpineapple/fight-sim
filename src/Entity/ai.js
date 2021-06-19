@@ -22,6 +22,8 @@ export default class SquareAI extends Entity {
         // entities this entity loses to 
         this.predators = [];
 
+        this.currentPath = [];
+
         this.renderObj = new THREE.Mesh(aiGeometry, aiMaterial);
         this.renderObj.name = "aisquare";
         this.group.position.x = pos.x;
@@ -51,11 +53,19 @@ export default class SquareAI extends Entity {
         //     console.log(vertex);
         //     this.addRay(currPos, temp.subVectors(currPos, vertex).normalize());
         // }
+
+        scene.add(this.group);
     }
 
     getCenter() {
         return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
         );
+    }
+
+    highlightPath(isHighlighted) {
+        const pathColor = isHighlighted ? new THREE.Color(0x32CD32) : new THREE.Color(0x000000);
+
+        this.currentPath.forEach(e => this.gridRef.grid[e.row][e.col].renderObj.material.color = pathColor);
     }
 
     // returns the node of the closest prey
