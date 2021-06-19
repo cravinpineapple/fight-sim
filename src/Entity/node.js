@@ -18,18 +18,23 @@ export default class Node extends Entity {
         this.renderObj.position.x = pos.x;
         this.renderObj.position.y = pos.y;
         this.renderObj.position.z = pos.z;
+        this.pos = {
+            x: pos.x,
+            y: pos.y,
+            z: pos.z,
+        }
         this.renderObj.visible = true; // should be false
 
         this.row = nodeInfo.row;
         this.col = nodeInfo.col;
-        this.id = nodeInfo.id; 
+        this.id = nodeInfo.id;
 
         // A* Stuff
         // this.fval = 0;
         this.gval = 0;
         this.hval = 0;
         this.fval = 0;
-        this.neighbors = null;
+        this.neighborCords = null;
         this.walkable = true;
         this.parent = null;
     }
@@ -38,7 +43,7 @@ export default class Node extends Entity {
     highlight(isHighlighted) {
         const nodeColor = isHighlighted ? new THREE.Color(0x00FFFF) : new THREE.Color(0x000000);
         const neighborColor = isHighlighted ? new THREE.Color(0xFFFF00) : new THREE.Color(0x000000);
-        
+
         // un/highlight current node
         this.renderObj.material.color = nodeColor;
         // un/highlight neighbors
