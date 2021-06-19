@@ -7,13 +7,20 @@ export default class SquareAI extends Entity {
     // color = 0x000000
     // size = {width, height, depth}
     // position = {x, y, z}
-    constructor(color, size, pos, scene, speed) {
+    constructor(color, size, pos, scene, speed, gridRef) {
         super(color, size, pos, scene, speed);
 
         const aiGeometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
         const aiMaterial = new THREE.MeshBasicMaterial();
         aiMaterial.color = new THREE.Color(color);
         aiMaterial.wireframe = true;
+
+        this.gridRef = gridRef;
+
+        // entities this entity beats
+        this.preys = [];
+        // entities this entity loses to 
+        this.predators = [];
 
         this.renderObj = new THREE.Mesh(aiGeometry, aiMaterial);
         this.renderObj.name = "aisquare";
@@ -40,7 +47,7 @@ export default class SquareAI extends Entity {
         //     let vertex = new THREE.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]);
         //     let currPos = this.renderObj.position;
         //     let temp = new THREE.Vector3();
-            
+
         //     console.log(vertex);
         //     this.addRay(currPos, temp.subVectors(currPos, vertex).normalize());
         // }
@@ -49,5 +56,27 @@ export default class SquareAI extends Entity {
     getCenter() {
         return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
         );
+    }
+
+    // returns the node of the closest prey
+    getClosestPreyNode() {
+        if (this.preys.length == 0)
+            return null;
+
+        startNode = this.gridRef.getNode(this.getCenter());
+
+        let closestNode = this.gridRef.getNode(this.preys[0].getCenter());
+        let closestNum = this.gridRef.calcHeuristic(startNode, closestNode);
+
+        for (let i = 1; i < this.beats.length; i++) {
+            let newClosestNode = this.gridRef.getNode(preys[i].getCenter());
+            let newClosestNum = this.gridRef.calcHeuristic(startNode, newClosestNode);
+            if (newClosestNum < closestNum) {
+                closest = newClosestNode;
+                closestNum = newClosestNum;
+            }
+        }
+
+        return closestNode;
     }
 }
