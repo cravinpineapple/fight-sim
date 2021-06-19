@@ -42,8 +42,12 @@ var aiSize = {
     depth: boxDimensions,
 };
 
-//aiMaterial
-let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1);
+const gWidth = 76;
+const gHeight = 30;
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, 5);
+
+// AI Square
+let aiSquare = new SquareAI(0x00ffff, aiSize, aiPosition, scene, 1, grid);
 entities.push(aiSquare);
 // let aiSquare2 = new SquareAI(0x00FFFF, aiSize, { x: 25, y: 0, z: 0 }, scene, 1);
 
@@ -64,9 +68,6 @@ let topLeft = {
     x: Math.round(-canvas.clientWidth / 2),
     y: Math.round(canvas.clientHeight / 2),
 };
-const gWidth = 76;
-const gHeight = 30;
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSquare.size.depth / 2 }, 5);
 
 for (let i = 0; i < grid.grid.length; i++) {
     for (let j = 0; j < grid.grid[i].length; j++) {
@@ -386,15 +387,15 @@ function resizeCanvasToDiv() {
 
 function highlightPath(path, isHighlighted) {
     const pathColor = isHighlighted ? new THREE.Color(0x32CD32) : new THREE.Color(0x000000);
-    
-    path.forEach(e => e.renderObj.material.color = pathColor);
+
+    path.forEach(e => grid.grid[e.row][e.col].renderObj.material.color = pathColor);
 }
 
 const colorAqua = new THREE.Color(0x00FFFF);
 const colorBlack = new THREE.Color(0x000000);
 const colorRed = new THREE.Color(0xFF0000);
 
-goalNode.renderObj.material.color = colorRed; 
+goalNode.renderObj.material.color = colorRed;
 currNode.renderObj.material.color = colorAqua;
 
 const tick = () => {
@@ -420,7 +421,7 @@ const tick = () => {
     // TODO: test code
     // let test = aiSquare.getCenter();
     let newNode = grid.getNode(aiSquare.getCenter());
-    
+
     if (newNode.position != currNode.position) {
         currNode.renderObj.material.color = colorBlack;
         // currNode.highlight(false);
