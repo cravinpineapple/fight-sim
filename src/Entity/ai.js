@@ -122,9 +122,9 @@ export default class SquareAI extends Entity {
 
         let tempPointsPath = new THREE.CurvePath();
 
-        for (let i = 1; i < this.currentPath.length; i++) {
-            const p1 = i == 1 ? this.getCenterForPath() : this.gridRef.grid[this.currentPath[i - 1].row][this.currentPath[i - 1].col].getCenter();
-            const p2 = this.gridRef.grid[this.currentPath[i].row][this.currentPath[i].col].getCenter();
+        if (this.currentPath.length == 1) {
+            const p1 = this.getCenterForPath();
+            const p2 = this.gridRef.grid[this.currentPath[0].row][this.currentPath[0].col].getCenter();
 
             const line = new THREE.LineCurve3(
                 p1,
@@ -132,6 +132,19 @@ export default class SquareAI extends Entity {
             );
             tempPointsPath.add(line);
         }
+        else {
+            for (let i = 1; i < this.currentPath.length; i++) {
+                const p1 = i == 1 ? this.getCenterForPath() : this.gridRef.grid[this.currentPath[i - 1].row][this.currentPath[i - 1].col].getCenter();
+                const p2 = this.gridRef.grid[this.currentPath[i].row][this.currentPath[i].col].getCenter();
+
+                const line = new THREE.LineCurve3(
+                    p1,
+                    p2,
+                );
+                tempPointsPath.add(line);
+            }
+        }
+
         const lineLengths = tempPointsPath.getCurveLengths();
 
         this.lineInfo.fraction = 0;
