@@ -15,25 +15,16 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // making floor
-const planeGeometry = new THREE.PlaneGeometry(1000, 400, 1, 1);
+const planeGeometry = new THREE.PlaneGeometry(2000, 800, 1, 1);
 const planeMesh = new THREE.MeshStandardMaterial();
 planeMesh.color = new THREE.Color(0x808080);
 const plane = new THREE.Mesh(planeGeometry, planeMesh);
 plane.castShadow = false;
 plane.receiveShadow = true;
-// plane.rotation.x = -Math.PI / 2;
 plane.position.set(200, -75, -10);
 scene.add(plane);
 
 const boxDimensions = 5;
-// Objects
-const geometry = new THREE.BoxGeometry(boxDimensions, boxDimensions, boxDimensions);
-// creating AI
-var aiPosition = {
-    x: 176,
-    y: -66,
-    z: 0,
-};
 
 var aiSize = {
     width: boxDimensions,
@@ -53,16 +44,16 @@ var player2Position = {
     z: 0,
 };
 
-
-const gWidth = 139;
-const gHeight = 55;
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, 5);
+var nodeWidth = boxDimensions * 2;
+const gWidth = 64; // 139 w/ boxDimensions * 2
+const gHeight = 29; // 55 w/ boxDimensions * 2
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, nodeWidth);
 
 function getRandomPosition() {
     let minX = 1;
-    let maxX = gWidth * boxDimensions - 20;
+    let maxX = gWidth * nodeWidth - 20;
     let minY = -1;
-    let maxY = -(gHeight - 2) * boxDimensions;
+    let maxY = -(gHeight - 2) * nodeWidth;
 
     let randX = Math.floor(Math.random() * (maxX - minX + 1) + minX);
     let randY = Math.floor(Math.random() * (maxY - minY + 1) + minY);
@@ -70,13 +61,13 @@ function getRandomPosition() {
     return { x: randX, y: randY, z: 0 };
 }
 
-let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.03, grid);
-let playerSquare2 = new SquareAI(0xFF00FF, aiSize, player2Position, scene, 0.03, grid);
+let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.05, grid);
+let playerSquare2 = new SquareAI(0xFF00FF, aiSize, player2Position, scene, 0.05, grid);
 playerSquare.renderObj.name = "playersquare";
 
 // AI Square
 let ais = []
-let aiCount = 50;
+let aiCount = 75;
 
 for (let i = 0; i < aiCount; i++) {
     ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid));
@@ -160,7 +151,7 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(340, -143, 190); // 190, -65, 150
+camera.position.set(322, -142, 190); // 190, -65, 150
 
 const perpCam = gui.addFolder('Orth Cam 1');
 
@@ -398,7 +389,7 @@ function resizeCanvasToDiv() {
 // currNode.renderObj.material.color = colorAqua;
 
 let elapsedTime = 0;
-let pathUpdateInterval = 300;
+let pathUpdateInterval = 150;
 const tick = () => {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
