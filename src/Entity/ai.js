@@ -49,6 +49,7 @@ export default class SquareAI extends Entity {
 
         // line path for testing
         this.visualLinePath = null
+        this.pathLineVisible = true;
 
 
         // entities this entity beats
@@ -109,13 +110,16 @@ export default class SquareAI extends Entity {
         );
     }
 
-    highlightPath(isHighlighted) {
+    highlightNodePath(isHighlighted) {
         const pathColor = isHighlighted ? new THREE.Color(0x32CD32) : new THREE.Color(0x000000);
 
         this.currentPath.forEach(e => this.gridRef.grid[e.row][e.col].renderObj.material.color = pathColor);
     }
 
     buildFollowPath() {
+        // remove old line
+        if (this.pathLineVisible) this.scene.remove(this.visualLinePath);
+
         let tempPointsPath = new THREE.CurvePath();
 
         for (let i = 1; i < this.currentPath.length; i++) {
@@ -128,8 +132,19 @@ export default class SquareAI extends Entity {
             );
             tempPointsPath.add(line);
         }
+        const lineLengths = tempPointsPath.getCurveLengths();
 
-        return tempPointsPath;
+        this.lineInfo.fraction = 0;
+        this.lineInfo.lineLength = lineLengths[lineLengths.length - 1];
+        this.lineInfo.pointsPath = tempPointsPath;
+
+        if (this.pathLineVisible) {
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFF69B4 });
+            const points = this.lineInfo.pointsPath.curves.reduce((p, d) => [...p, ...d.getPoints(20)], []);
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            this.visualLinePath = new THREE.Line(lineGeometry, lineMaterial);
+            this.scene.add(this.visualLinePath);
+        }
     }
 
     // returns the node of the closest prey
@@ -173,6 +188,7 @@ export default class SquareAI extends Entity {
 
     updatePath() {
         this.getPath(this.getClosestPreyNode());
+        this.buildFollowPath();
     }
 
     getPath(end) {
