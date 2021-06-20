@@ -160,10 +160,6 @@ perpCam.add(camera.position, 'y').step(0.5);
 perpCam.add(camera.position, 'z').step(0.5);
 scene.add(camera)
 
-// Controls
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
-
 /**
  * Renderer
  */
@@ -177,21 +173,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 
-
 var delta;
 var speed = 0.05;
-
-
-// building line from AI to clicked point
-var vec = new THREE.Vector3();
-var pos = new THREE.Vector3();
-var path = new THREE.Line();
-let fraction = 0;
-let lineInfo = {
-    lineLength: null,
-    pointsPath: null,
-    fraction: null
-};
 
 // convert click cords to Three.js 3D coordinates and makes aiSquare follow path
 canvas.addEventListener("click", (e) => {
@@ -222,114 +205,86 @@ let goalNode2 = grid.getNode(playerSquare2.getCenter());
 document.onkeydown = () => {
     var e = e || window.event;
 
-    // print cords (camera)
-    if (e.keyCode == 80) {
-        p = true;
-    }
-
-    // up
-    if (e.keyCode == 87) {
-        up = true;
-    }
-    // left
-    if (e.keyCode == 65) {
-        left = true;
-    }
-    // down
-    if (e.keyCode == 83) {
-        down = true;
-    }
-    // right
-    if (e.keyCode == 68) {
-        right = true;
-    }
-
-    // arrow keys
-    if (e.keyCode == 38) {
-        aUp = true;
-    }
-    // left
-    if (e.keyCode == 37) {
-        aLeft = true;
-    }
-    // down
-    if (e.keyCode == 40) {
-        aDown = true;
-    }
-    // right
-    if (e.keyCode == 39) {
-        aRight = true;
-    }
-
-    // zoom out
-    if (e.keyCode == 81) {
-        zoomOut = true;
-    }
-
-    // zoom in
-    if (e.keyCode == 69) {
-        zoomIn = true;
-    }
-
-    // control
-    if (e.keyCode == 17) {
-        ctrl = true;
+    switch (e.keyCode) {
+        case 80:
+            p = true;
+            break;
+        case 87:
+            up = true;
+            break;
+        case 65:
+            left = true;
+            break;
+        case 83:
+            down = true;
+            break;
+        case 68:
+            right = true;
+            break;
+        case 38:
+            aUp = true;
+            break;
+        case 37:
+            aLeft = true;
+            break;
+        case 40:
+            aDown = true;
+            break;
+        case 39:
+            aRight = true;
+            break;
+        case 81:
+            zoomOut = true;
+            break;
+        case 69:
+            zoomIn = true;
+            break;
+        case 17:
+            ctrl = true;
+            break;
     }
 }
 
 document.onkeyup = () => {
     var e = e || window.event;
 
-    // print cords (camera)
-    if (e.keyCode == 80) {
-        p = false;
-    }
-
-    // up
-    if (e.keyCode == 87) {
-        up = false;
-    }
-    // left
-    if (e.keyCode == 65) {
-        left = false;
-    }
-    // down
-    if (e.keyCode == 83) {
-        down = false;
-    }
-    // right
-    if (e.keyCode == 68) {
-        right = false;
-    }
-
-    if (e.keyCode == 38) {
-        aUp = false;
-    }
-    // left
-    if (e.keyCode == 37) {
-        aLeft = false;
-    }
-    // down
-    if (e.keyCode == 40) {
-        aDown = false;
-    }
-    // right
-    if (e.keyCode == 39) {
-        aRight = false;
-    }
-
-    // zoom out
-    if (e.keyCode == 81) {
-        zoomOut = false;
-    }
-
-    // zoom in
-    if (e.keyCode == 69) {
-        zoomIn = false;
-    }
-
-    if (e.keyCode == 17) {
-        ctrl = false;
+    switch (e.keyCode) {
+        case 80:
+            p = false;
+            break;
+        case 87:
+            up = false;
+            break;
+        case 65:
+            left = false;
+            break;
+        case 83:
+            down = false;
+            break;
+        case 68:
+            right = false;
+            break;
+        case 38:
+            aUp = false;
+            break;
+        case 37:
+            aLeft = false;
+            break;
+        case 40:
+            aDown = false;
+            break;
+        case 39:
+            aRight = false;
+            break;
+        case 81:
+            zoomOut = false;
+            break;
+        case 69:
+            zoomIn = false;
+            break;
+        case 17:
+            ctrl = false;
+            break;
     }
 }
 
@@ -360,7 +315,6 @@ const moveCamera = () => {
 }
 
 var lastUpdate = Date.now();
-// var myInterval = setInterval(tick, 0);
 
 function buttonClick() {
     playerSquare.material.color.setHex(Math.random() * 0xffffff);
@@ -380,13 +334,6 @@ function resizeCanvasToDiv() {
         camera.updateProjectionMatrix();
     }
 }
-
-// const colorAqua = new THREE.Color(0x00FFFF);
-// const colorBlack = new THREE.Color(0x000000);
-// const colorRed = new THREE.Color(0xFF0000);
-
-// goalNode.renderObj.material.color = colorRed;
-// currNode.renderObj.material.color = colorAqua;
 
 let elapsedTime = 0;
 let pathUpdateInterval = 150;
