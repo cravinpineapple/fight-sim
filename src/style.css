@@ -48,12 +48,30 @@ body
     padding-left: 6%;
   }
   
-  .sidenav a {
+.sidenav a {
     padding: 6px 8px 6px 16px;
     text-decoration: none;
     font-size: 25px;
     color: #818181;
     display: block;
+}
+
+.floatButton{
+	position: fixed;
+	width: 30px;
+	height: 30px;
+	top: 20px;
+	left: 20px;
+	background-color: #0C9;
+	color: rgb(48, 4, 243);
+	border-radius: 50px;
+	text-align: center;
+	/* box-shadow: 2px 2px 3px #999; */
+    z-index: 2;
+}
+
+.my-float{
+	margin-top:22px;
 }
 
 /* button {
