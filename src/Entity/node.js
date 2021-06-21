@@ -1,19 +1,20 @@
 import * as THREE from 'three';
 import Entity from './entity';
+import Wall from './wall';
 
 export default class Node extends Entity {
     // color - Node is automatically black
     // size = {width, height, depth}
     // position = {x, y, z}
-    constructor(size, pos, nodeInfo) {
-        super(0x000000, size, pos);
+    constructor(size, pos, nodeInfo, scene) {
+        super(0x000000, size, pos, scene);
 
-        const aiGeometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
-        const aiMaterial = new THREE.MeshBasicMaterial();
-        aiMaterial.wireframe = true;
-        aiMaterial.color = new THREE.Color(0x000000);
+        const nodeGeometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
+        const nodeMaterial = new THREE.MeshBasicMaterial();
+        nodeMaterial.wireframe = true;
+        nodeMaterial.color = new THREE.Color(0x000000);
 
-        this.renderObj = new THREE.Mesh(aiGeometry, aiMaterial);
+        this.renderObj = new THREE.Mesh(nodeGeometry, nodeMaterial);
         this.renderObj.name = "node";
         this.renderObj.position.x = pos.x;
         this.renderObj.position.y = pos.y;
@@ -23,7 +24,7 @@ export default class Node extends Entity {
             y: pos.y,
             z: pos.z,
         }
-        this.renderObj.visible = false; // should be false
+        this.renderObj.visible = true; // should be false
 
         this.row = nodeInfo.row;
         this.col = nodeInfo.col;
@@ -31,12 +32,32 @@ export default class Node extends Entity {
 
         // A* Stuff
         // this.fval = 0;
-        this.gval = 0;
-        this.hval = 0;
-        this.fval = 0;
+        this.gval = Number.POSITIVE_INFINITY;
+        this.hval = Number.POSITIVE_INFINITY;
+        this.fval = Number.POSITIVE_INFINITY;
         this.neighborCords = null;
         this.walkable = true;
         this.parent = null;
+
+        this.wall = null;
+    }
+
+    addWall() {
+        this.wall = new Wall(this.renderObj.material.color, 
+            { width: this.size.width, 
+            height: this.size.height, 
+            depth: this.size.height},
+            {x: this.position.x,
+            y: this.position.y,
+            z: this.position.z + (this.size.width / 2)});
+        this.scene.add(this.wall.renderObj);
+        this.walkable = false;
+    }
+
+    removeWall() {
+        this.scene.remove(this.wall.renderObj);
+        this.wall = null;
+        this.walkable = true;
     }
 
     getCenter() {
