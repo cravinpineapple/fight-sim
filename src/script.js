@@ -39,7 +39,7 @@ var playerPosition = {
 };
 
 var player2Position = {
-    x: 5,
+    x: 300,
     y: -15,
     z: 0,
 };
@@ -67,10 +67,10 @@ playerSquare.renderObj.name = "playersquare";
 
 // AI Square
 let ais = []
-let aiCount = 1;
+let aiCount = 25;
 
 for (let i = 0; i < aiCount; i++) {
-    ais.push(new SquareAI(0x00ffff, aiSize, {x: playerPosition.x + 50, y: playerPosition.y, z: playerPosition.z}, scene, 0.5, grid));
+    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid));
     ais[i].preys.push(playerSquare);
     ais[i].preys.push(playerSquare2);
     ais[i].pathLineVisible = true;
@@ -385,11 +385,6 @@ function resizeCanvasToDiv() {
 let elapsedTime = 0;
 let pathUpdateInterval = 150;
 
-let testHold = false;
-
-let testElapse = 0;
-let increment = 0;
-
 const tick = () => {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
@@ -398,7 +393,6 @@ const tick = () => {
     lastUpdate = now;
 
     elapsedTime += delta;
-
 
     // aiSquare.checkCollision();
 
@@ -418,18 +412,12 @@ const tick = () => {
         if (newGoalNode1.position != goalNode.position) {
             goalNode = newGoalNode1;
             ais.forEach(e => e.updatePath());
-            increment = 1
         }
         
         if (newGoalNode2.position != goalNode2.position) {
             goalNode2 = newGoalNode2;
             ais.forEach(e => e.updatePath());
         }
-    }
-    testElapse += increment;
-
-    if (testElapse > 5) {
-        throw new Error("Path Built");
     }
 
     // Render
