@@ -11,6 +11,7 @@ export default class NodeGrid {
         this.nodeWidth = nodeWidth;
         this.gridHeight = gridHeight;
         this.gridWidth = gridWidth;
+        this.scene = scene;
 
         // create 2d array 
         this.grid = new Array(gridHeight);
@@ -27,7 +28,7 @@ export default class NodeGrid {
                     y: pos.y + nodeWidth * -i,
                     z: pos.z,
                 }
-                this.grid[i][j] = new Node({ width: nodeWidth, height: nodeWidth, depth: 0.005 }, tempPos, { row: i, col: j, id: idCount });
+                this.grid[i][j] = new Node({ width: nodeWidth, height: nodeWidth, depth: 0.005 }, tempPos, { row: i, col: j, id: idCount }, scene);
                 scene.add(this.grid[i][j].renderObj);
                 idCount++;
             }
