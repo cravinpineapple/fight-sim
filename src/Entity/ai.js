@@ -17,29 +17,9 @@ export default class SquareAI extends Entity {
 
         this.gridRef = gridRef;
 
-        this.pathingGrid = new Array(gridRef.gridHeight);
-        for (let i = 0; i < this.pathingGrid.length; i++) {
-            this.pathingGrid[i] = new Array(gridRef.gridWidth);
-            for (let j = 0; j < this.pathingGrid[i].length; j++) {
-                let n = this.gridRef.grid[i][j];
-                this.pathingGrid[i][j] = {
-                    row: i,
-                    col: j,
-                    id: n.id,
-                    pos: {
-                        x: n.renderObj.position.x,
-                        y: n.renderObj.position.y,
-                        z: n.renderObj.position.z,
-                    },
-                    gval: 0,
-                    fval: 0,
-                    hval: 0,
-                    parent: null,
-                    walkable: n.walkable,
-                    neighborCords: this.getNeighborCords(n),
-                };
-            }
-        }
+        this.pathingGrid = null;
+        this.updatePathingGrid();
+        
         this.currentPath = [];
         this.lineInfo = {
             fraction: 0,
@@ -89,6 +69,32 @@ export default class SquareAI extends Entity {
         // }
 
         scene.add(this.group);
+    }
+
+    updatePathingGrid() {
+        this.pathingGrid = new Array(this.gridRef.gridHeight);
+        for (let i = 0; i < this.pathingGrid.length; i++) {
+            this.pathingGrid[i] = new Array(this.gridRef.gridWidth);
+            for (let j = 0; j < this.pathingGrid[i].length; j++) {
+                let n = this.gridRef.grid[i][j];
+                this.pathingGrid[i][j] = {
+                    row: i,
+                    col: j,
+                    id: n.id,
+                    pos: {
+                        x: n.renderObj.position.x,
+                        y: n.renderObj.position.y,
+                        z: n.renderObj.position.z,
+                    },
+                    gval: 0,
+                    fval: 0,
+                    hval: 0,
+                    parent: null,
+                    walkable: n.walkable,
+                    neighborCords: this.getNeighborCords(n),
+                };
+            }
+        }
     }
 
     // for creating pathingGrid in constructor
@@ -219,17 +225,10 @@ export default class SquareAI extends Entity {
         while (true) {
             current = open[0];
 
-            // let less = 0;
-            // for (; less < open.length; less++) {
-            //     if (open[less].fval <= current.fval) {
-            //         if (open[less].hval < current.hval)
-            //             current = open[less];
-            //     }
-            // }
-
             open.splice(0, 1);
             closed.push(current);
 
+            
             if (current.id == goalNode.id) {
                 let path = [current];
                 current = current.parent;
@@ -269,7 +268,7 @@ export default class SquareAI extends Entity {
                 if (costToNeighbor < n.gval || !open.includes(n)) {
                     n.gval = costToNeighbor
                     n.hval = this.calcHeuristic(n, goalNode);
-                    n.fval = costToNeighbor + n.hval;
+                    n.fval = n.gval + n.hval;
                     n.parent = current;
 
                     if (!open.includes(n)) {
@@ -278,10 +277,15 @@ export default class SquareAI extends Entity {
                             open.push(n);
                         }
                         else {
-                            for (let i = 0; i < open.length; i++) {
+                            let adding = true;
+                            for (let i = 0; i < open.length && adding; i++) {
                                 if (n.fval < open[i].fval) {
                                     open.splice(i, 0, n);
-                                    break;
+                                    adding = false;
+                                }
+                                else if (i == open.length - 1) {
+                                    open.push(n);
+                                    adding = false;
                                 }
                             }
                         }
