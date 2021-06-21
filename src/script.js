@@ -33,13 +33,13 @@ var aiSize = {
 };
 
 var playerPosition = {
-    x: 200,
+    x: 275,
     y: -134,
     z: 0,
 };
 
 var player2Position = {
-    x: 316,
+    x: 5,
     y: -15,
     z: 0,
 };
@@ -47,7 +47,7 @@ var player2Position = {
 var nodeWidth = boxDimensions * 2;
 const gWidth = 64; // 139 w/ boxDimensions * 2
 const gHeight = 29; // 55 w/ boxDimensions * 2
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0, y: 0, z: -aiSize.depth / 2 }, nodeWidth);
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: -aiSize.depth / 2 }, nodeWidth);
 
 function getRandomPosition() {
     let minX = 1;
@@ -67,13 +67,13 @@ playerSquare.renderObj.name = "playersquare";
 
 // AI Square
 let ais = []
-let aiCount = 75;
+let aiCount = 1;
 
 for (let i = 0; i < aiCount; i++) {
-    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid));
+    ais.push(new SquareAI(0x00ffff, aiSize, {x: playerPosition.x + 50, y: playerPosition.y, z: playerPosition.z}, scene, 0.5, grid));
     ais[i].preys.push(playerSquare);
     ais[i].preys.push(playerSquare2);
-    ais[i].pathLineVisible = false;
+    ais[i].pathLineVisible = true;
 }
 
 const testObj1 = gui.addFolder('Player Object');
@@ -176,8 +176,14 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 var delta;
 var speed = 0.05;
 
+let lastMouseNode;
+let mouseDown = false;
 // convert click cords to Three.js 3D coordinates and makes aiSquare follow path
-canvas.addEventListener("click", (e) => {
+canvas.addEventListener("mousedown", (e) => {
+    mouseDown = true;
+    let vec = new THREE.Vector3();
+    let pos = new THREE.Vector3();
+
     vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
@@ -191,6 +197,47 @@ canvas.addEventListener("click", (e) => {
         console.log(pos);
         return;
     }
+    else {
+        lastMouseNode = grid.getNode(pos);
+        if (lastMouseNode.wall == null) lastMouseNode.addWall();
+        else lastMouseNode.removeWall();
+
+        console.log(lastMouseNode.walkable);
+    }
+});
+
+canvas.addEventListener("mouseup", (e) => {
+    mouseDown = false;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+    let vec = new THREE.Vector3();
+    let pos = new THREE.Vector3();
+
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.unproject(camera);
+    vec.sub(camera.position).normalize();
+
+    var distance = - camera.position.z / vec.z;
+
+    pos.copy(camera.position).add(vec.multiplyScalar(distance));
+
+    let node = grid.getNode(pos);
+    if (ctrl) {
+        // prints click coordinates
+        console.log(pos);
+        return;
+    }
+    else if (lastMouseNode != node && mouseDown) {
+        lastMouseNode = node;
+        if (node.wall == null) node.addWall();
+        else node.removeWall();
+    }
+});
+
+document.getElementById("floatButton").addEventListener("click", function() {
+    console.log("Starting...");
+    ais.forEach(e => e.updatePathingGrid());
 });
 
 var p = false;
@@ -337,6 +384,12 @@ function resizeCanvasToDiv() {
 
 let elapsedTime = 0;
 let pathUpdateInterval = 150;
+
+let testHold = false;
+
+let testElapse = 0;
+let increment = 0;
+
 const tick = () => {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
@@ -365,12 +418,18 @@ const tick = () => {
         if (newGoalNode1.position != goalNode.position) {
             goalNode = newGoalNode1;
             ais.forEach(e => e.updatePath());
+            increment = 1
         }
-
+        
         if (newGoalNode2.position != goalNode2.position) {
             goalNode2 = newGoalNode2;
             ais.forEach(e => e.updatePath());
         }
+    }
+    testElapse += increment;
+
+    if (testElapse > 5) {
+        throw new Error("Path Built");
     }
 
     // Render
