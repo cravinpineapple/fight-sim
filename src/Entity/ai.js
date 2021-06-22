@@ -124,7 +124,19 @@ export default class SquareAI extends Entity {
 
     buildFollowPath() {
         // remove old line
+
+        // if no path found, return
+        if (this.currentPath.length == 0) {
+            console.log("path not reachable");
+            this.lineInfo.pointsPath = null;
+            return;
+        } 
+
         if (this.pathLineVisible) this.scene.remove(this.visualLinePath);
+
+        // if (this.lineInfo == null) {
+        //     return;
+        // };
 
         let tempPointsPath = new THREE.CurvePath();
 
@@ -199,6 +211,10 @@ export default class SquareAI extends Entity {
     }
 
     tryMove() {
+        if (this.lineInfo.pointsPath == null) {
+            return
+        }
+
         if (this.lineInfo.pointsPath != null)
             this.move(this.lineInfo);
         else
@@ -206,7 +222,13 @@ export default class SquareAI extends Entity {
     }
 
     updatePath() {
-        this.getPath(this.getClosestPreyNode());
+        let closestPrey = this.getClosestPreyNode();
+        let closestPreyNode = this.gridRef.getNode(closestPrey.position);
+        if (!this.pathingGrid[closestPreyNode.row][closestPreyNode.col].walkable) {
+            return;
+        }
+        this.getPath(closestPrey);
+        console.log(this.currentPath);
         this.buildFollowPath();
     }
 
@@ -228,6 +250,8 @@ export default class SquareAI extends Entity {
             open.splice(0, 1);
             closed.push(current);
 
+
+            if (current == null) return [];
             
             if (current.id == goalNode.id) {
                 let path = [current];
