@@ -67,12 +67,12 @@ playerSquare.renderObj.name = "playersquare";
 
 // AI Square
 let ais = []
-let aiCount = 25;
+let aiCount = 10;
 
 for (let i = 0; i < aiCount; i++) {
     ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid));
     ais[i].preys.push(playerSquare);
-    ais[i].preys.push(playerSquare2);
+    // ais[i].preys.push(playerSquare2);
     ais[i].pathLineVisible = true;
 }
 
@@ -225,7 +225,6 @@ canvas.addEventListener("mousemove", (e) => {
     let node = grid.getNode(pos);
     if (ctrl) {
         // prints click coordinates
-        console.log(pos);
         return;
     }
     else if (lastMouseNode != node && mouseDown) {
@@ -407,17 +406,17 @@ const tick = () => {
         console.log("New Path");
 
         let newGoalNode1 = grid.getNode(playerSquare.getCenter());
-        let newGoalNode2 = grid.getNode(playerSquare2.getCenter());
+        // let newGoalNode2 = grid.getNode(playerSquare2.getCenter());
 
         if (newGoalNode1.position != goalNode.position) {
             goalNode = newGoalNode1;
             ais.forEach(e => e.updatePath());
         }
         
-        if (newGoalNode2.position != goalNode2.position) {
-            goalNode2 = newGoalNode2;
-            ais.forEach(e => e.updatePath());
-        }
+        // if (newGoalNode2.position != goalNode2.position) {
+        //     goalNode2 = newGoalNode2;
+        //     ais.forEach(e => e.updatePath());
+        // }
     }
 
     // Render
