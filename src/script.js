@@ -10,7 +10,23 @@ const entities = [];
 // Debug
 const gui = new dat.GUI()
 // Canvas
+// const canvasContainer = document.getElementById('canvas-container');
+const sidebar = document.getElementById('sidenav');
+const bottombar = document.getElementById('navbar');
 const canvas = document.querySelector('canvas.webgl')
+
+// Renderer
+ const renderer = new THREE.WebGLRenderer({
+    canvas: canvas, alpha: true,
+})
+const sideBarWidth = sidebar.offsetWidth;
+const bottomBarHeight = bottombar.offsetHeight;
+const windowWidth = document.documentElement.clientWidth
+const windowHeight = document.documentElement.clientHeight
+// setting renderer size
+renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
 // Scene
 const scene = new THREE.Scene()
 
@@ -161,15 +177,6 @@ perpCam.add(camera.position, 'z').step(0.5);
 scene.add(camera)
 
 /**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas, alpha: true,
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-/**
  * Animate
  */
 
@@ -184,7 +191,7 @@ canvas.addEventListener("mousedown", (e) => {
     let vec = new THREE.Vector3();
     let pos = new THREE.Vector3();
 
-    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.set(((e.clientX - sideBarWidth) / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
 
@@ -214,7 +221,7 @@ canvas.addEventListener("mousemove", (e) => {
     let vec = new THREE.Vector3();
     let pos = new THREE.Vector3();
 
-    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.set(((e.clientX - sideBarWidth) / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
 
@@ -222,6 +229,7 @@ canvas.addEventListener("mousemove", (e) => {
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
 
+    // CLICK DRAGGING FOR WALLS
     let node = grid.getNode(pos);
     if (ctrl) {
         // prints click coordinates
