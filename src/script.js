@@ -370,13 +370,6 @@ const moveCamera = () => {
 
 var lastUpdate = Date.now();
 
-function buttonClick() {
-    playerSquare.material.color.setHex(Math.random() * 0xffffff);
-    // aiSquare.renderObj.material.color.setHex(Math.random() * 0xffffff);
-}
-
-document.getElementById("changeColor").addEventListener("click", buttonClick);
-
 function resizeCanvasToDiv() {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;

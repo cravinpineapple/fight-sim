@@ -24,12 +24,6 @@ body
     position: absolute;
 }
 
-.entity-customizer-container
-{
-    position: relative;
-    outline: dashed lightcyan;
-}
-
 .sidenav {
     height: 100%;
     width: 9%;
@@ -41,7 +35,34 @@ body
     overflow-x: hidden;
     padding-top: 22%;
     padding-left: 6%;
-  }
+}
+
+.entity-customizer-container
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 5%;
+    margin-left: 5%;
+    width: 90%;
+    height: 20%;
+    outline: solid lightcyan;
+    outline-width: thin;
+}
+
+.roundButton
+{
+    position: relative;
+    margin-left: 10%;
+	width: 30px;
+	height: 30px;
+	background-color: rgba(204, 65, 0, 0);
+	color: rgb(49, 49, 49);
+    background-color: rgb(60, 255, 206);
+	border-radius: 50px;
+	text-align: center;
+    font-size: 25px;
+}
   
 .sidenav a {
     padding: 6px 8px 6px 16px;
@@ -51,11 +72,12 @@ body
     display: block;
 }
 
-.floatButton{
+.floatButton
+{
 	position: fixed;
 	width: 30px;
 	height: 30px;
-	top: 20px;
+	bottom: 20px;
 	left: 20px;
 	background-color: #0C9;
 	color: rgb(48, 4, 243);
