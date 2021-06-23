@@ -24,10 +24,11 @@ body
     position: absolute;
 }
 
-/* @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-} */
+.entity-customizer-container
+{
+    position: relative;
+    outline: dashed lightcyan;
+}
 
 .sidenav {
     height: 100%;
