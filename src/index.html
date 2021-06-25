@@ -6,14 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThreeJS Starter</title>
     <script defer src="./Entity/nodeGrid.js"></script> 
+    <script src="script.js"></script> 
+    <script defer src="sidebar-controls.js"></script> 
     <script type="module" defer src="script.js"></script>
 </head>
 
 <body>
     <button class="floatButton" id="floatButton"></button>
     <div class="sidenav" id="sidenav">
-        <div class="entity-customizer-container"></div>
-        <button class="roundButton" id="changeColor">&#43</button>
+        <div class="sidenav-header" id="sidenav-header">
+            <div class="sidenav-header-text">Fight-Sim!</div> 
+            <button class="sidenav-header-minimize" id="sidenav-header-minimize" onclick="minimizeSideBar()"></button>
+        </div>
+        <div class="entity-customizer-container" id="customizer1"></div>
+        <button class="roundButton" id="changeColor" onclick="addEntityCustomizerBox()">&#43</button>
     </div>
     <div class="navbar" id="navbar">
         <button type="button">whoa</button>

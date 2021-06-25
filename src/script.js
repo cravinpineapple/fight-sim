@@ -16,7 +16,7 @@ const bottombar = document.getElementById('navbar');
 const canvas = document.querySelector('canvas.webgl')
 
 // Renderer
- const renderer = new THREE.WebGLRenderer({
+var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true,
 })
 const sideBarWidth = sidebar.offsetWidth;
