@@ -19,17 +19,17 @@ function addEntityCustomizerBox() {
     entityCustomizerCount++;
 }
 
-function minimizeSideBar() {
-    // console.log(renderer);
-    var sideNav = document.getElementById('sidenav');
-    var canvas = document.getElementById('canvas-container');
+// function minimizeSideBar() {
+//     // console.log(renderer);
+//     var sideNav = document.getElementById('sidenav');
+//     var canvas = document.getElementById('canvas-container');
 
-    // TODO: Resize canvas after minimize pressed
-    console.log(canvas);
-    console.log("before: " + canvas.offsetWidth);
-    canvas.style.marginLeft = "0%";
-    canvas.offsetWidth = "100%";
+//     // TODO: Resize canvas after minimize pressed
+//     console.log(canvas);
+//     console.log("before: " + canvas.offsetWidth);
+//     canvas.style.marginLeft = "0%";
+//     canvas.offsetWidth = "100%";
 
-    sideNav.style.visibility = "hidden";
-    console.log("after: " + canvas.offsetWidth);
-}
+//     sideNav.style.visibility = "hidden";
+//     console.log("after: " + canvas.offsetWidth);
+// }

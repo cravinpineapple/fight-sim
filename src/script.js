@@ -11,16 +11,18 @@ const entities = [];
 const gui = new dat.GUI()
 // Canvas
 // const canvasContainer = document.getElementById('canvas-container');
-const sidebar = document.getElementById('sidenav');
-const bottombar = document.getElementById('navbar');
+const sideBar = document.getElementById('sidenav');
+const bottomBar = document.getElementById('navbar');
 const canvas = document.querySelector('canvas.webgl')
+const canvasContainer = document.getElementById('canvas-container');
+const sideNavMaximizeButton = document.getElementById('sidenav-header-maximize-button');
 
 // Renderer
 var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true,
 })
-const sideBarWidth = sidebar.offsetWidth;
-const bottomBarHeight = bottombar.offsetHeight;
+var sideBarWidth = sideBar.offsetWidth;
+const bottomBarHeight = bottomBar.offsetHeight;
 const windowWidth = document.documentElement.clientWidth
 const windowHeight = document.documentElement.clientHeight
 // setting renderer size
@@ -367,6 +369,26 @@ const moveCamera = () => {
         if (aRight) playerSquare2.group.position.x += playerSquare.speed * delta;
     }
 }
+
+// hiden side nav
+document.getElementById('sidenav-header-minimize').addEventListener("click", function() {
+
+    sideNavMaximizeButton.style.visibility = "visible";
+    canvasContainer.style.marginLeft = "0%";
+    renderer.setSize(windowWidth, windowHeight);
+    sideBar.style.visibility = "hidden";
+    sideBarWidth = 0;
+});
+
+// show side nav
+document.getElementById('sidenav-header-maximize-button').addEventListener("click", function() {
+    sideNavMaximizeButton.style.visibility = "hidden";
+    canvasContainer.style.marginLeft = "15%";
+    sideBarWidth = sideBar.offsetWidth;
+    renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
+    sideBar.style.visibility = "visible";
+    console.log(sideBar.style);
+});
 
 var lastUpdate = Date.now();
 
