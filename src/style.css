@@ -63,10 +63,16 @@ body
     left: 0;
     margin-top: 5%;
     margin-left: 5%;
-    width: 90%;
+    width: 85%;
+    max-width: 85%;
     height: 35%;
-    outline: solid lightcyan;
-    outline-width: thin;
+    border-radius: 25px;
+    background-color: rgb(206, 206, 206);
+    padding-left: 5%;
+    padding-top: 5%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
 }
 
 .sidenav-header
@@ -76,6 +82,110 @@ body
     background-color: #818181;
     display: flex;
     flex-wrap: nowrap;
+}
+
+.entity-speed-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 20;
+}
+
+.speed-label
+{
+    padding-top: 1.6%;
+}
+
+.entity-size-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 20;
+}
+
+.size-label
+{
+    padding-top: 1.6%;
+}
+
+.entity-shape-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 20;
+}
+
+.shape-label
+{
+    padding-top: 1.6%;
+}
+
+.entity-customizer-header
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 1;
+}
+
+hr.rounded
+{
+    border-top: 8px solid rgb(92, 92, 92);
+    width: 95%;
+    border-radius: 5px;
+    flex: 1;
+}
+
+.spacer
+{
+    flex: 0.5;
+}
+
+.entity-customizer-text-box
+{
+    border: 1px solid rgb(32, 32, 32);
+    border-radius: 30px;
+    height: 25px;
+    min-width: 5px;
+    flex: 20;
+    outline-width: 0;
+    padding-left: 4%;
+}
+
+
+.entity-customizer-minimize
+{
+    background-color: rgb(92, 92, 92);
+    width: 5%;
+    height: 25px;
+    flex: 3;
+    border-radius: 30px;
+    border-style: none;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+.entity-customizer-delete
+{
+    background-color: rgb(92, 92, 92);
+    width: 5%;
+    height: 25px;
+    flex: 3;
+    border-radius: 30px;
+    border-style: none;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15pt;
+    font-weight: bold;
 }
 
 .sidenav-header-text
@@ -152,21 +262,6 @@ body
 	margin-top:22px;
 }
 
-/* button {
-    display: inline-block;
-    padding: .75rem 1.25rem;
-    border-radius: 30px;
-    color: rgb(48, 48, 48);
-    background-color: rgb(0, 132, 255);
-    font-size: 12px;
-    font-weight: bolder;
-    z-index: 1;
-}
-
-button:active {
-    color: rgb(124, 124, 124);
-} */
-
 .navbar {
     overflow: hidden;
     background-color: #333;
@@ -186,4 +281,60 @@ button:active {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
+}
+
+
+/* dropdown menu stuff */
+
+.shape-drop-button {
+    background-color: rgb(92, 92, 92);
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    height: 50%;
+    border-radius: 15px;
+}
+  
+  /* The container <div> - needed to position the dropdown content */
+.shape-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.shape-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 105px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 15px;
+}
+
+/* Links inside the dropdown */
+.shape-dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.shape-dropdown-content a:hover {
+    background-color: #f1f1f1;
+    border-radius: 15px;
+}
+
+/* Show the dropdown menu on hover */
+.shape-dropdown-container:hover .shape-dropdown-content {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.shape-dropdown-container:hover .shape-drop-button {
+    background-color: rgb(56, 56, 56);
 }

@@ -18,7 +18,39 @@
             <div class="sidenav-header-text">Fight-Sim!</div> 
             <button class="sidenav-header-minimize" id="sidenav-header-minimize"></button>
         </div>
-        <div class="entity-customizer-container" id="customizer1"></div>
+        <div class="entity-customizer-container" id="customizer1">
+            <div class="entity-customizer-header" id="entity-customizer-header1">
+                <input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..." id="entity-customizer-name-text-box1" />
+                <div class="spacer" id="spacer1"></div>
+                <button class="entity-customizer-minimize" id="entity-customizer-minimize1">-</button>
+                <div class="spacer" id="spacer1"></div>
+                <button class="entity-customizer-delete" id="entity-customizer-delete1">x</button>
+            </div>
+            <hr class="rounded" id="rounded1">
+            <div class="entity-shape-row" id="entity-shape-row1">
+                <label class="shape-label" for="entity-customizer-shape-dropdown1" id="shape-label1">Shape:</label>
+                <div class="spacer" id="spacer1"></div>
+                <div class="shape-dropdown-container" id="shape-dropdown-container1">
+                    <button class="shape-drop-button" id="shape-drop-button1">Dropdown</button>
+                    <div class="shape-dropdown-content">
+                        <a href="#">Square</a>
+                        <!-- <a href="#">Triangle</a>
+                        <a href="#">Circle</a> -->
+                    </div>
+                  </div>
+            </div>
+            <div class="entity-speed-row" id="entity-speed-row1">
+                <label class="speed-label" for="entity-customizer-speed-text-box1" id="speed-label1">Speed:</label>
+                <div class="spacer" id="spacer1"></div>
+                <input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..." id="entity-customizer-speed-text-box1" />
+            </div>
+            <div class="entity-size-row" id="entity-size-row1">
+                <label class="size-label" for="entity-customizer-size-text-box1" id="size-label1">Size:</label>
+                <div class="spacer" id="spacer1"></div>
+                <input type="text" class="entity-customizer-text-box" placeholder="Enter a size..." id="entity-customizer-size-text-box1" />
+            </div>
+
+        </div>
         <button class="roundButton" id="changeColor" onclick="addEntityCustomizerBox()">&#43</button>
     </div>
     <button class="sidenav-header-maximize-button" id="sidenav-header-maximize-button">+</button>
