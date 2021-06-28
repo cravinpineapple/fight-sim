@@ -26,7 +26,8 @@ const bottomBarHeight = bottomBar.offsetHeight;
 const windowWidth = document.documentElement.clientWidth
 const windowHeight = document.documentElement.clientHeight
 // setting renderer size
-renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
+// renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
+renderer.setSize(windowWidth, windowHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Scene
@@ -193,7 +194,7 @@ canvas.addEventListener("mousedown", (e) => {
     let vec = new THREE.Vector3();
     let pos = new THREE.Vector3();
 
-    vec.set(((e.clientX - sideBarWidth) / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
 
@@ -223,7 +224,7 @@ canvas.addEventListener("mousemove", (e) => {
     let vec = new THREE.Vector3();
     let pos = new THREE.Vector3();
 
-    vec.set(((e.clientX - sideBarWidth) / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
 
@@ -375,19 +376,13 @@ document.getElementById('sidenav-header-minimize').addEventListener("click", fun
 
     sideNavMaximizeButton.style.visibility = "visible";
     canvasContainer.style.marginLeft = "0%";
-    renderer.setSize(windowWidth, windowHeight);
     sideBar.style.visibility = "hidden";
-    sideBarWidth = 0;
 });
 
 // show side nav
 document.getElementById('sidenav-header-maximize-button').addEventListener("click", function() {
     sideNavMaximizeButton.style.visibility = "hidden";
-    canvasContainer.style.marginLeft = "15%";
-    sideBarWidth = sideBar.offsetWidth;
-    renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
     sideBar.style.visibility = "visible";
-    console.log(sideBar.style);
 });
 
 var lastUpdate = Date.now();
