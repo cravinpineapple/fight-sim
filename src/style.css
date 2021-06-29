@@ -224,19 +224,11 @@ body
 .matchups-table tbody tr:last-of-type
 {
     text-align: center;
-    border-bottom: 1px solid rgb(0, 0, 0);
 }
 
 .matchups-table tbody tr:first-of-type
 {
     text-align: center;
-    border-top: 1px solid rgb(0, 0, 0);
-}
-
-.matchups-table tbody tr:first-of-type
-{
-    text-align: center;
-    border-top: 1px solid rgb(0, 0, 0);
 }
 
 .matchups-table td

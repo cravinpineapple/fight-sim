@@ -18,13 +18,13 @@
             <div class="sidenav-header-text">Fight-Sim!</div> 
             <button class="sidenav-header-minimize" id="sidenav-header-minimize"></button>
         </div>
-        <div class="entity-customizer-container" id="customizer1">
+        <div class="entity-customizer-container" id="customizer1" entid="1">
             <div class="entity-customizer-header" id="entity-customizer-header1">
                 <input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..." id="entity-customizer-name-text-box1" />
                 <div class="spacer" id="spacer1"></div>
-                <button class="entity-customizer-minimize" id="entity-customizer-minimize1">-</button>
+                <button class="entity-customizer-minimize" id="entity-customizer-minimize1" minimized="false">-</button>
                 <div class="spacer" id="spacer1"></div>
-                <button class="entity-customizer-delete" id="entity-customizer-delete1">x</button>
+                <!-- <button class="entity-customizer-delete" id="entity-customizer-delete1">x</button> -->
             </div>
             <div class="spacer-col" id="spacer-col1"></div>
             <div class="rounded-divider" id="rounded-divider1"></div>
@@ -128,7 +128,7 @@
             </div>
             <div class="spacer-col" id="spacer-col1"></div>
         </div>
-        <button class="roundButton" id="changeColor" onclick="addEntityCustomizerBox()">&#43</button>
+        <button class="roundButton" id="add-customizer" onclick="addEntityCustomizerBox()">&#43</button>
     </div>
 
 

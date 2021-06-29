@@ -231,7 +231,7 @@ canvas.addEventListener("mousemove", (e) => {
     var distance = - camera.position.z / vec.z;
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
-
+ 
     // CLICK DRAGGING FOR WALLS
     let node = grid.getNode(pos);
     if (ctrl) {
@@ -421,7 +421,7 @@ const tick = () => {
 
     if (elapsedTime >= pathUpdateInterval) {
         elapsedTime = 0;
-        console.log("New Path");
+        // console.log("New Path");
 
         let newGoalNode1 = grid.getNode(playerSquare.getCenter());
         // let newGoalNode2 = grid.getNode(playerSquare2.getCenter());

@@ -228,7 +228,6 @@ export default class SquareAI extends Entity {
             return;
         }
         this.getPath(closestPrey);
-        console.log(this.currentPath);
         this.buildFollowPath();
     }
 
