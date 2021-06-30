@@ -148,6 +148,51 @@ body
     flex: 10;
 }
 
+.entity-customizer-color-picker
+{
+    position: fixed;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    margin-left: 14.3%;
+    margin-top: -4%;
+}
+
+.entity-customizer-color-picker-box
+{
+    position: fixed;
+    z-index: 2;
+    width: 160px;
+    height: 200px;
+    background-color: #818181;
+    border-radius: 20px;
+}
+
+.entity-customizer-color-picker-pointer
+{
+    position: fixed;
+	height: 50px;
+	width: 50px;
+	background: #818181;
+	margin: 0 auto;
+	transform: rotate(45deg);
+	border-radius: 0 0 0 7px;
+	position: relative;
+    margin-left: -26px;
+    margin-top: 61px;
+    border-left: 3px solid #363636;
+    border-bottom: 3px solid #363636;
+    z-index: 1;
+}
+
+.entity-customizer-color-picker-wheel
+{
+    position: relative;
+    margin-left: 5%;
+    margin-top: 5%;
+    z-index: 2;
+}
+
 .entity-shape-row
 {
     display: flex;
