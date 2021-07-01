@@ -3,8 +3,33 @@
 // var id = element.id.match(regEx)[0];
 
 var entityCustomizerID = 1; // ID generator
+var colorPickerContainerVisible = false;
 
 addEntityCustomizerListeners(1);
+
+var colorPickerContainer = document.getElementById(`entity-customizer-color-picker1`);
+var sidenav = document.getElementById("sidenav");
+
+window.addEventListener("click", function() {
+    if (colorPickerContainerVisible) {
+        colorPickerContainer.style.visibility = "hidden";
+        colorPickerContainerVisible = false;
+    }
+    if (colorPickerContainer.style.visibility == "visible") {
+        colorPickerContainerVisible = true;
+    }
+});
+
+sidenav.addEventListener("scroll", function() {
+    console.log("test");
+    if (colorPickerContainerVisible) {
+        colorPickerContainer.style.visibility = "hidden";
+        colorPickerContainerVisible = false;
+    }
+    if (colorPickerContainer.style.visibility == "visible") {
+        colorPickerContainerVisible = true;
+    }
+});
 
 
 function addEntityCustomizerBox() {
@@ -43,6 +68,21 @@ function addEntityCustomizerListeners(newID) {
         colorBox.style.backgroundColor = color.hexString;
     });
 
+    // color selector event
+    colorSelector.addEventListener("click", function() {
+        var e = window.event;
+        var posX = e.clientX + 45;
+        var posY = e.clientY - 85;
+
+
+        colorPickerContainer.style.visibility = "hidden";
+        colorPickerContainer = document.getElementById(`entity-customizer-color-picker${newID}`);
+        
+        colorPickerContainer.style.top = posY + "px";
+        colorPickerContainer.style.left = posX + "px";
+        colorPickerContainer.style.visibility = "visible";
+    });
+
     
     // minimizer event
     minimizer.addEventListener("click", function() {
@@ -77,22 +117,20 @@ function addEntityCustomizerListeners(newID) {
     });
 
     // closer event
-    closer.addEventListener("click", function() {
-        container.remove();
-        
-        // update ids
-        var minimizers = document.getElementsByClassName("entity-customizer-container")
-        for (let i = 0; i < minimizers.length; i++) {
-            minimizers[i].setAttribute("id", `customizer${i + 1}`);
-        }
-
-        entityCustomizerID--;
-    });
-
-    // color selector event
-    colorSelector.addEventListener("click", function() {
-        console.log(colorSelector.id);
-    });
+    if (newID != 1) {
+        closer.addEventListener("click", function() {
+            container.remove();
+            
+            // update ids
+            var minimizers = document.getElementsByClassName("entity-customizer-container")
+            for (let i = 0; i < minimizers.length; i++) {
+                minimizers[i].setAttribute("id", `customizer${i + 1}`);
+            }
+    
+            entityCustomizerID--;
+        });
+    }
+    
 }
 
 
