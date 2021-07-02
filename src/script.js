@@ -2,10 +2,17 @@ import './style.css'
 import * as THREE from 'three'
 import SquareAI from './Entity/ai.js';
 import NodeGrid from './Entity/nodeGrid.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 
 const entities = [];
+
+// groups
+// id
+// activeMembers: []
+// color
+// size
+// speed
+// shape
 
 // Debug
 const gui = new dat.GUI()

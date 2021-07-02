@@ -239,9 +239,8 @@ body
 .matchups-table
 {
     border-collapse: collapse;
-    margin: 10px;
+    margin: 7px;
     font-size: 1em;
-    min-width: 95%;
     border-radius: 10px 10px 0 0;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -251,32 +250,20 @@ body
 {
     background-color: rgb(139, 139, 139);
     font-weight: bold;
+    font-size: 18;
     /* border-bottom: 3px solid rgb(139, 139, 139);; */
 }
 
 .matchups-table tbody tr
 {
     text-align: center;
-    border-left: 1px solid rgb(0, 0, 0);
-    border-right: 1px solid rgb(0, 0, 0);
+    font-size: 15px;
 }
 
 .matchups-table tbody tr:nth-of-type(even)
 {
     text-align: center;
     background-color: rgb(139, 139, 139);;
-    border-left: 1px solid rgb(0, 0, 0);
-    border-right: 1px solid rgb(0, 0, 0);
-}
-
-.matchups-table tbody tr:last-of-type
-{
-    text-align: center;
-}
-
-.matchups-table tbody tr:first-of-type
-{
-    text-align: center;
 }
 
 .matchups-table td
