@@ -5,12 +5,15 @@ const randomWords = ["wing",
     "tomato", "lizard", "spoon", "night", "robin", "blade", "hammer", "friend", "scarecrow", "giraffe", "deer", "cabbage", "queen",
     "ink", "potato", "kitty", "popcorn", "squirrel", "bubble", "loaf", "bear", "boy", "ray", "yam", "doll", "spark", "goose", "yoke", "egg"];
 
-addEntityCustomizerListeners(0);
+
 
 let regEx = /\d+/;
 
 var colorPickerContainer = document.getElementById(`entity-customizer-color-picker0`);
 var sidenav = document.getElementById("sidenav");
+var entitySelector = document.getElementById("entity-selector");
+
+addEntityCustomizerListeners(0);
 
 window.addEventListener("click", function () {
     if (colorPickerContainerVisible) {
@@ -36,13 +39,110 @@ sidenav.addEventListener("scroll", function () {
 function addEntityCustomizerBox() {
     var newID = entityCustomizerID + 1;
 
-    var newCustomizer = `<div class="entity-customizer-container" id="customizer${newID}"> <div class="entity-customizer-header" id="entity-customizer-header${newID}"> <input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..." id="entity-customizer-name-text-box${newID}" /> <div class="spacer" id="spacer${newID}"></div> <button class="entity-customizer-minimize" id="entity-customizer-minimize${newID}" minimized="false">-</button> <div class="spacer" id="spacer${newID}"></div> <button class="entity-customizer-delete" id="entity-customizer-delete${newID}">x</button> </div> <div class="spacer-col" id="spacer-col${newID}"></div> <div class="rounded-divider" id="rounded-divider${newID}"></div> <div class="spacer-col" id="spacer-col${newID}"></div> <div class="entity-shape-row" id="entity-shape-row${newID}"> <label class="shape-label" for="entity-customizer-shape-dropdown${newID}" id="shape-label${newID}">Shape:</label> <div class="spacer" id="spacer${newID}"></div> <div class="shape-dropdown-container" id="shape-dropdown-container${newID}"> <button class="shape-drop-button" id="shape-drop-button${newID}">Dropdown</button> <div class="shape-dropdown-content"> <a href="#">Square</a> </div> </div> </div> <div class="spacer-col" id="spacer-col${newID}"></div> <div class="entity-speed-row" id="entity-speed-row${newID}"> <label class="speed-label" for="entity-customizer-speed-text-box${newID}" id="speed-label${newID}">Speed:</label> <div class="spacer" id="spacer${newID}"></div> <input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..." id="entity-customizer-speed-text-box${newID}" /> </div> <div class="spacer-col" id="spacer-col${newID}"></div> <div class="entity-size-row" id="entity-size-row${newID}"> <label class="size-label" for="entity-customizer-size-text-box${newID}" id="size-label${newID}">Size:</label> <div class="spacer" id="spacer${newID}"></div> <input type="text" class="entity-customizer-text-box" placeholder="Enter a size..." id="entity-customizer-size-text-box${newID}" /> </div> <div class="spacer-col" id="spacer-col${newID}"></div> <div class="entity-color-row" id="entity-color-row${newID}"> <label class="color-label" for="entity-customizer-color-box" id="color-label${newID}">Color:</label> <div class="spacer" id="spacer${newID}"></div> <div class="entity-customizer-color-box" id="entity-customizer-color-box${newID}"></div><div class="entity-customizer-color-picker" id="entity-customizer-color-picker${newID}"><div class="entity-customizer-color-picker-box" id="entity-customizer-color-picker-box${newID}"><div class="entity-customizer-color-picker-wheel" id="entity-customizer-color-picker-wheel${newID}"></div></div><div class="entity-customizer-color-picker-pointer" id="entity-customizer-color-picker-pointer${newID}"></div></div></div> <div class="spacer-col" id="spacer-col${newID}"></div> <div class="matchups-label" for="entity-customizer-matchups-box" id="matchups-label${newID}">Matchups:</div> <div class="entity-customizer-matchups-container" id="entity-customizer-matchups-container${newID}"> <table class="matchups-table" id="matchups-table${newID}"> <thead> <tr> <th>Name</th> <th>Prey</th> <th>Predator</th> </tr> </thead> <tbody id="tbody${newID}"></tbody> </table> </div> <div class="spacer-col" id="spacer-col${newID}"></div> </div>`;
+    var newCustomizer = `<div class="entity-customizer-container" id="entity-customizer-container${newID}">` +
+        `<div class="entity-customizer-header" id="entity-customizer-header${newID}">` +
+        `<input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..."` +
+        `id="entity-customizer-name-text-box${newID}" value="Square${newID}" />` +
+        `<div class="spacer" id="spacer${newID}"></div>` +
+        `<button class="entity-customizer-minimize" id="entity-customizer-minimize${newID}" minimized="false">-</button>` +
+        `<div class="spacer" id="spacer${newID}"></div>` +
+        `<button class="entity-customizer-delete" id="entity-customizer-delete${newID}">x</button>` +
+        `</div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `<div class="rounded-divider" id="rounded-divider${newID}"></div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `<div class="entity-shape-row" id="entity-shape-row${newID}">` +
+        `<label class="shape-label" for="entity-customizer-shape-dropdown${newID}" id="shape-label${newID}">Shape:</label>` +
+        `<div class="spacer" id="spacer${newID}"></div>` +
+        `<div class="shape-dropdown-container" id="shape-dropdown-container${newID}">` +
+        `<button class="shape-drop-button" id="shape-drop-button${newID}">Dropdown</button>` +
+        `<div class="shape-dropdown-content">` +
+        `<a href="#">Square</a>` +
+        `</div>` +
+        `</div>` +
+        `</div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `<div class="entity-speed-row" id="entity-speed-row${newID}">` +
+        `<label class="speed-label" for="entity-customizer-speed-text-box${newID}" id="speed-label${newID}">Speed:</label>` +
+        `<div class="spacer" id="spacer${newID}"></div>` +
+        `<input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..."` +
+        `id="entity-customizer-speed-text-box${newID}" value="1${newID}" />` +
+        `</div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `<div class="entity-size-row" id="entity-size-row${newID}">` +
+        `<label class="size-label" for="entity-customizer-size-text-box${newID}" id="size-label${newID}">Size:</label>` +
+        `<div class="spacer" id="spacer${newID}"></div>` +
+        `<input type="text" class="entity-customizer-text-box" placeholder="Enter a size..."` +
+        `id="entity-customizer-size-text-box${newID}" value="1${newID}" />` +
+        `</div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `<div class="entity-color-row" id="entity-color-row${newID}">` +
+        `<label class="color-label" for="entity-customizer-color-box" id="color-label${newID}">Color:</label>` +
+        `<div class="spacer" id="spacer${newID}"></div>` +
+        `<div class="entity-customizer-color-box" id="entity-customizer-color-box${newID}"></div>` +
+        `</div>` +
+        `<div class="entity-customizer-color-picker" id="entity-customizer-color-picker${newID}">` +
+        `<div class="entity-customizer-color-picker-box" id="entity-customizer-color-picker-box${newID}">` +
+        `<div class="entity-customizer-color-picker-wheel" id="entity-customizer-color-picker-wheel${newID}"></div>` +
+        `</div>` +
+        `<div class="entity-customizer-color-picker-pointer" id="entity-customizer-color-picker-pointer${newID}"></div>` +
+        `</div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `<div class="matchups-label" for="entity-customizer-matchups-box" id="matchups-label${newID}">Matchups:</div>` +
+        `<div class="entity-customizer-matchups-container" id="entity-customizer-matchups-container${newID}">` +
+        `<table class="matchups-table" id="matchups-table${newID}">` +
+        `<thead>` +
+        `<tr>` +
+        `<th>Name</th>` +
+        `<th>Prey</th>` +
+        `<th>Predator</th>` +
+        `</tr>` +
+        `</thead>` +
+        `<tbody id="tbody${newID}"></tbody>` +
+        `</table>` +
+        `</div>` +
+        `<div class="spacer-col" id="spacer-col${newID}"></div>` +
+        `</div>`;
 
-    var element = document.getElementById(`customizer${entityCustomizerID}`);
-    element.insertAdjacentHTML('afterend', newCustomizer);
+    var customizer = document.getElementById(`entity-customizer-container${entityCustomizerID}`);
+    customizer.insertAdjacentHTML('afterend', newCustomizer);
 
     entityCustomizerID++;
     addEntityCustomizerListeners(newID);
+}
+
+function createSelector(newID, name, shape, randomColor) {
+    let selectorContainer = document.createElement("div");
+    selectorContainer.setAttribute("class", "selector-option-container");
+    selectorContainer.setAttribute("id", `selector-option-container${newID}`);
+    let selectorRow = document.createElement("div");
+    selectorRow.setAttribute("class", "selector-option-row");
+    selectorRow.setAttribute("id", `selector-option-row${newID}`);
+    let selectorIndicator = document.createElement("div");
+    selectorIndicator.setAttribute("class", "selector-indicator");
+    selectorIndicator.setAttribute("id", `selector-indicator${newID}`);
+    let spacer = document.createElement("div");
+    spacer.setAttribute("class", "spacer");
+    let selectorShape = document.createElement("div");
+    selectorShape.setAttribute("class", `${shape}-selector-option`);
+    selectorShape.setAttribute("id", `${shape}-selector-option${newID}`);
+    selectorShape.style.backgroundColor = `${randomColor}`;
+    let spacerCol = document.createElement("div");
+    spacerCol.setAttribute("class", "spacer-col");
+    let selectorLabel = document.createElement("div");
+    selectorLabel.setAttribute("class", "selector-option-label");
+    selectorLabel.setAttribute("id", `selector-option-label${newID}`);
+    selectorLabel.innerHTML += name;
+
+    selectorContainer.appendChild(selectorRow);
+    selectorContainer.appendChild(spacerCol);
+    selectorContainer.appendChild(selectorLabel);
+
+    selectorRow.appendChild(selectorIndicator);
+    selectorRow.appendChild(spacer);
+    selectorRow.appendChild(selectorShape);
+
+    return selectorContainer;
 }
 
 function createMatchupRow(ownerID, referenceID) {
@@ -73,8 +173,9 @@ function addEntityCustomizerListeners(newID) {
     let minSize = 1;
 
     // TODO: randomShape
+    var randomShape = "square";
     var randomName = randomWords[Math.floor(Math.random() * randomWords.length)];
-    var randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    var randomColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
     var randomSpeed = Math.floor(Math.random() * (maxSpeed - minSpeed) + minSpeed);
     var randomSize = Math.floor(Math.random() * (maxSize - minSize) + minSize);
 
@@ -92,14 +193,13 @@ function addEntityCustomizerListeners(newID) {
     console.log(groups);
 
     // container
-    var container = document.getElementById(`customizer${newID}`);
+    var container = document.getElementById(`entity-customizer-container${newID}`);
     var headerDivider = document.getElementById(`rounded-divider${newID}`);
     var shapeRow = document.getElementById(`entity-shape-row${newID}`);
     var speedRow = document.getElementById(`entity-speed-row${newID}`);
     var sizeRow = document.getElementById(`entity-size-row${newID}`);
     var colorRow = document.getElementById(`entity-color-row${newID}`);
     var colorBox = document.getElementById(`entity-customizer-color-box${newID}`);
-    var colorSelector = document.getElementById(`entity-customizer-color-box${newID}`);
     var matchupsLabel = document.getElementById(`matchups-label${newID}`);
     var matchupsContainer = document.getElementById(`entity-customizer-matchups-container${newID}`);
     var minimizer = document.getElementById(`entity-customizer-minimize${newID}`);
@@ -114,25 +214,31 @@ function addEntityCustomizerListeners(newID) {
     nameTextBox.value = "" + randomName;
     colorBox.style.backgroundColor = randomColor;
 
+    var selector = createSelector(newID, randomName, randomShape, randomColor);
+    entitySelector.appendChild(selector);
+
+    console.log(document.getElementById(`entity-customizer-color-picker-wheel${newID}`));
     // color picker
-    const colorPicker = new iro.ColorPicker(`#entity-customizer-color-picker-wheel${newID}`, {
-        width: 140, color: randomColor
+    var colorPicker = new iro.ColorPicker(`#entity-customizer-color-picker-wheel${newID}`, {
+        width: 140, color: randomColor,
     });
     colorPicker.on("color:change", function (color) {
-        colorBox.style.backgroundColor = color.hexString;
-        let id = colorBox.id.match(regEx);
+        let id = this.el.id.match(regEx)[0];
         groups[id].color = color.hexString;
+        document.getElementById(`entity-customizer-color-box${id}`).style.backgroundColor = color.hexString;
+        document.getElementById(`${randomShape}-selector-option${id}`).style.backgroundColor = color.hexString;
     });
 
     // color selector event
-    colorSelector.addEventListener("click", function () {
+    colorBox.addEventListener("click", function () {
+        let id = this.parentElement.parentElement.id.match(regEx)[0];
+
         var e = window.event;
         var posX = e.clientX + 45;
         var posY = e.clientY - 85;
 
-
         colorPickerContainer.style.visibility = "hidden";
-        colorPickerContainer = document.getElementById(`entity-customizer-color-picker${newID}`);
+        colorPickerContainer = document.getElementById(`entity-customizer-color-picker${id}`);
 
         colorPickerContainer.style.top = posY + "px";
         colorPickerContainer.style.left = posX + "px";
@@ -167,7 +273,7 @@ function addEntityCustomizerListeners(newID) {
             colorRow.style.visibility = "hidden";
             matchupsLabel.style.visibility = "hidden";
             matchupsContainer.style.visibility = "hidden";
-            container.style.height = "3%"
+            container.style.height = "1.3%"
         }
     });
 
@@ -177,18 +283,36 @@ function addEntityCustomizerListeners(newID) {
             let removeID = container.id.match(regEx)[0];
             container.remove();
             groups.splice(removeID, 1);
+            // console.log(entitySelector.childNodes[0].childNodes[0].childNodes[2]);
+
+            // remove from entity selector
+            document.getElementById(`selector-option-container${removeID}`).remove();
+
+            // remove from other matchups in html
+
+            // remove from other matchups in group
 
             // update ids
             let customizers = document.getElementsByClassName("entity-customizer-container")
+            let colorPickers = document.getElementsByClassName("entity-customizer-color-picker");
+            let selectorOptionContainers = document.getElementsByClassName("selector-option-container");
+
             for (let i = 0; i < customizers.length; i++) {
-                customizers[i].setAttribute("id", `customizer${i}`);
+                changeElementID(customizers[i], i);
+                console.log("-----------------------------------------");
+                changeElementID(selectorOptionContainers[i], i);
+                console.log("=========================================");
+                console.log("=========================================");
+                console.log("=========================================");
+
+
+
+
                 groups[i].id = i;
             }
-
             entityCustomizerID--;
         });
     }
-
 
     var tableBody = document.getElementById(`tbody${newID}`);
     // add all other groups to this group's matchups
@@ -247,6 +371,13 @@ function addEntityCustomizerListeners(newID) {
     }
 }
 
+// Changes the id number of an element and the id number of all of it's children (and their children, etc), recursively
+function changeElementID(element, newID) {
+    if (element == undefined) return;
 
-// sideNavMaximizeButton.style.visibility = "visible";
-// sideNavMaximizeButton.style.visibility = "hidden";
+    element.setAttribute("id", `${element.className}${newID}`);
+
+    for (let i = 0; i < element.childElementCount; i++) {
+        changeElementID(element.children[i], newID);
+    }
+}

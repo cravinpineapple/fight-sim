@@ -384,12 +384,14 @@ document.getElementById('sidenav-header-minimize').addEventListener("click", fun
     sideNavMaximizeButton.style.visibility = "visible";
     canvasContainer.style.marginLeft = "0%";
     sideBar.style.visibility = "hidden";
+    entitySelector.style.visibility = "hidden";
 });
 
 // show side nav
 document.getElementById('sidenav-header-maximize-button').addEventListener("click", function () {
     sideNavMaximizeButton.style.visibility = "hidden";
     sideBar.style.visibility = "visible";
+    entitySelector.style.visibility = "visible";
 });
 
 var lastUpdate = Date.now();

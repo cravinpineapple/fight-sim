@@ -21,7 +21,7 @@
             <div class="sidenav-header-text">Fight-Sim!</div>
             <button class="sidenav-header-minimize" id="sidenav-header-minimize"></button>
         </div>
-        <div class="entity-customizer-container" id="customizer0">
+        <div class="entity-customizer-container" id="entity-customizer-container0">
             <div class="entity-customizer-header" id="entity-customizer-header0">
                 <input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..."
                     id="entity-customizer-name-text-box0" value="Square0" />
@@ -63,6 +63,12 @@
                 <div class="spacer" id="spacer0"></div>
                 <div class="entity-customizer-color-box" id="entity-customizer-color-box0"></div>
             </div>
+            <div class="entity-customizer-color-picker" id="entity-customizer-color-picker0">
+                <div class="entity-customizer-color-picker-box" id="entity-customizer-color-picker-box0">
+                    <div class="entity-customizer-color-picker-wheel" id="entity-customizer-color-picker-wheel0"></div>
+                </div>
+                <div class="entity-customizer-color-picker-pointer" id="entity-customizer-color-picker-pointer0"></div>
+            </div>
             <div class="spacer-col" id="spacer-col0"></div>
             <div class="matchups-label" for="entity-customizer-matchups-box" id="matchups-label0">Matchups:</div>
             <div class="entity-customizer-matchups-container" id="entity-customizer-matchups-container0">
@@ -82,26 +88,7 @@
         <button class="roundButton" id="add-customizer" onclick="addEntityCustomizerBox()">&#43</button>
     </div>
 
-    <div class="entity-selector" id="entity-selector">
-        <div class="selector-option-container" id="selector-option-container0">
-            <div class="selector-option-row" id="selector-option-row0">
-                <div class="selector-indicator" id="selector-indicator0"></div>
-                <div class="spacer"></div>
-                <div class="square-selector-option" id="square-selector-option0"></div>
-            </div>
-            <div class="spacer-col"></div>
-            <div class="selector-option-label" id="selector-option-label">scarecrow</div>
-        </div>
-    </div>
-
-    <div class="entity-customizer-color-picker" id="entity-customizer-color-picker0">
-        <div class="entity-customizer-color-picker-box" id="entity-customizer-color-picker-box0">
-            <div class="entity-customizer-color-picker-wheel" id="entity-customizer-color-picker-wheel0">
-            </div>
-        </div>
-        <div class="entity-customizer-color-picker-pointer" id="entity-customizer-color-picker-pointer0">
-        </div>
-    </div>
+    <div class="entity-selector" id="entity-selector"></div>
 
     <button class="sidenav-header-maximize-button" id="sidenav-header-maximize-button">+</button>
     <div class="navbar" id="navbar">
