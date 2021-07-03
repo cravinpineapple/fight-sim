@@ -238,7 +238,7 @@ canvas.addEventListener("mousemove", (e) => {
     var distance = - camera.position.z / vec.z;
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
- 
+
     // CLICK DRAGGING FOR WALLS
     let node = grid.getNode(pos);
     if (ctrl) {
@@ -252,7 +252,7 @@ canvas.addEventListener("mousemove", (e) => {
     }
 });
 
-document.getElementById("floatButton").addEventListener("click", function() {
+document.getElementById("floatButton").addEventListener("click", function () {
     console.log("Starting...");
     ais.forEach(e => e.updatePathingGrid());
 });
@@ -379,7 +379,7 @@ const moveCamera = () => {
 }
 
 // hiden side nav
-document.getElementById('sidenav-header-minimize').addEventListener("click", function() {
+document.getElementById('sidenav-header-minimize').addEventListener("click", function () {
 
     sideNavMaximizeButton.style.visibility = "visible";
     canvasContainer.style.marginLeft = "0%";
@@ -387,7 +387,7 @@ document.getElementById('sidenav-header-minimize').addEventListener("click", fun
 });
 
 // show side nav
-document.getElementById('sidenav-header-maximize-button').addEventListener("click", function() {
+document.getElementById('sidenav-header-maximize-button').addEventListener("click", function () {
     sideNavMaximizeButton.style.visibility = "hidden";
     sideBar.style.visibility = "visible";
 });
@@ -437,7 +437,7 @@ const tick = () => {
             goalNode = newGoalNode1;
             ais.forEach(e => e.updatePath());
         }
-        
+
         // if (newGoalNode2.position != goalNode2.position) {
         //     goalNode2 = newGoalNode2;
         //     ais.forEach(e => e.updatePath());

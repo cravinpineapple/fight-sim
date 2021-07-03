@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThreeJS Starter</title>
-    <script type="module" defer src="./Entity/nodeGrid.js"></script> 
+    <script type="module" defer src="./Entity/nodeGrid.js"></script>
     <script type="module" defer src="script.js"></script>
-    <script defer src="sidebar-controls.js"></script> 
+    <script defer src="sidebar-controls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
     <script>
         var groups = [];
@@ -18,58 +18,55 @@
     <button class="floatButton" id="floatButton"></button>
     <div class="sidenav" id="sidenav">
         <div class="sidenav-header" id="sidenav-header">
-            <div class="sidenav-header-text">Fight-Sim!</div> 
+            <div class="sidenav-header-text">Fight-Sim!</div>
             <button class="sidenav-header-minimize" id="sidenav-header-minimize"></button>
         </div>
-        <div class="entity-customizer-container" id="customizer1">
-            <div class="entity-customizer-header" id="entity-customizer-header1">
-                <input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..." id="entity-customizer-name-text-box1" value="Square1"/>
-                <div class="spacer" id="spacer1"></div>
-                <button class="entity-customizer-minimize" id="entity-customizer-minimize1" minimized="false">-</button>
-                <div class="spacer" id="spacer1"></div>
-                <!-- <button class="entity-customizer-delete" id="entity-customizer-delete1">x</button> -->
+        <div class="entity-customizer-container" id="customizer0">
+            <div class="entity-customizer-header" id="entity-customizer-header0">
+                <input type="text" class="entity-customizer-text-box" placeholder="Enter a fighter name..."
+                    id="entity-customizer-name-text-box0" value="Square0" />
+                <div class="spacer" id="spacer0"></div>
+                <button class="entity-customizer-minimize" id="entity-customizer-minimize0" minimized="false">-</button>
+                <div class="spacer" id="spacer0"></div>
+                <!-- <button class="entity-customizer-delete" id="entity-customizer-delete0">x</button> -->
             </div>
-            <div class="spacer-col" id="spacer-col1"></div>
-            <div class="rounded-divider" id="rounded-divider1"></div>
-            <div class="spacer-col" id="spacer-col1"></div>
-            <div class="entity-shape-row" id="entity-shape-row1">
-                <label class="shape-label" for="entity-customizer-shape-dropdown1" id="shape-label1">Shape:</label>
-                <div class="spacer" id="spacer1"></div>
-                <div class="shape-dropdown-container" id="shape-dropdown-container1">
-                    <button class="shape-drop-button" id="shape-drop-button1">Dropdown</button>
+            <div class="spacer-col" id="spacer-col0"></div>
+            <div class="rounded-divider" id="rounded-divider0"></div>
+            <div class="spacer-col" id="spacer-col0"></div>
+            <div class="entity-shape-row" id="entity-shape-row0">
+                <label class="shape-label" for="entity-customizer-shape-dropdown0" id="shape-label0">Shape:</label>
+                <div class="spacer" id="spacer0"></div>
+                <div class="shape-dropdown-container" id="shape-dropdown-container0">
+                    <button class="shape-drop-button" id="shape-drop-button0">Dropdown</button>
                     <div class="shape-dropdown-content">
                         <a href="#">Square</a>
                     </div>
-                  </div>
-            </div>
-            <div class="spacer-col" id="spacer-col1"></div>
-            <div class="entity-speed-row" id="entity-speed-row1">
-                <label class="speed-label" for="entity-customizer-speed-text-box1" id="speed-label1">Speed:</label>
-                <div class="spacer" id="spacer1"></div>
-                <input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..." id="entity-customizer-speed-text-box1" value="10"/>
-            </div>
-            <div class="spacer-col" id="spacer-col1"></div>
-            <div class="entity-size-row" id="entity-size-row1">
-                <label class="size-label" for="entity-customizer-size-text-box1" id="size-label1">Size:</label>
-                <div class="spacer" id="spacer1"></div>
-                <input type="text" class="entity-customizer-text-box" placeholder="Enter a size..." id="entity-customizer-size-text-box1" value="10"/>
-            </div>
-            <div class="spacer-col" id="spacer-col1"></div>
-            <div class="entity-color-row" id="entity-color-row1">
-                <label class="color-label" for="entity-customizer-color-box" id="color-label1">Color:</label>
-                <div class="spacer" id="spacer1"></div>
-                <div class="entity-customizer-color-box" id="entity-customizer-color-box1"></div>
-                <div class="entity-customizer-color-picker" id="entity-customizer-color-picker1">
-                    <div class="entity-customizer-color-picker-box" id="entity-customizer-color-picker-box1">
-                        <div class="entity-customizer-color-picker-wheel" id="entity-customizer-color-picker-wheel1"></div>
-                    </div>
-                    <div class="entity-customizer-color-picker-pointer" id="entity-customizer-color-picker-pointer1"></div>
                 </div>
             </div>
-            <div class="spacer-col" id="spacer-col1"></div>
-            <div class="matchups-label" for="entity-customizer-matchups-box" id="matchups-label1">Matchups:</div>
-            <div class="entity-customizer-matchups-container" id="entity-customizer-matchups-container1">
-                <table class="matchups-table" id="matchups-table1">
+            <div class="spacer-col" id="spacer-col0"></div>
+            <div class="entity-speed-row" id="entity-speed-row0">
+                <label class="speed-label" for="entity-customizer-speed-text-box0" id="speed-label0">Speed:</label>
+                <div class="spacer" id="spacer0"></div>
+                <input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..."
+                    id="entity-customizer-speed-text-box0" value="10" />
+            </div>
+            <div class="spacer-col" id="spacer-col0"></div>
+            <div class="entity-size-row" id="entity-size-row0">
+                <label class="size-label" for="entity-customizer-size-text-box0" id="size-label0">Size:</label>
+                <div class="spacer" id="spacer0"></div>
+                <input type="text" class="entity-customizer-text-box" placeholder="Enter a size..."
+                    id="entity-customizer-size-text-box0" value="10" />
+            </div>
+            <div class="spacer-col" id="spacer-col0"></div>
+            <div class="entity-color-row" id="entity-color-row0">
+                <label class="color-label" for="entity-customizer-color-box" id="color-label0">Color:</label>
+                <div class="spacer" id="spacer0"></div>
+                <div class="entity-customizer-color-box" id="entity-customizer-color-box0"></div>
+            </div>
+            <div class="spacer-col" id="spacer-col0"></div>
+            <div class="matchups-label" for="entity-customizer-matchups-box" id="matchups-label0">Matchups:</div>
+            <div class="entity-customizer-matchups-container" id="entity-customizer-matchups-container0">
+                <table class="matchups-table" id="matchups-table0">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -77,24 +74,34 @@
                             <th>Predator</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody1">
-                        <tr>
-                            <td>TempName1</td>
-                            <td>
-                                <input type="checkbox" id="matchup-prey1" value="true">
-                            </td>
-                            <td>
-                                <input type="checkbox" id="matchup-predator1" value="true">
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tbody0"></tbody>
                 </table>
             </div>
-            <div class="spacer-col" id="spacer-col1"></div>
+            <div class="spacer-col" id="spacer-col0"></div>
         </div>
         <button class="roundButton" id="add-customizer" onclick="addEntityCustomizerBox()">&#43</button>
     </div>
 
+    <div class="entity-selector" id="entity-selector">
+        <div class="selector-option-container" id="selector-option-container0">
+            <div class="selector-option-row" id="selector-option-row0">
+                <div class="selector-indicator" id="selector-indicator0"></div>
+                <div class="spacer"></div>
+                <div class="square-selector-option" id="square-selector-option0"></div>
+            </div>
+            <div class="spacer-col"></div>
+            <div class="selector-option-label" id="selector-option-label">scarecrow</div>
+        </div>
+    </div>
+
+    <div class="entity-customizer-color-picker" id="entity-customizer-color-picker0">
+        <div class="entity-customizer-color-picker-box" id="entity-customizer-color-picker-box0">
+            <div class="entity-customizer-color-picker-wheel" id="entity-customizer-color-picker-wheel0">
+            </div>
+        </div>
+        <div class="entity-customizer-color-picker-pointer" id="entity-customizer-color-picker-pointer0">
+        </div>
+    </div>
 
     <button class="sidenav-header-maximize-button" id="sidenav-header-maximize-button">+</button>
     <div class="navbar" id="navbar">
