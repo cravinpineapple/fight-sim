@@ -98,7 +98,7 @@ function addEntityCustomizerBox() {
         `<th>Predator</th>` +
         `</tr>` +
         `</thead>` +
-        `<tbody id="tbody${newID}"></tbody>` +
+        `<tbody class="tbody" id="tbody${newID}"></tbody>` +
         `</table>` +
         `</div>` +
         `<div class="spacer-col" id="spacer-col${newID}"></div>` +
@@ -147,6 +147,8 @@ function createSelector(newID, name, shape, randomColor) {
 
 function createMatchupRow(ownerID, referenceID) {
     let groupTableRow = document.createElement("tr");
+    groupTableRow.setAttribute("class", `matchup-row-${groups[referenceID].name}${referenceID}`);
+    groupTableRow.setAttribute("id", `matchup-row-${groups[referenceID].name}${referenceID}${ownerID}`);
     let groupTableRowLabel = document.createElement("td");
     let groupTableRowPredator = document.createElement("td");
     let groupTableRowPrey = document.createElement("td");
@@ -281,36 +283,46 @@ function addEntityCustomizerListeners(newID) {
     if (newID != 0) {
         closer.addEventListener("click", function () {
             let removeID = container.id.match(regEx)[0];
-            container.remove();
-            groups.splice(removeID, 1);
             // console.log(entitySelector.childNodes[0].childNodes[0].childNodes[2]);
 
             // remove from entity selector
             document.getElementById(`selector-option-container${removeID}`).remove();
 
-            // remove from other matchups in html
+            let allMatchupTables = document.getElementsByClassName("tbody");
+            for (let i = 0; i < allMatchupTables.length; i++) {
+                let id = allMatchupTables[i].id.match(regEx)[0];
+                // remove from other matchups in html
+                if (id != removeID) {
+                    document.getElementById(`matchup-row-${groups[removeID].name}${removeID}${i}`).remove();
 
-            // remove from other matchups in group
+                    // if present in beats, remove
+                    for (let j = 0; j < groups[i].beats.length; j++) {
+                        if (groups[i].beats[j].id == removeID) groups[i].beats.splice(j, 1);
+                    }
+
+                    // if present in loses, remove
+                    for (let j = 0; j < groups[i].loses.length; j++) {
+                        if (groups[i].loses[j].id == removeID) groups[i].loses.splice(j, 1);
+                    }
+                }
+            }
+
+            // remove customizer
+            container.remove();
+            groups.splice(removeID, 1);
 
             // update ids
             let customizers = document.getElementsByClassName("entity-customizer-container")
-            let colorPickers = document.getElementsByClassName("entity-customizer-color-picker");
             let selectorOptionContainers = document.getElementsByClassName("selector-option-container");
-
             for (let i = 0; i < customizers.length; i++) {
                 changeElementID(customizers[i], i);
-                console.log("-----------------------------------------");
                 changeElementID(selectorOptionContainers[i], i);
-                console.log("=========================================");
-                console.log("=========================================");
-                console.log("=========================================");
-
-
-
 
                 groups[i].id = i;
             }
             entityCustomizerID--;
+
+            console.log(groups);
         });
     }
 
@@ -328,19 +340,19 @@ function addEntityCustomizerListeners(newID) {
             otherGroupTableBody.appendChild(thisGroupTableRow);
 
             document.getElementById(`matchup-predator-${groups[newID].name}${newID}-${i}`).addEventListener("change", function (e) {
-                if (this.checked) groups[i].beats.push(groups[newID]);
+                if (this.checked) groups[i].loses.push(groups[newID]);
                 else {
-                    for (let j = 0; j < groups[i].beats.length; j++) {
-                        if (groups[i].beats[j].id == newID) groups[i].beats.splice(j, 1);
+                    for (let j = 0; j < groups[i].loses.length; j++) {
+                        if (groups[i].loses[j].id == newID) groups[i].loses.splice(j, 1);
                     }
                 }
             });
 
             document.getElementById(`matchup-prey-${groups[newID].name}${newID}-${i}`).addEventListener("change", function (e) {
-                if (this.checked) groups[i].loses.push(groups[newID]);
+                if (this.checked) groups[i].beats.push(groups[newID]);
                 else {
-                    for (let j = 0; j < groups[i].loses.length; j++) {
-                        if (groups[i].loses[j].id == newID) groups[i].loses.splice(j, 1);
+                    for (let j = 0; j < groups[i].beats.length; j++) {
+                        if (groups[i].beats[j].id == newID) groups[i].beats.splice(j, 1);
                     }
                 }
             });
@@ -351,19 +363,19 @@ function addEntityCustomizerListeners(newID) {
             tableBody.appendChild(otherGroupTableRow);
 
             document.getElementById(`matchup-predator-${groups[i].name}${i}-${newID}`).addEventListener("change", function (e) {
-                if (this.checked) groups[newID].beats.push(groups[i]);
+                if (this.checked) groups[newID].loses.push(groups[i]);
                 else {
-                    for (let j = 0; j < groups[newID].beats.length; j++) {
-                        if (groups[newID].beats[j].id == i) groups[newID].beats.splice(j, 1);
+                    for (let j = 0; j < groups[newID].loses.length; j++) {
+                        if (groups[newID].loses[j].id == i) groups[newID].loses.splice(j, 1);
                     }
                 }
             });
 
             document.getElementById(`matchup-prey-${groups[i].name}${i}-${newID}`).addEventListener("change", function (e) {
-                if (this.checked) groups[newID].loses.push(groups[i]);
+                if (this.checked) groups[newID].beats.push(groups[i]);
                 else {
-                    for (let j = 0; j < groups[newID].loses.length; j++) {
-                        if (groups[newID].loses[j].id == i) groups[newID].loses.splice(j, 1);
+                    for (let j = 0; j < groups[newID].beats.length; j++) {
+                        if (groups[newID].beats[j].id == i) groups[newID].beats.splice(j, 1);
                     }
                 }
             });

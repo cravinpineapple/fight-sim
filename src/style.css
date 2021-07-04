@@ -69,7 +69,7 @@ body
     margin-left: 16%;
     margin-top: 0.5%;
     background-color: #111;
-    overflow-x: hidden;
+    overflow-y: hidden;
     border-radius: 10px;
     opacity: 0.9;
     padding-top: 0.75%;
@@ -180,6 +180,7 @@ body
     height: 5%;
     background-color: #818181;
     display: flex;
+    /* position: sticky; */
     flex-wrap: nowrap;
 }
 
