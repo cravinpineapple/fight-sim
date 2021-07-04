@@ -1,6 +1,5 @@
 var entityCustomizerID = 0; // ID generator
 var colorPickerContainerVisible = false;
-var removeID = 0;
 
 const randomWords = ["wing",
     "tomato", "lizard", "spoon", "night", "robin", "blade", "hammer", "friend", "scarecrow", "giraffe", "deer", "cabbage", "queen",
@@ -283,7 +282,7 @@ function addEntityCustomizerListeners(newID) {
     // closer event
     if (newID != 0) {
         closer.addEventListener("click", function () {
-            removeID = container.id.match(regEx)[0];
+            let removeID = container.id.match(regEx)[0];
 
             console.log(`selector-option-container${removeID}`);
 
@@ -291,8 +290,13 @@ function addEntityCustomizerListeners(newID) {
             document.getElementById(`selector-option-container${removeID}`).remove();
 
             let allMatchupTables = document.getElementsByClassName("tbody");
-            for (let i = 0; i < allMatchupTables.length; i++) {
-                if (removeID != i) {
+            for (let i = removeID + 1; i < allMatchupTables.length; i++) {
+                let id = allMatchupTables[i].id.match(regEx)[0];
+
+
+                // remove from other matchups in html
+                if (id != removeID) {
+                    console.log(`matchup-row-${groups[removeID].name}${removeID}${i}`);
                     document.getElementById(`matchup-row-${groups[removeID].name}${removeID}${i}`).remove();
 
                     // if present in beats, remove
@@ -410,17 +414,16 @@ function changeElementID(element, newID) {
     // specific operation for matchup rows
     if (element.parentElement.className == "tbody") {
         let matchupRegEx = /[a-z]+\-[a-z]+\-[a-z]+/
-        let prevIDRegEx = /\d{1,2}/
         let matchupRowClassName = element.className.match(matchupRegEx)[0];
-        let prevRefID = element.className.match(prevIDRegEx)[0];
-
-        // only update new ref id if it needs to be shifted (is after deleted customizer)
-        let newRefID = prevRefID < removeID ? prevRefID : prevRefID - 1;
-
-        element.setAttribute("class", `${matchupRowClassName}${newRefID}`);
+        console.log("===================================");
+        console.log(element.className);
+        element.setAttribute("class", `${matchupRowClassName}${newID}`);
+        console.log(element.className);
+        console.log("===================================");
     }
 
     element.setAttribute("id", `${element.className}${newID}`);
+    console.log(element.id);
 
     for (let i = 0; i < element.childElementCount; i++) {
         changeElementID(element.children[i], newID);
