@@ -283,7 +283,6 @@ function addEntityCustomizerListeners(newID) {
     if (newID != 0) {
         closer.addEventListener("click", function () {
             let removeID = container.id.match(regEx)[0];
-            // console.log(entitySelector.childNodes[0].childNodes[0].childNodes[2]);
 
             // remove from entity selector
             document.getElementById(`selector-option-container${removeID}`).remove();
@@ -338,22 +337,32 @@ function addEntityCustomizerListeners(newID) {
             // otherGroupTableBody.innerHTML += thisGroup;
             let thisGroupTableRow = createMatchupRow(i, newID);
             otherGroupTableBody.appendChild(thisGroupTableRow);
+            let thisGroupPredatorCheckbox = document.getElementById(`matchup-predator-${groups[newID].name}${newID}-${i}`);
+            let thisGroupPreyCheckbox = document.getElementById(`matchup-prey-${groups[newID].name}${newID}-${i}`);
 
-            document.getElementById(`matchup-predator-${groups[newID].name}${newID}-${i}`).addEventListener("change", function (e) {
-                if (this.checked) groups[i].loses.push(groups[newID]);
+            thisGroupPredatorCheckbox.addEventListener("change", function (e) {
+                if (this.checked) {
+                    groups[i].loses.push(groups[newID]);
+                    thisGroupPreyCheckbox.disabled = true;
+                }
                 else {
                     for (let j = 0; j < groups[i].loses.length; j++) {
                         if (groups[i].loses[j].id == newID) groups[i].loses.splice(j, 1);
                     }
+                    thisGroupPreyCheckbox.disabled = false;
                 }
             });
 
-            document.getElementById(`matchup-prey-${groups[newID].name}${newID}-${i}`).addEventListener("change", function (e) {
-                if (this.checked) groups[i].beats.push(groups[newID]);
+            thisGroupPreyCheckbox.addEventListener("change", function (e) {
+                if (this.checked) {
+                    groups[i].beats.push(groups[newID]);
+                    thisGroupPredatorCheckbox.disabled = true;
+                }
                 else {
                     for (let j = 0; j < groups[i].beats.length; j++) {
                         if (groups[i].beats[j].id == newID) groups[i].beats.splice(j, 1);
                     }
+                    thisGroupPredatorCheckbox.disabled = false;
                 }
             });
 
@@ -361,22 +370,32 @@ function addEntityCustomizerListeners(newID) {
             // adds all other groups to this group's matchups
             let otherGroupTableRow = createMatchupRow(newID, i);
             tableBody.appendChild(otherGroupTableRow);
+            let otherGroupPredatorCheckbox = document.getElementById(`matchup-predator-${groups[i].name}${i}-${newID}`);
+            let otherGroupPreyCheckbox = document.getElementById(`matchup-prey-${groups[i].name}${i}-${newID}`);
 
-            document.getElementById(`matchup-predator-${groups[i].name}${i}-${newID}`).addEventListener("change", function (e) {
-                if (this.checked) groups[newID].loses.push(groups[i]);
+            otherGroupPredatorCheckbox.addEventListener("change", function (e) {
+                if (this.checked) {
+                    groups[newID].loses.push(groups[i]);
+                    otherGroupPreyCheckbox.disabled = true;
+                }
                 else {
                     for (let j = 0; j < groups[newID].loses.length; j++) {
                         if (groups[newID].loses[j].id == i) groups[newID].loses.splice(j, 1);
                     }
+                    otherGroupPreyCheckbox.disabled = false;
                 }
             });
 
-            document.getElementById(`matchup-prey-${groups[i].name}${i}-${newID}`).addEventListener("change", function (e) {
-                if (this.checked) groups[newID].beats.push(groups[i]);
+            otherGroupPreyCheckbox.addEventListener("change", function (e) {
+                if (this.checked) {
+                    groups[newID].beats.push(groups[i]);
+                    otherGroupPredatorCheckbox.disabled = true;
+                }
                 else {
                     for (let j = 0; j < groups[newID].beats.length; j++) {
                         if (groups[newID].beats[j].id == i) groups[newID].beats.splice(j, 1);
                     }
+                    otherGroupPredatorCheckbox.disabled = false;
                 }
             });
         }
