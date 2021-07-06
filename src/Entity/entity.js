@@ -4,7 +4,7 @@ export default class Entity {
     // color = 0x000000
     // size = {width, height, depth}
     // position = {x, y, z}
-    constructor(color, size, position, scene, speed) {
+    constructor(color, size, position, scene, speed, id) {
         this.debugMode = true;
         this.scene = scene;
         this.entityID = this.id++;
@@ -15,6 +15,7 @@ export default class Entity {
         this.rays = [];
         this.currentNodeRay = null;
         this.speed = speed;
+        this.id = id;
 
         // group for line helpers and render object
         this.group = new THREE.Group();

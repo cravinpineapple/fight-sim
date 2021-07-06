@@ -7,8 +7,8 @@ export default class SquareAI extends Entity {
     // color = 0x000000
     // size = {width, height, depth}
     // position = {x, y, z}
-    constructor(color, size, pos, scene, speed, gridRef) {
-        super(color, size, pos, scene, speed);
+    constructor(color, size, pos, scene, speed, gridRef, preys, predators, id) {
+        super(color, size, pos, scene, speed, id);
 
         const aiGeometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
         const aiMaterial = new THREE.MeshBasicMaterial();
@@ -33,9 +33,9 @@ export default class SquareAI extends Entity {
 
 
         // entities this entity beats
-        this.preys = [];
+        this.preys = preys;
         // entities this entity loses to 
-        this.predators = [];
+        this.predators = predators;
 
 
         this.renderObj = new THREE.Mesh(aiGeometry, aiMaterial);
@@ -95,6 +95,12 @@ export default class SquareAI extends Entity {
                 };
             }
         }
+    }
+
+    // update color of square
+    updateColor(color) {
+        this.color = color;
+        this.renderObj.material.color = new THREE.Color(color);
     }
 
     // for creating pathingGrid in constructor

@@ -87,8 +87,8 @@ function getRandomPosition() {
     return { x: randX, y: randY, z: 0 };
 }
 
-let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.05, grid);
-let playerSquare2 = new SquareAI(0xFF00FF, aiSize, player2Position, scene, 0.05, grid);
+let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.05, grid, [], []);
+let playerSquare2 = new SquareAI(0xFF00FF, aiSize, player2Position, scene, 0.05, grid, [], []);
 playerSquare.renderObj.name = "playersquare";
 
 // AI Square
@@ -96,7 +96,7 @@ let ais = []
 let aiCount = 10;
 
 for (let i = 0; i < aiCount; i++) {
-    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid));
+    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid, [], []));
     ais[i].preys.push(playerSquare);
     // ais[i].preys.push(playerSquare2);
     ais[i].pathLineVisible = true;
@@ -209,17 +209,23 @@ canvas.addEventListener("mousedown", (e) => {
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
 
+
+    // place wall
     if (ctrl) {
-        // prints click coordinates
-        console.log(pos);
-        return;
-    }
-    else {
         lastMouseNode = grid.getNode(pos);
         if (lastMouseNode.wall == null) lastMouseNode.addWall();
         else lastMouseNode.removeWall();
 
         console.log(lastMouseNode.walkable);
+    }
+    // add entity into the arena where clicked
+    else {
+        console.log(groups[selectedEntityIndex]);
+        const size = groups[selectedEntityIndex].size;
+        let newEntity = new SquareAI(groups[selectedEntityIndex].color, { width: size, height: size, depth: size }, pos, scene, 
+            groups[selectedEntityIndex].speed, grid, groups[selectedEntityIndex].beats, groups[selectedEntityIndex].loses, groups[selectedEntityIndex].id);
+        groups[selectedEntityIndex].members.push(newEntity);
+        console.log(groups[selectedEntityIndex]);
     }
 });
 
@@ -241,11 +247,7 @@ canvas.addEventListener("mousemove", (e) => {
 
     // CLICK DRAGGING FOR WALLS
     let node = grid.getNode(pos);
-    if (ctrl) {
-        // prints click coordinates
-        return;
-    }
-    else if (lastMouseNode != node && mouseDown) {
+    if (lastMouseNode != node && mouseDown && ctrl) {
         lastMouseNode = node;
         if (node.wall == null) node.addWall();
         else node.removeWall();

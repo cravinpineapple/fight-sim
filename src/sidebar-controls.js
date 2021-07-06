@@ -1,6 +1,7 @@
 var entityCustomizerID = 0; // ID generator
 var colorPickerContainerVisible = false;
 var removeID = 0;
+const INDICATOR_HIGHLIGHT_COLOR = "rgb(142, 255, 128)";
 
 const randomWords = ["wing",
     "tomato", "lizard", "spoon", "night", "robin", "blade", "hammer", "friend", "scarecrow", "giraffe", "deer", "cabbage", "queen",
@@ -15,6 +16,8 @@ var sidenav = document.getElementById("sidenav");
 var entitySelector = document.getElementById("entity-selector");
 
 addEntityCustomizerListeners(0);
+var prevHighlightedIndicator = document.getElementById(`selector-indicator0`);
+prevHighlightedIndicator.style.backgroundColor = INDICATOR_HIGHLIGHT_COLOR;
 
 window.addEventListener("click", function () {
     if (colorPickerContainerVisible) {
@@ -155,9 +158,11 @@ function createMatchupRow(ownerID, referenceID) {
     let groupTableRowPrey = document.createElement("td");
     let groupTableRowPredatorCheckBox = document.createElement("input");
     groupTableRowPredatorCheckBox.setAttribute("type", "checkbox");
+    groupTableRowPredatorCheckBox.setAttribute("class", `matchup-predator-${groups[referenceID].name}${referenceID}-`);
     groupTableRowPredatorCheckBox.setAttribute("id", `matchup-predator-${groups[referenceID].name}${referenceID}-${ownerID}`);
     let groupTableRowPreyCheckBox = document.createElement("input");
     groupTableRowPreyCheckBox.setAttribute("type", "checkbox");
+    groupTableRowPreyCheckBox.setAttribute("class", `matchup-prey-${groups[referenceID].name}${referenceID}-`);
     groupTableRowPreyCheckBox.setAttribute("id", `matchup-prey-${groups[referenceID].name}${referenceID}-${ownerID}`);
     groupTableRowLabel.innerHTML = `${groups[referenceID].name}`;
     groupTableRowPredator.appendChild(groupTableRowPredatorCheckBox);
@@ -218,9 +223,23 @@ function addEntityCustomizerListeners(newID) {
     colorBox.style.backgroundColor = randomColor;
 
     var selector = createSelector(newID, randomName, randomShape, randomColor);
+    selector.addEventListener("click", function() {
+        let id = this.id.match(regEx)[0]
+        let indicator = document.getElementById(`selector-indicator${id}`);
+
+        if (indicator.style.backgroundColor == INDICATOR_HIGHLIGHT_COLOR) {
+            return;
+        }
+        else {
+            prevHighlightedIndicator.style.backgroundColor = "transparent";
+            selectedEntityIndex = id;
+            indicator.style.backgroundColor = INDICATOR_HIGHLIGHT_COLOR;
+            prevHighlightedIndicator = indicator;
+        }
+    });
+
     entitySelector.appendChild(selector);
 
-    console.log(document.getElementById(`entity-customizer-color-picker-wheel${newID}`));
     // color picker
     var colorPicker = new iro.ColorPicker(`#entity-customizer-color-picker-wheel${newID}`, {
         width: 140, color: randomColor,
@@ -230,6 +249,10 @@ function addEntityCustomizerListeners(newID) {
         groups[id].color = color.hexString;
         document.getElementById(`entity-customizer-color-box${id}`).style.backgroundColor = color.hexString;
         document.getElementById(`${randomShape}-selector-option${id}`).style.backgroundColor = color.hexString;
+
+        for (let i = 0; i < groups[id].members.length; i++) {
+            groups[id].members[i].updateColor(color.hexString);
+        }
     });
 
     // color selector event
@@ -311,6 +334,18 @@ function addEntityCustomizerListeners(newID) {
             container.remove();
             groups.splice(removeID, 1);
 
+            // if selected was deleted, set previous as selected
+            if (selectedEntityIndex == removeID) {
+                selectedEntityIndex--;
+                prevHighlightedIndicator = document.getElementById(`selector-indicator${selectedEntityIndex}`);
+                prevHighlightedIndicator.style.backgroundColor = INDICATOR_HIGHLIGHT_COLOR;
+            }
+            // if selected was after delete, shift selected back by one
+            else {
+                selectedEntityIndex = removeID < selectedEntityIndex ? selectedEntityIndex - 1 : selectedEntityIndex;
+            }
+            console.log(selectedEntityIndex);
+
             // update ids
             let customizers = document.getElementsByClassName("entity-customizer-container")
             let selectorOptionContainers = document.getElementsByClassName("selector-option-container");
@@ -319,6 +354,10 @@ function addEntityCustomizerListeners(newID) {
                 changeElementID(selectorOptionContainers[i], i);
 
                 groups[i].id = i;
+                // shift id's of members
+                for (let j = 0; j < groups[i].members.length; j++) {
+                    groups[i].members[j].id = i;
+                }
             }
             entityCustomizerID--;
 
@@ -332,39 +371,53 @@ function addEntityCustomizerListeners(newID) {
         if (newID != i) {
             let otherGroupTableBody = document.getElementById(`tbody${i}`);
 
+            
             // adds this group to all other group's matchups
-
-            // let thisGroup = `<tr><td>${groups[newID].name}</td><td><input type="checkbox" id="matchup-prey-${groups[newID].name}${newID}-${i}" value="true"></td><td><input type="checkbox" id="matchup-predator-${groups[newID].name}${newID}-${i}" value="true"></td></tr>`;
-            // otherGroupTableBody.innerHTML += thisGroup;
             let thisGroupTableRow = createMatchupRow(i, newID);
             otherGroupTableBody.appendChild(thisGroupTableRow);
             let thisGroupPredatorCheckbox = document.getElementById(`matchup-predator-${groups[newID].name}${newID}-${i}`);
             let thisGroupPreyCheckbox = document.getElementById(`matchup-prey-${groups[newID].name}${newID}-${i}`);
 
             thisGroupPredatorCheckbox.addEventListener("change", function (e) {
+                let idResults = this.id.match(/\d+/gm);
+                let addID = idResults[0];
+                let thisID = idResults[1];
+
                 if (this.checked) {
-                    groups[i].loses.push(groups[newID]);
+                    groups[thisID].loses.push(groups[addID]);
                     thisGroupPreyCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[i].loses.length; j++) {
-                        if (groups[i].loses[j].id == newID) groups[i].loses.splice(j, 1);
+                    for (let j = 0; j < groups[thisID].loses.length; j++) {
+                        if (groups[thisID].loses[j].addID == addID) groups[thisID].loses.splice(j, 1);
                     }
                     thisGroupPreyCheckbox.disabled = false;
                 }
+
+                console.log(groups);
             });
 
             thisGroupPreyCheckbox.addEventListener("change", function (e) {
+                let idResults = this.id.match(/\d+/gm);
+                let addID = idResults[0];
+                let thisID = idResults[1];
+
                 if (this.checked) {
-                    groups[i].beats.push(groups[newID]);
+                    // remove from groups info
+                    groups[thisID].beats.push(groups[addID]);
+                    // remove from each of the member's beats
+
+
                     thisGroupPredatorCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[i].beats.length; j++) {
-                        if (groups[i].beats[j].id == newID) groups[i].beats.splice(j, 1);
+                    for (let j = 0; j < groups[thisID].beats.length; j++) {
+                        if (groups[thisID].beats[j].addID == addID) groups[thisID].beats.splice(j, 1);
                     }
                     thisGroupPredatorCheckbox.disabled = false;
                 }
+
+                console.log(groups);
             });
 
 
@@ -375,29 +428,41 @@ function addEntityCustomizerListeners(newID) {
             let otherGroupPreyCheckbox = document.getElementById(`matchup-prey-${groups[i].name}${i}-${newID}`);
 
             otherGroupPredatorCheckbox.addEventListener("change", function (e) {
+                let idResults = this.id.match(/\d+/gm);
+                let thisID = idResults[1];
+                let refID = idResults[0];
+
                 if (this.checked) {
-                    groups[newID].loses.push(groups[i]);
+                    groups[thisID].loses.push(groups[refID]);
                     otherGroupPreyCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[newID].loses.length; j++) {
-                        if (groups[newID].loses[j].id == i) groups[newID].loses.splice(j, 1);
+                    for (let j = 0; j < groups[thisID].loses.length; j++) {
+                        if (groups[thisID].loses[j].id == refID) groups[thisID].loses.splice(j, 1);
                     }
                     otherGroupPreyCheckbox.disabled = false;
                 }
+
+                console.log(groups);
             });
 
             otherGroupPreyCheckbox.addEventListener("change", function (e) {
+                let idResults = this.id.match(/\d+/gm);
+                let thisID = idResults[1];
+                let refID = idResults[0];
+
                 if (this.checked) {
-                    groups[newID].beats.push(groups[i]);
+                    groups[thisID].beats.push(groups[refID]);
                     otherGroupPredatorCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[newID].beats.length; j++) {
-                        if (groups[newID].beats[j].id == i) groups[newID].beats.splice(j, 1);
+                    for (let j = 0; j < groups[thisID].beats.length; j++) {
+                        if (groups[thisID].beats[j].id == refID) groups[thisID].beats.splice(j, 1);
                     }
                     otherGroupPredatorCheckbox.disabled = false;
                 }
+
+                console.log(groups);
             });
         }
     }
@@ -414,10 +479,18 @@ function changeElementID(element, newID) {
         let matchupRowClassName = element.className.match(matchupRegEx)[0];
         let prevRefID = element.className.match(prevIDRegEx)[0];
 
+        let preyBox = element.children[1].children[0];
+        let predBox = element.children[2].children[0];
+        let predCheckBoxClassName = predBox.className.match(matchupRegEx)[0];
+        let preyCheckBoxClassName = preyBox.className.match(matchupRegEx)[0];
+
         // only update new ref id if it needs to be shifted (is after deleted customizer)
         let newRefID = prevRefID < removeID ? prevRefID : prevRefID - 1;
+        // let newRefID = prevRefID;
 
         element.setAttribute("class", `${matchupRowClassName}${newRefID}`);
+        preyBox.setAttribute("class", `${preyCheckBoxClassName}${newRefID}-`);
+        predBox.setAttribute("class", `${predCheckBoxClassName}${newRefID}-`);
     }
 
     element.setAttribute("id", `${element.className}${newID}`);
