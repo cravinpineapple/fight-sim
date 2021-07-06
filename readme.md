@@ -5,7 +5,7 @@ Fight-Sim is work-in-progress rock-paper-scissors like simulator. A user is able
 The following features are *hopefully* going to be added as development continues:
  - Custom entity creation
  - Pathing for entities
-     - *towards* others entities
+     - *towards* other entities
      - *away* from entities
  - Moveable/Viewable 3D arena
  - Arena editor
