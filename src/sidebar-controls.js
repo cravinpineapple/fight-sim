@@ -380,17 +380,15 @@ function addEntityCustomizerListeners(newID) {
 
             thisGroupPredatorCheckbox.addEventListener("change", function (e) {
                 let idResults = this.id.match(/\d+/gm);
-                let addID = idResults[0];
+                let refID = idResults[0];
                 let thisID = idResults[1];
 
                 if (this.checked) {
-                    groups[thisID].loses.push(groups[addID]);
+                    addToLoses(thisID, refID);
                     thisGroupPreyCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[thisID].loses.length; j++) {
-                        if (groups[thisID].loses[j].addID == addID) groups[thisID].loses.splice(j, 1);
-                    }
+                    removeFromLoses(thisID, refID);
                     thisGroupPreyCheckbox.disabled = false;
                 }
 
@@ -399,21 +397,15 @@ function addEntityCustomizerListeners(newID) {
 
             thisGroupPreyCheckbox.addEventListener("change", function (e) {
                 let idResults = this.id.match(/\d+/gm);
-                let addID = idResults[0];
+                let refID = idResults[0];
                 let thisID = idResults[1];
 
                 if (this.checked) {
-                    // remove from groups info
-                    groups[thisID].beats.push(groups[addID]);
-                    // remove from each of the member's beats
-
-
+                    addToBeats(thisID, refID);
                     thisGroupPredatorCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[thisID].beats.length; j++) {
-                        if (groups[thisID].beats[j].addID == addID) groups[thisID].beats.splice(j, 1);
-                    }
+                    removeFromBeats(thisID, refID);
                     thisGroupPredatorCheckbox.disabled = false;
                 }
 
@@ -433,13 +425,11 @@ function addEntityCustomizerListeners(newID) {
                 let refID = idResults[0];
 
                 if (this.checked) {
-                    groups[thisID].loses.push(groups[refID]);
+                    addToLoses(thisID, refID);
                     otherGroupPreyCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[thisID].loses.length; j++) {
-                        if (groups[thisID].loses[j].id == refID) groups[thisID].loses.splice(j, 1);
-                    }
+                    removeFromLoses(thisID, refID);
                     otherGroupPreyCheckbox.disabled = false;
                 }
 
@@ -452,19 +442,85 @@ function addEntityCustomizerListeners(newID) {
                 let refID = idResults[0];
 
                 if (this.checked) {
-                    groups[thisID].beats.push(groups[refID]);
+                    addToBeats(thisID, refID);
                     otherGroupPredatorCheckbox.disabled = true;
                 }
                 else {
-                    for (let j = 0; j < groups[thisID].beats.length; j++) {
-                        if (groups[thisID].beats[j].id == refID) groups[thisID].beats.splice(j, 1);
-                    }
+                    removeFromBeats(thisID, refID);
                     otherGroupPredatorCheckbox.disabled = false;
                 }
 
                 console.log(groups);
             });
         }
+    }
+}
+
+function addToBeats(groupID, groupRefID) {
+    let group = groups[groupID];
+    let groupRef = groups[groupRefID];
+
+    // adds to group info
+    group.beats.push(groupRef);
+
+    // adds each prey to each member in group
+    for (let i = 0; i < group.members.length; i++) {
+        for (let j = 0; j < groupRef.members.length; j++) {
+            group.members[i].preys.push(groupRef.members[j]);
+        }
+    }
+}
+
+function removeFromBeats(groupID, groupRefID) {
+    let group = groups[groupID];
+
+    // remove from group info
+    for (let i = 0; i < group.beats.length; i++) {
+        if (group.beats[i].id == groupRefID) group.beats.splice(i, 1);
+    }
+
+    // remove from member's list
+    let removeList = [];
+    for (let i = 0; i < group.members.length; i++) {
+        for (let j = 0; j < group.members[i].preys.length; j++) {
+            if (group.members[i].preys[j].id == groupRefID) removeList.push(group.members[i].preys[j]);
+        }
+
+        group.members[i].preys = group.members[i].preys.filter(ar => !removeList.find(rm => (ar.id == rm.id)));
+    }
+}
+
+function addToLoses(groupID, groupRefID) {
+    let group = groups[groupID];
+    let groupRef = groups[groupRefID];
+
+    // adds to group info
+    group.loses.push(groupRef);
+
+    // adds each prey to each member in group
+    for (let i = 0; i < group.members.length; i++) {
+        for (let j = 0; j < groupRef.members.length; j++) {
+            group.members[i].predators.push(groupRef.members[j]);
+        }
+    }
+}
+
+function removeFromLoses(groupID, groupRefID) {
+    let group = groups[groupID];
+
+    // remove from group info
+    for (let i = 0; i < group.loses.length; i++) {
+        if (group.loses[i].id == groupRefID) group.loses.splice(i, 1);
+    }
+
+    // remove from member's list
+    let removeList = [];
+    for (let i = 0; i < group.members.length; i++) {
+        for (let j = 0; j < group.members[i].predators.length; j++) {
+            if (group.members[i].predators[j].id == groupRefID) removeList.push(group.members[i].predators[j]);
+        }
+
+        group.members[i].predators = group.members[i].predators.filter(ar => !removeList.find(rm => (ar.id == rm.id)));
     }
 }
 

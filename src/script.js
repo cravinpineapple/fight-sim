@@ -221,11 +221,29 @@ canvas.addEventListener("mousedown", (e) => {
     // add entity into the arena where clicked
     else {
         console.log(groups[selectedEntityIndex]);
-        const size = groups[selectedEntityIndex].size;
-        let newEntity = new SquareAI(groups[selectedEntityIndex].color, { width: size, height: size, depth: size }, pos, scene, 
-            groups[selectedEntityIndex].speed, grid, groups[selectedEntityIndex].beats, groups[selectedEntityIndex].loses, groups[selectedEntityIndex].id);
-        groups[selectedEntityIndex].members.push(newEntity);
-        console.log(groups[selectedEntityIndex]);
+        const group = groups[selectedEntityIndex];
+        const size = group.size;
+        let beats = [];
+        let loses = [];
+
+        // getting all entities from beats
+        for (let i = 0; i < group.beats.length; i++) {
+            for (let j = 0; j < group.beats[i].members.length; j++) {
+                beats.push(group.beats[i].members[j]);
+            }
+        }
+
+        // getting all entities from loses
+        for (let i = 0; i < group.loses.length; i++) {
+            for (let j = 0; j < group.loses[i].members.length; j++) {
+                loses.push(group.loses[i].members[j]);
+            }
+        }
+
+        let newEntity = new SquareAI(group.color, { width: size, height: size, depth: size }, 
+            pos, scene, group.speed, grid, beats, loses, group.id);
+        group.members.push(newEntity);
+        console.log(group);
     }
 });
 
