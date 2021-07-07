@@ -10,7 +10,7 @@ export default class SquareAI extends Entity {
     constructor(color, size, pos, scene, speed, gridRef, preys, predators, id) {
         super(color, size, pos, scene, speed, id);
 
-        const aiGeometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
+        const aiGeometry = new THREE.BoxGeometry(1, 1, 1);
         const aiMaterial = new THREE.MeshBasicMaterial();
         aiMaterial.color = new THREE.Color(color);
         aiMaterial.wireframe = true;
@@ -31,6 +31,7 @@ export default class SquareAI extends Entity {
         this.visualLinePath = null
         this.pathLineVisible = true;
 
+        this.preyGoalNode = null;
 
         // entities this entity beats
         this.preys = preys;
@@ -46,7 +47,7 @@ export default class SquareAI extends Entity {
         this.group.add(this.renderObj);
 
         // currentNodeRay
-        this.addCurrentNodeRay(this.group.position);
+        // this.addCurrentNodeRay(this.group.position);
 
         // adding rays to object
         this.addRay(this.group.position, new THREE.Vector3(0, 1, 0)); // up
@@ -57,6 +58,8 @@ export default class SquareAI extends Entity {
         this.addRay(this.group.position, new THREE.Vector3(-1, -1, 0)); // down left
         this.addRay(this.group.position, new THREE.Vector3(-1, 0, 0)); // left
         this.addRay(this.group.position, new THREE.Vector3(-1, 1, 0)); // up left
+
+        this.group.scale.set(size.width, size.height, size.depth);
 
         // let vertices = this.renderObj.geometry.attributes.position.array;
         // for (let i = 0; i < vertices.length; i += 3) {
@@ -140,10 +143,6 @@ export default class SquareAI extends Entity {
 
         if (this.pathLineVisible) this.scene.remove(this.visualLinePath);
 
-        // if (this.lineInfo == null) {
-        //     return;
-        // };
-
         let tempPointsPath = new THREE.CurvePath();
 
         if (this.currentPath.length == 1) {
@@ -189,13 +188,16 @@ export default class SquareAI extends Entity {
         if (this.preys.length == 0)
             return null;
 
-        let startNode = this.gridRef.getNode(this.getCenter());
+        
 
-        let closestNode = this.gridRef.getNode(this.preys[0].getCenter());
+        let startNode = this.gridRef.getNode(this.group.position);
+        startNode.renderObj.material.color = new THREE.Color("#FF0000");
+
+        let closestNode = this.gridRef.getNode(this.preys[0].group.position);
         let closestNum = this.calcHeuristic(startNode, closestNode);
 
         for (let i = 1; i < this.preys.length; i++) {
-            let newClosestNode = this.gridRef.getNode(this.preys[i].getCenter());
+            let newClosestNode = this.gridRef.getNode(this.preys[i].group.position);
             let newClosestNum = this.calcHeuristic(startNode, newClosestNode);
             if (newClosestNum < closestNum) {
                 closestNode = newClosestNode;
@@ -218,7 +220,7 @@ export default class SquareAI extends Entity {
 
     tryMove() {
         if (this.lineInfo.pointsPath == null) {
-            return
+            return;
         }
 
         if (this.lineInfo.pointsPath != null)
@@ -228,11 +230,16 @@ export default class SquareAI extends Entity {
     }
 
     updatePath() {
+        if (this.preys.length == 0) return;
+
         let closestPrey = this.getClosestPreyNode();
         let closestPreyNode = this.gridRef.getNode(closestPrey.position);
-        if (!this.pathingGrid[closestPreyNode.row][closestPreyNode.col].walkable) {
+
+        if (!this.pathingGrid[closestPreyNode.row][closestPreyNode.col].walkable || this.preyGoalNode == closestPrey) {
             return;
         }
+
+        this.preyGoalNode = closestPrey;
         this.getPath(closestPrey);
         this.buildFollowPath();
     }
@@ -248,7 +255,6 @@ export default class SquareAI extends Entity {
         let changed = [currNode];
 
         let current;
-        let count = 0;
         while (true) {
             current = open[0];
 

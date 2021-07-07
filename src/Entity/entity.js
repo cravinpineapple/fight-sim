@@ -81,7 +81,7 @@ export default class Entity {
     // origin (vector3) = {x, y, z}
     // direction (vector3) = {x, y, z}
     addRay(origin, direction) {
-        const far = this.size.width / 2; // this.size.width / 2
+        const far = this.group.scale.y / 2; // this.size.width / 2
         const ray = new THREE.Raycaster(origin, direction, 0, far);
         this.rays.push(ray);
 
@@ -104,6 +104,8 @@ export default class Entity {
             // for some reason, the origin is relative to the center of the group.
             const arrowHelper = new THREE.ArrowHelper(direction, new THREE.Vector3(0, 0, 0), far, 0x00FFFF);
             // this.scene.add(arrowHelper);
+            let arrowHelperSize = 0;
+            arrowHelper.scale.set(this.group.scale.x + arrowHelperSize, this.group.scale.y + arrowHelperSize, this.group.scale.z + arrowHelperSize);
             this.group.add(arrowHelper);
         }
     }

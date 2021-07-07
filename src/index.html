@@ -12,6 +12,12 @@
     <script>
         var groups = [];
         var selectedEntityIndex = 0;
+        var speedMin = 1;
+        var speedMax = 30;
+        var sizeMin = 1;
+        var sizeMax = 30;
+        var sizeMultiplier = 2.5;
+        var speedMultiplier = 0.25;
     </script>
 </head>
 
@@ -48,15 +54,13 @@
             <div class="entity-speed-row" id="entity-speed-row0">
                 <label class="speed-label" for="entity-customizer-speed-text-box0" id="speed-label0">Speed:</label>
                 <div class="spacer" id="spacer0"></div>
-                <input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..."
-                    id="entity-customizer-speed-text-box0" value="10" />
+                <input type="range" class="entity-customizer-speed-slider" id="entity-customizer-speed-slider0" min="1" max="30" value="15" />
             </div>
             <div class="spacer-col" id="spacer-col0"></div>
             <div class="entity-size-row" id="entity-size-row0">
                 <label class="size-label" for="entity-customizer-size-text-box0" id="size-label0">Size:</label>
                 <div class="spacer" id="spacer0"></div>
-                <input type="text" class="entity-customizer-text-box" placeholder="Enter a size..."
-                    id="entity-customizer-size-text-box0" value="10" />
+                <input type="range" class="entity-customizer-size-slider" id="entity-customizer-size-slider0" min="1" max="30" value="15" />
             </div>
             <div class="spacer-col" id="spacer-col0"></div>
             <div class="entity-color-row" id="entity-color-row0">

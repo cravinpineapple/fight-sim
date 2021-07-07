@@ -69,15 +69,13 @@ function addEntityCustomizerBox() {
         `<div class="entity-speed-row" id="entity-speed-row${newID}">` +
         `<label class="speed-label" for="entity-customizer-speed-text-box${newID}" id="speed-label${newID}">Speed:</label>` +
         `<div class="spacer" id="spacer${newID}"></div>` +
-        `<input type="text" class="entity-customizer-text-box" placeholder="Enter a speed..."` +
-        `id="entity-customizer-speed-text-box${newID}" value="1${newID}" />` +
+        `<input type="range" class="entity-customizer-speed-slider" id="entity-customizer-speed-slider${newID}" min="${speedMin}" max="${speedMax}" value="15" />` +
         `</div>` +
         `<div class="spacer-col" id="spacer-col${newID}"></div>` +
         `<div class="entity-size-row" id="entity-size-row${newID}">` +
         `<label class="size-label" for="entity-customizer-size-text-box${newID}" id="size-label${newID}">Size:</label>` +
         `<div class="spacer" id="spacer${newID}"></div>` +
-        `<input type="text" class="entity-customizer-text-box" placeholder="Enter a size..."` +
-        `id="entity-customizer-size-text-box${newID}" value="1${newID}" />` +
+        `<input type="range" class="entity-customizer-size-slider" id="entity-customizer-size-slider${newID}" min="${sizeMin}" max="${sizeMax}" value="15" />` +
         `</div>` +
         `<div class="spacer-col" id="spacer-col${newID}"></div>` +
         `<div class="entity-color-row" id="entity-color-row${newID}">` +
@@ -175,24 +173,19 @@ function createMatchupRow(ownerID, referenceID) {
 }
 
 function addEntityCustomizerListeners(newID) {
-    let maxSpeed = 50;
-    let minSpeed = 1;
-    let maxSize = 25;
-    let minSize = 1;
-
     // TODO: randomShape
     var randomShape = "square";
     var randomName = randomWords[Math.floor(Math.random() * randomWords.length)];
     var randomColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
-    var randomSpeed = Math.floor(Math.random() * (maxSpeed - minSpeed) + minSpeed);
-    var randomSize = Math.floor(Math.random() * (maxSize - minSize) + minSize);
+    var randomSpeed = Math.floor(Math.random() * (speedMax - speedMin) + speedMin);
+    var randomSize = Math.floor(Math.random() * (sizeMax - sizeMin) + sizeMin);
 
     groups.push({
         name: randomName,
         id: newID,
         color: randomColor,
-        size: randomSize * 2.5,
-        speed: randomSpeed * 0.025,
+        size: randomSize * sizeMultiplier,
+        speed: randomSpeed * speedMultiplier,
         shape: "square",
         members: [],
         beats: [],
@@ -214,11 +207,11 @@ function addEntityCustomizerListeners(newID) {
     var closer = document.getElementById(`entity-customizer-delete${newID}`);
 
     var nameTextBox = document.getElementById(`entity-customizer-name-text-box${newID}`);
-    var speedTextBox = document.getElementById(`entity-customizer-speed-text-box${newID}`);
-    var sizeTextBox = document.getElementById(`entity-customizer-size-text-box${newID}`);
+    var speedSlider = document.getElementById(`entity-customizer-speed-slider${newID}`);
+    var sizeSlider = document.getElementById(`entity-customizer-size-slider${newID}`);
 
-    speedTextBox.value = "" + randomSpeed;
-    sizeTextBox.value = "" + randomSize;
+    speedSlider.value = randomSpeed;
+    sizeSlider.value = randomSize;
     nameTextBox.value = "" + randomName;
     colorBox.style.backgroundColor = randomColor;
 
@@ -239,6 +232,25 @@ function addEntityCustomizerListeners(newID) {
     });
 
     entitySelector.appendChild(selector);
+
+    //speed slider
+    speedSlider.oninput = function() {
+        let id = this.id.match(regEx)[0];
+        let newSpeedValue = this.value * speedMultiplier
+        groups[id].speed = newSpeedValue;
+        groups[id].members.forEach(m => m.speed = newSpeedValue);
+    }
+
+    // size slider
+    sizeSlider.oninput = function() {
+        let id = this.id.match(regEx)[0];
+        let newSizeValue = this.value * sizeMultiplier;
+        groups[id].size = newSizeValue
+        groups[id].members.forEach(m => {
+            m.size = newSizeValue;
+            m.group.scale.set(newSizeValue, newSizeValue, newSizeValue);
+        });
+    }
 
     // color picker
     var colorPicker = new iro.ColorPicker(`#entity-customizer-color-picker-wheel${newID}`, {

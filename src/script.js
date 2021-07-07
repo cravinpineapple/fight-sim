@@ -4,16 +4,6 @@ import SquareAI from './Entity/ai.js';
 import NodeGrid from './Entity/nodeGrid.js';
 import * as dat from 'dat.gui'
 
-const entities = [];
-
-// groups
-// id
-// activeMembers: []
-// color
-// size
-// speed
-// shape
-
 // Debug
 const gui = new dat.GUI()
 // Canvas
@@ -28,17 +18,18 @@ const sideNavMaximizeButton = document.getElementById('sidenav-header-maximize-b
 var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true,
 })
-var sideBarWidth = sideBar.offsetWidth;
-const bottomBarHeight = bottomBar.offsetHeight;
 const windowWidth = document.documentElement.clientWidth
 const windowHeight = document.documentElement.clientHeight
+
 // setting renderer size
-// renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
 renderer.setSize(windowWidth, windowHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Scene
 const scene = new THREE.Scene()
+const boxDimensions = 5;
+const floorHeight = -25;
+var simStarted = false;
 
 // making floor
 const planeGeometry = new THREE.PlaneGeometry(2000, 800, 1, 1);
@@ -47,33 +38,14 @@ planeMesh.color = new THREE.Color(0x808080);
 const plane = new THREE.Mesh(planeGeometry, planeMesh);
 plane.castShadow = false;
 plane.receiveShadow = true;
-plane.position.set(200, -75, -10);
+plane.position.set(200, -75, floorHeight - 1);
 scene.add(plane);
 
-const boxDimensions = 5;
-
-var aiSize = {
-    width: boxDimensions,
-    height: boxDimensions,
-    depth: boxDimensions,
-};
-
-var playerPosition = {
-    x: 275,
-    y: -134,
-    z: 0,
-};
-
-var player2Position = {
-    x: 300,
-    y: -15,
-    z: 0,
-};
 
 var nodeWidth = boxDimensions * 2;
 const gWidth = 64; // 139 w/ boxDimensions * 2
 const gHeight = 29; // 55 w/ boxDimensions * 2
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: -aiSize.depth / 2 }, nodeWidth);
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: floorHeight }, nodeWidth);
 
 function getRandomPosition() {
     let minX = 1;
@@ -87,39 +59,10 @@ function getRandomPosition() {
     return { x: randX, y: randY, z: 0 };
 }
 
-let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.05, grid, [], []);
-let playerSquare2 = new SquareAI(0xFF00FF, aiSize, player2Position, scene, 0.05, grid, [], []);
-playerSquare.renderObj.name = "playersquare";
-
-// AI Square
-let ais = []
-let aiCount = 10;
-
-for (let i = 0; i < aiCount; i++) {
-    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid, [], []));
-    ais[i].preys.push(playerSquare);
-    // ais[i].preys.push(playerSquare2);
-    ais[i].pathLineVisible = true;
-}
-
-const testObj1 = gui.addFolder('Player Object');
-
-
 let topLeft = {
     x: Math.round(-canvas.clientWidth / 2),
     y: Math.round(canvas.clientHeight / 2),
 };
-
-for (let i = 0; i < grid.grid.length; i++) {
-    for (let j = 0; j < grid.grid[i].length; j++) {
-        entities.push(grid.grid[i][j]);
-    }
-}
-
-// AI 
-testObj1.add(playerSquare.renderObj.position, 'x').step(0.5);
-testObj1.add(playerSquare.renderObj.position, 'y').step(0.5);
-testObj1.add(playerSquare.renderObj.position, 'z').step(2);
 
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
@@ -274,7 +217,13 @@ canvas.addEventListener("mousemove", (e) => {
 
 document.getElementById("floatButton").addEventListener("click", function () {
     console.log("Starting...");
-    ais.forEach(e => e.updatePathingGrid());
+    groups.forEach(e => {
+        e.members.forEach(e => {
+            e.updatePathingGrid();
+        });
+    });
+
+    simStarted = true;
 });
 
 var p = false;
@@ -282,9 +231,6 @@ var up = false, down = false, left = false, right = false; // WASD
 var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
 var zoomOut = false, zoomIn = false;
 var ctrl = false;
-
-let goalNode = grid.getNode(playerSquare.getCenter());
-let goalNode2 = grid.getNode(playerSquare2.getCenter());
 
 document.onkeydown = () => {
     var e = e || window.event;
@@ -372,30 +318,15 @@ document.onkeyup = () => {
     }
 }
 
-const movement = () => {
-    if (up) playerSquare.group.position.y += playerSquare.speed * delta;
-    if (left) playerSquare.group.position.x -= playerSquare.speed * delta;
-    if (down) playerSquare.group.position.y -= playerSquare.speed * delta;
-    if (right) playerSquare.group.position.x += playerSquare.speed * delta;
-}
-
 const moveCamera = () => {
     if (zoomIn) camera.position.z -= speed * delta;
     if (zoomOut) camera.position.z += speed * delta;
     if (p) console.log(camera.position);
 
-    if (ctrl) {
-        if (aUp) camera.position.y += speed * delta;
-        if (aLeft) camera.position.x -= speed * delta;
-        if (aDown) camera.position.y -= speed * delta;
-        if (aRight) camera.position.x += speed * delta;
-    }
-    else {
-        if (aUp) playerSquare2.group.position.y += playerSquare.speed * delta;
-        if (aLeft) playerSquare2.group.position.x -= playerSquare.speed * delta;
-        if (aDown) playerSquare2.group.position.y -= playerSquare.speed * delta;
-        if (aRight) playerSquare2.group.position.x += playerSquare.speed * delta;
-    }
+    if (up) camera.position.y += speed * delta;
+    if (left) camera.position.x -= speed * delta;
+    if (down) camera.position.y -= speed * delta;
+    if (right) camera.position.x += speed * delta;
 }
 
 // hiden side nav
@@ -431,7 +362,11 @@ function resizeCanvasToDiv() {
 let elapsedTime = 0;
 let pathUpdateInterval = 150;
 
-const tick = () => {
+// const tick = () => {
+    
+// }
+
+function tick() {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
     var now = Date.now();
@@ -440,31 +375,24 @@ const tick = () => {
 
     elapsedTime += delta;
 
-    // aiSquare.checkCollision();
-
-    movement();
     moveCamera();
 
-
-    ais.forEach(e => e.tryMove());
-
-    if (elapsedTime >= pathUpdateInterval) {
-        elapsedTime = 0;
-        // console.log("New Path");
-
-        let newGoalNode1 = grid.getNode(playerSquare.getCenter());
-        // let newGoalNode2 = grid.getNode(playerSquare2.getCenter());
-
-        if (newGoalNode1.position != goalNode.position) {
-            goalNode = newGoalNode1;
-            ais.forEach(e => e.updatePath());
+    if (simStarted) {
+        groups.forEach(e => {
+            e.members.forEach(e => {
+                e.tryMove();
+            });
+        });
+    
+        if (elapsedTime >= pathUpdateInterval) {
+            groups.forEach(e => {
+                e.members.forEach(e => {
+                    e.updatePath();
+                });
+            });
         }
-
-        // if (newGoalNode2.position != goalNode2.position) {
-        //     goalNode2 = newGoalNode2;
-        //     ais.forEach(e => e.updatePath());
-        // }
     }
+    
 
     // Render
     renderer.render(scene, camera);
