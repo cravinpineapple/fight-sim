@@ -81,7 +81,7 @@ let topLeft = {
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
 
-const pointLight = new THREE.PointLight(0xffffff, 0.2)
+const pointLight = new THREE.PointLight(0xffffff, 0.15)
 pointLight.position.set(0, 0, 40);
 light1.add(pointLight.position, 'x').min(-500).max(500).step(0.001);
 light1.add(pointLight.position, 'y').min(-500).max(500).step(0.001);

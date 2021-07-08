@@ -13,7 +13,7 @@ export default class SquareAI extends Entity {
         const aiGeometry = new THREE.BoxGeometry(1, 1, 1);
         const aiMaterial = new THREE.MeshBasicMaterial();
         aiMaterial.color = new THREE.Color(color);
-        aiMaterial.wireframe = true;
+        aiMaterial.wireframe = false;
 
         this.gridRef = gridRef;
 
