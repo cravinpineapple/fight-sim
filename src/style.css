@@ -14,7 +14,7 @@ body
 .canvas-container
 {
     position: relative;
-    margin-left: 15%;
+    /* margin-left: 15%; */
     width: 200;
     height: 200;
 }
@@ -24,37 +24,564 @@ body
     position: absolute;
 }
 
-/* @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-} */
+.sidenav-header-maximize-button
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-top: 0.3%;
+    margin-left: 0.3%;
+    background-color: rgb(141, 141, 141);
+    width: 2%;
+    height: 4%;
+    border-style: none;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 4vh;
+    z-index: 1;
+    opacity: 0.8;
+    visibility: hidden;
+}
 
 .sidenav {
-    height: 100%;
-    width: 9%;
+    margin-left: 0.5%;
+    margin-top: 0.5%;
+    height: 98%;
+    width: 15%;
     position: fixed;
-    z-index: 0;
+    z-index: 1;
     top: 0;
     left: 0;
     background-color: #111;
     overflow-x: hidden;
-    padding-top: 22%;
-    padding-left: 6%;
-  }
+    border-radius: 10px;
+    opacity: 0.9;
+}
+
+.entity-selector
+{
+    height: 10%;
+    width: 83%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    margin-left: 16%;
+    margin-top: 0.5%;
+    background-color: #111;
+    overflow-y: hidden;
+    border-radius: 10px;
+    opacity: 0.9;
+    padding-top: 0.75%;
+    padding-left: 0.85%;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+}
+
+.selector-option-container
+{
+    display: flex;
+    width: 8.5%;
+    flex-direction: column;
+    height: 9vh;
+    margin-bottom: 12.5%;
+    z-index: 1;
+}
+
+.selector-option-label
+{
+    width: 90%;
+    height: 30%;
+    font-size: 1.75vh;
+    background-color: rgb(173, 173, 173);
+    border-radius: 10px;
+    /* margin-left: %; */
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+}
+
+.selector-option-row
+{
+    display: flex;
+    width: 85%;
+    align-items: center;
+    flex: 1;
+    z-index: 1;
+}
+
+.selector-indicator
+{
+    position: relative;
+    width: 0.75vw;
+    height: 0.75vw;
+    border: solid 1.5px rgb(173, 173, 173);
+    border-radius: 50%;
+    background-color: transparent;
+    z-index: 1;
+    flex: 0.33;
+    z-index: 1;
+}
+
+.square-selector-option
+{
+    height: 3vw;
+    width: 3vw;
+    max-width: 4vw;
+    position: relative;
+    z-index: 1;
+    background-color: rgb(255, 2, 2);
+    flex: 4;
+    z-index: 1;
+}
+
+.square-selector-option-text
+{
+    height: 50%;
+    width: 50%;
+    position: relative;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    margin-left: 26.5%;
+    margin-top: 22.5%;
+    overflow-x: hidden;
+    opacity: 0.9;
+    font-size: 10vh;
+    z-index: 1;
+}
+
+.entity-customizer-container
+{
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-top: 5%;
+    margin-left: 5%;
+    width: 85%;
+    max-width: 85%;
+    height: 35%;
+    border-radius: 10px;
+    background-color: rgb(206, 206, 206);
+    padding-left: 2%;
+    padding-top: 4%;
+    padding-bottom: 5%;
+    padding-right: 2%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.sidenav-header
+{
+    width: 100%;
+    height: 5%;
+    background-color: #818181;
+    display: flex;
+    /* position: sticky; */
+    flex-wrap: nowrap;
+}
+
+.entity-speed-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 5;
+}
+
+.speed-label
+{
+    padding-top: 1.6%;
+    flex: 1;
+    font-size: 2vh;
+}
+
+.entity-size-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 5;
+}
+
+.size-label
+{
+    padding-top: 1.6%;
+    flex: 1;
+    font-size: 2vh;
+}
+
+.entity-customizer-speed-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 1vh;
+    background: rgb(131, 131, 131);
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 15px;
+    margin-top: 4%;
+    flex: 5
+}
+
+.entity-customizer-speed-slider:hover {
+    opacity: 1;
+}
+
+.entity-customizer-speed-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2vh;
+    height: 2vh;
+    background: #303030;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.entity-customizer-speed-slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #303030;
+    cursor: pointer;
+}
+
+.entity-customizer-size-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 1vh;
+    background: rgb(131, 131, 131);
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 15px;
+    margin-top: 4%;
+    flex: 5
+}
+
+.entity-customizer-size-slider:hover {
+    opacity: 1;
+}
+
+.entity-customizer-size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2vh;
+    height: 2vh;
+    background: #303030;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.entity-customizer-size-slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #303030;
+    cursor: pointer;
+}
+
+.entity-color-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 5;
+}
+
+.color-label
+{
+    padding-top: 0.8%;
+    flex: 1;
+    font-size: 2vh;
+}
+
+.entity-customizer-color-box
+{
+    width: 100%;
+    height: 75%;
+    background-color: rgba(71, 68, 255, 0.363);
+    border: rgb(109, 109, 109);
+    border-radius: 20px;
+    border-width: 3px;
+    border-style: solid;
+    flex: 10;
+}
+
+.entity-customizer-color-picker
+{
+    position: fixed;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    /* margin-left: 14.3%; */
+    /* margin-top: -4%; */
+    visibility: hidden;
+    top: 0px;
+    left: 0px;
+}
+
+.entity-customizer-color-picker-box
+{
+    position: fixed;
+    z-index: 5;
+    width: 160px;
+    height: 200px;
+    background-color: #818181;
+    border-radius: 20px;
+}
+
+.entity-customizer-color-picker-pointer
+{
+    position: fixed;
+	height: 50px;
+	width: 50px;
+	background: #818181;
+	margin: 0 auto;
+	transform: rotate(45deg);
+	border-radius: 0 0 0 7px;
+	position: relative;
+    margin-left: -26px;
+    margin-top: 61px;
+    border-left: 3px solid #363636;
+    border-bottom: 3px solid #363636;
+    z-index: 1;
+}
+
+.entity-customizer-color-picker-wheel
+{
+    position: relative;
+    margin-left: 5%;
+    margin-top: 5%;
+    z-index: 2;
+}
+
+.entity-shape-row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 5;
+}
+
+.shape-label
+{
+    padding-top: 6%;
+    flex: 0.2;
+    font-size: 2vh;
+}
+
+.entity-customizer-header
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 97%;
+    /* justify-content:space-evenly; */
+    flex: 1;
+}
+
+.matchups-label
+{
+    flex: 0.5;
+    font-size: 2vh;
+}
+
+.entity-customizer-matchups-container
+{
+    width: 90%;
+    height: 90%;
+    background-color: rgb(109, 109, 109);
+    border-radius: 10px;
+    flex: 30;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.matchups-table
+{
+    border-collapse: collapse;
+    width: 91.5%;
+    margin: 8px;
+    font-size: 0.8vw;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.matchups-table thead tr
+{
+    background-color: rgb(139, 139, 139);
+    font-weight: bold;
+    /* font-size: 18; */
+    /* border-bottom: 3px solid rgb(139, 139, 139);; */
+}
+
+.matchups-table tbody tr
+{
+    text-align: center;
+    /* font-size: 15px; */
+}
+
+.matchups-table tbody tr:nth-of-type(even)
+{
+    text-align: center;
+    background-color: rgb(139, 139, 139);;
+}
+
+.matchups-table td
+{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2.5px 2px rgba(0, 0, 0, 0.5);
+    
+}
+::-webkit-scrollbar-thumb
+{
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(45deg, rgb(255, 0, 0), rgb(251, 255, 0));
+}
+
+hr.rounded
+{
+    border-top: 8px solid rgb(92, 92, 92);
+    width: 95%;
+    border-radius: 5px;
+    flex: 1;
+}
+
+.rounded-divider
+{
+    background-color:  rgb(92, 92, 92);
+    width: 97%;
+    flex: 0.7;
+    border-radius: 50px;
+}
+
+.spacer
+{
+    flex: 0.5;
+}
+
+.spacer-col
+{
+    flex: 1.5;
+}
+
+.entity-customizer-text-box
+{
+    border: 1px solid rgb(32, 32, 32);
+    border-radius: 30px;
+    height: 70%;
+    min-width: 5px;
+    flex: 20;
+    outline-width: 0;
+    padding-left: 4%;
+}
+
+
+.entity-customizer-minimize
+{
+    background-color: rgb(92, 92, 92);
+    width: 5%;
+    height: 65%;
+    flex: 3;
+    border-radius: 30px;
+    border-style: none;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.5vh;
+    font-weight: bold;
+}
+
+.entity-customizer-delete
+{
+    background-color: rgb(92, 92, 92);
+    width: 5%;
+    height: 65%;
+    flex: 3;
+    border-radius: 30px;
+    border-style: none;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.5vh;
+    font-weight: bold;
+}
+
+.sidenav-header-text
+{
+    padding-top: 2%;
+    padding-left: 10%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 3.5vh;
+    font-weight: bold;
+    float: left;
+    flex: 9;
+}
+
+.sidenav-header-minimize
+{
+    float: right;
+    margin-right: 4%;
+    margin-top: 5.4%;
+    flex: 2;
+	width: 1vh;
+	height: 2vh;
+	color: rgb(202, 202, 202);
+    background-color: #4e4e4e;
+	border-radius: 50px;
+    border-color: transparent;
+	text-align:center;
+    font-size: 1vh;
+    border-style: solid;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+.roundButton
+{
+    position: relative;
+    margin-left: 47%;
+	width: 30px;
+	height: 30px;
+	background-color: rgba(204, 65, 0, 0);
+	color: rgb(49, 49, 49);
+    background-color: rgb(60, 255, 206);
+	border-radius: 50px;
+	text-align: center;
+    font-size: 25px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
   
 .sidenav a {
-    padding: 6px 8px 6px 16px;
+    /* padding: 6px 8px 6px 16px; */
     text-decoration: none;
     font-size: 25px;
     color: #818181;
     display: block;
 }
 
-.floatButton{
+.floatButton
+{
 	position: fixed;
 	width: 30px;
 	height: 30px;
-	top: 20px;
+	bottom: 20px;
 	left: 20px;
 	background-color: #0C9;
 	color: rgb(48, 4, 243);
@@ -67,21 +594,6 @@ body
 .my-float{
 	margin-top:22px;
 }
-
-/* button {
-    display: inline-block;
-    padding: .75rem 1.25rem;
-    border-radius: 30px;
-    color: rgb(48, 48, 48);
-    background-color: rgb(0, 132, 255);
-    font-size: 12px;
-    font-weight: bolder;
-    z-index: 1;
-}
-
-button:active {
-    color: rgb(124, 124, 124);
-} */
 
 .navbar {
     overflow: hidden;
@@ -102,4 +614,62 @@ button:active {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
+}
+
+
+/* dropdown menu stuff */
+
+.shape-drop-button {
+    background-color: rgb(92, 92, 92);
+    color: white;
+    font-size: 2vh;
+    border: none;
+    cursor: pointer;
+    width: 12vh;
+    height: 4vh;
+    border-radius: 15px;
+    flex: 10;
+}
+  
+  /* The container <div> - needed to position the dropdown content */
+.shape-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.shape-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    width: 100%;
+    border-radius: 15px;
+}
+
+/* Links inside the dropdown */
+.shape-dropdown-content a {
+    color: black;
+    padding-top: 12px;
+    padding-left: 16px;
+    text-decoration: none;
+    display: block;
+    height: 40px;
+}
+
+/* Change color of dropdown links on hover */
+.shape-dropdown-content a:hover {
+    background-color: #f1f1f1;
+    border-radius: 15px;
+}
+
+/* Show the dropdown menu on hover */
+.shape-dropdown-container:hover .shape-dropdown-content {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.shape-dropdown-container:hover .shape-drop-button {
+    background-color: rgb(56, 56, 56);
 }

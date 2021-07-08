@@ -2,68 +2,64 @@ import './style.css'
 import * as THREE from 'three'
 import SquareAI from './Entity/ai.js';
 import NodeGrid from './Entity/nodeGrid.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
-
-const entities = [];
 
 // Debug
 const gui = new dat.GUI()
 // Canvas
 // const canvasContainer = document.getElementById('canvas-container');
-const sidebar = document.getElementById('sidenav');
-const bottombar = document.getElementById('navbar');
+const sideBar = document.getElementById('sidenav');
+const bottomBar = document.getElementById('navbar');
 const canvas = document.querySelector('canvas.webgl')
+const canvasContainer = document.getElementById('canvas-container');
+const sideNavMaximizeButton = document.getElementById('sidenav-header-maximize-button');
 
 // Renderer
- const renderer = new THREE.WebGLRenderer({
+var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true,
 })
-const sideBarWidth = sidebar.offsetWidth;
-const bottomBarHeight = bottombar.offsetHeight;
 const windowWidth = document.documentElement.clientWidth
 const windowHeight = document.documentElement.clientHeight
+
 // setting renderer size
-renderer.setSize(windowWidth - sideBarWidth, windowHeight - bottomBarHeight);
+renderer.setSize(windowWidth, windowHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Scene
 const scene = new THREE.Scene()
+const boxDimensions = 10;
+const floorHeight = -25;
+var simStarted = false;
 
 // making floor
-const planeGeometry = new THREE.PlaneGeometry(2000, 800, 1, 1);
-const planeMesh = new THREE.MeshStandardMaterial();
-planeMesh.color = new THREE.Color(0x808080);
-const plane = new THREE.Mesh(planeGeometry, planeMesh);
-plane.castShadow = false;
-plane.receiveShadow = true;
-plane.position.set(200, -75, -10);
-scene.add(plane);
+const backgroundPlaneGeometry = new THREE.PlaneGeometry(2500, 1500, 1, 1);
+const backgroundPlaneMesh = new THREE.MeshStandardMaterial();
+backgroundPlaneMesh.color = new THREE.Color(0x808080);
+const backgroundPlane = new THREE.Mesh(backgroundPlaneGeometry, backgroundPlaneMesh);
+backgroundPlane.castShadow = false;
+backgroundPlane.receiveShadow = true;
+backgroundPlane.position.set(300, -150, floorHeight - 25);
+scene.add(backgroundPlane);
 
-const boxDimensions = 5;
 
-var aiSize = {
-    width: boxDimensions,
-    height: boxDimensions,
-    depth: boxDimensions,
-};
 
-var playerPosition = {
-    x: 275,
-    y: -134,
-    z: 0,
-};
+const nodeWidth = boxDimensions;
+const gWidth = 125; // 139 w/ boxDimensions * 2
+const gHeight = 60; // 55 w/ boxDimensions * 2
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: floorHeight }, nodeWidth);
 
-var player2Position = {
-    x: 300,
-    y: -15,
-    z: 0,
-};
 
-var nodeWidth = boxDimensions * 2;
-const gWidth = 64; // 139 w/ boxDimensions * 2
-const gHeight = 29; // 55 w/ boxDimensions * 2
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: -aiSize.depth / 2 }, nodeWidth);
+const playAreaPlaneGeometry = new THREE.PlaneGeometry(nodeWidth * gWidth, nodeWidth * gHeight, 1, 1);
+const playAreaPlaneMesh = new THREE.MeshStandardMaterial();
+playAreaPlaneMesh.color = new THREE.Color(0xdbdbdb);
+const playAreaPlane = new THREE.Mesh(playAreaPlaneGeometry, playAreaPlaneMesh);
+playAreaPlane.castShadow = false;
+playAreaPlane.receiveShadow = true;
+console.log(playAreaPlane.geometry.computeBoundingBox());
+const playAreaPlaneSize = playAreaPlane.geometry.boundingBox.getSize();
+console.log(playAreaPlaneSize);
+playAreaPlane.position.set(0 + playAreaPlaneSize.x / 2, 0 - playAreaPlaneSize.y / 2, floorHeight - 1);
+scene.add(playAreaPlane);
 
 function getRandomPosition() {
     let minX = 1;
@@ -77,50 +73,21 @@ function getRandomPosition() {
     return { x: randX, y: randY, z: 0 };
 }
 
-let playerSquare = new SquareAI(0xff0000, aiSize, playerPosition, scene, 0.05, grid);
-let playerSquare2 = new SquareAI(0xFF00FF, aiSize, player2Position, scene, 0.05, grid);
-playerSquare.renderObj.name = "playersquare";
-
-// AI Square
-let ais = []
-let aiCount = 10;
-
-for (let i = 0; i < aiCount; i++) {
-    ais.push(new SquareAI(0x00ffff, aiSize, getRandomPosition(), scene, 0.5, grid));
-    ais[i].preys.push(playerSquare);
-    // ais[i].preys.push(playerSquare2);
-    ais[i].pathLineVisible = true;
-}
-
-const testObj1 = gui.addFolder('Player Object');
-
-
 let topLeft = {
     x: Math.round(-canvas.clientWidth / 2),
     y: Math.round(canvas.clientHeight / 2),
 };
 
-for (let i = 0; i < grid.grid.length; i++) {
-    for (let j = 0; j < grid.grid[i].length; j++) {
-        entities.push(grid.grid[i][j]);
-    }
-}
-
-// AI 
-testObj1.add(playerSquare.renderObj.position, 'x').step(0.5);
-testObj1.add(playerSquare.renderObj.position, 'y').step(0.5);
-testObj1.add(playerSquare.renderObj.position, 'z').step(2);
-
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
 
-const pointLight = new THREE.PointLight(0xffffff, 0.3)
+const pointLight = new THREE.PointLight(0xffffff, 0.15)
 pointLight.position.set(0, 0, 40);
 light1.add(pointLight.position, 'x').min(-500).max(500).step(0.001);
 light1.add(pointLight.position, 'y').min(-500).max(500).step(0.001);
 light1.add(pointLight.position, 'z').min(1).max(115).step(0.01);
 light1.add(pointLight, 'intensity').min(0).max(10).step(0.01);
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
+pointLight.position.set(630, -292, 200);
 
 const lightColor = {
     color: 0x7cc8ed,
@@ -135,7 +102,8 @@ const ambientLight = new THREE.AmbientLight(0x404040);
 
 scene.add(ambientLight);
 scene.add(pointLight)
-scene.add(pointLightHelper);
+// const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
+// scene.add(pointLightHelper);
 
 /**
  * Sizes
@@ -167,7 +135,7 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(322, -142, 190); // 190, -65, 150
+camera.position.set(630, -292, 190); // 190, -65, 150
 
 const perpCam = gui.addFolder('Orth Cam 1');
 
@@ -191,7 +159,7 @@ canvas.addEventListener("mousedown", (e) => {
     let vec = new THREE.Vector3();
     let pos = new THREE.Vector3();
 
-    vec.set(((e.clientX - sideBarWidth) / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
 
@@ -199,17 +167,41 @@ canvas.addEventListener("mousedown", (e) => {
 
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
 
+
+    // place wall
     if (ctrl) {
-        // prints click coordinates
-        console.log(pos);
-        return;
-    }
-    else {
         lastMouseNode = grid.getNode(pos);
         if (lastMouseNode.wall == null) lastMouseNode.addWall();
         else lastMouseNode.removeWall();
 
         console.log(lastMouseNode.walkable);
+    }
+    // add entity into the arena where clicked
+    else {
+        console.log(groups[selectedEntityIndex]);
+        const group = groups[selectedEntityIndex];
+        const size = group.size;
+        let beats = [];
+        let loses = [];
+
+        // getting all entities from beats
+        for (let i = 0; i < group.beats.length; i++) {
+            for (let j = 0; j < group.beats[i].members.length; j++) {
+                beats.push(group.beats[i].members[j]);
+            }
+        }
+
+        // getting all entities from loses
+        for (let i = 0; i < group.loses.length; i++) {
+            for (let j = 0; j < group.loses[i].members.length; j++) {
+                loses.push(group.loses[i].members[j]);
+            }
+        }
+
+        let newEntity = new SquareAI(group.color, { width: size, height: size, depth: size }, 
+            pos, scene, group.speed, grid, beats, loses, group.id);
+        group.members.push(newEntity);
+        console.log(group);
     }
 });
 
@@ -221,7 +213,7 @@ canvas.addEventListener("mousemove", (e) => {
     let vec = new THREE.Vector3();
     let pos = new THREE.Vector3();
 
-    vec.set(((e.clientX - sideBarWidth) / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
+    vec.set((e.clientX / canvas.clientWidth) * 2 - 1, - (e.clientY / canvas.clientHeight) * 2 + 1, 0.5);
     vec.unproject(camera);
     vec.sub(camera.position).normalize();
 
@@ -230,21 +222,26 @@ canvas.addEventListener("mousemove", (e) => {
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
 
     // CLICK DRAGGING FOR WALLS
-    let node = grid.getNode(pos);
     if (ctrl) {
-        // prints click coordinates
-        return;
-    }
-    else if (lastMouseNode != node && mouseDown) {
-        lastMouseNode = node;
-        if (node.wall == null) node.addWall();
-        else node.removeWall();
+        let node = grid.getNode(pos);
+        if (lastMouseNode != node && mouseDown && ctrl) {
+            lastMouseNode = node;
+            if (node.wall == null) node.addWall();
+            else node.removeWall();
+        }
     }
 });
 
-document.getElementById("floatButton").addEventListener("click", function() {
+document.getElementById("floatButton").addEventListener("click", function () {
     console.log("Starting...");
-    ais.forEach(e => e.updatePathingGrid());
+    groups.forEach(e => {
+        e.members.forEach(e => {
+            // console.log(e.group.position);
+            e.updatePathingGrid();
+        });
+    });
+
+    simStarted = true;
 });
 
 var p = false;
@@ -252,9 +249,6 @@ var up = false, down = false, left = false, right = false; // WASD
 var aUp = false, aDown = false, aLeft = false, aRight = false; // arrow keys
 var zoomOut = false, zoomIn = false;
 var ctrl = false;
-
-let goalNode = grid.getNode(playerSquare.getCenter());
-let goalNode2 = grid.getNode(playerSquare2.getCenter());
 
 document.onkeydown = () => {
     var e = e || window.event;
@@ -342,40 +336,34 @@ document.onkeyup = () => {
     }
 }
 
-const movement = () => {
-    if (up) playerSquare.group.position.y += playerSquare.speed * delta;
-    if (left) playerSquare.group.position.x -= playerSquare.speed * delta;
-    if (down) playerSquare.group.position.y -= playerSquare.speed * delta;
-    if (right) playerSquare.group.position.x += playerSquare.speed * delta;
-}
-
 const moveCamera = () => {
     if (zoomIn) camera.position.z -= speed * delta;
     if (zoomOut) camera.position.z += speed * delta;
     if (p) console.log(camera.position);
 
-    if (ctrl) {
-        if (aUp) camera.position.y += speed * delta;
-        if (aLeft) camera.position.x -= speed * delta;
-        if (aDown) camera.position.y -= speed * delta;
-        if (aRight) camera.position.x += speed * delta;
-    }
-    else {
-        if (aUp) playerSquare2.group.position.y += playerSquare.speed * delta;
-        if (aLeft) playerSquare2.group.position.x -= playerSquare.speed * delta;
-        if (aDown) playerSquare2.group.position.y -= playerSquare.speed * delta;
-        if (aRight) playerSquare2.group.position.x += playerSquare.speed * delta;
-    }
+    if (up) camera.position.y += speed * delta;
+    if (left) camera.position.x -= speed * delta;
+    if (down) camera.position.y -= speed * delta;
+    if (right) camera.position.x += speed * delta;
 }
+
+// hiden side nav
+document.getElementById('sidenav-header-minimize').addEventListener("click", function () {
+
+    sideNavMaximizeButton.style.visibility = "visible";
+    canvasContainer.style.marginLeft = "0%";
+    sideBar.style.visibility = "hidden";
+    entitySelector.style.visibility = "hidden";
+});
+
+// show side nav
+document.getElementById('sidenav-header-maximize-button').addEventListener("click", function () {
+    sideNavMaximizeButton.style.visibility = "hidden";
+    sideBar.style.visibility = "visible";
+    entitySelector.style.visibility = "visible";
+});
 
 var lastUpdate = Date.now();
-
-function buttonClick() {
-    playerSquare.material.color.setHex(Math.random() * 0xffffff);
-    // aiSquare.renderObj.material.color.setHex(Math.random() * 0xffffff);
-}
-
-document.getElementById("changeColor").addEventListener("click", buttonClick);
 
 function resizeCanvasToDiv() {
     const canvas = renderer.domElement;
@@ -401,30 +389,22 @@ const tick = () => {
 
     elapsedTime += delta;
 
-    // aiSquare.checkCollision();
-
-    movement();
     moveCamera();
 
-
-    ais.forEach(e => e.tryMove());
-
-    if (elapsedTime >= pathUpdateInterval) {
-        elapsedTime = 0;
-        console.log("New Path");
-
-        let newGoalNode1 = grid.getNode(playerSquare.getCenter());
-        // let newGoalNode2 = grid.getNode(playerSquare2.getCenter());
-
-        if (newGoalNode1.position != goalNode.position) {
-            goalNode = newGoalNode1;
-            ais.forEach(e => e.updatePath());
+    if (simStarted) {
+        groups.forEach(e => {
+            e.members.forEach(e => {
+                e.tryMove();
+            });
+        });
+    
+        if (elapsedTime >= pathUpdateInterval) {
+            groups.forEach(e => {
+                e.members.forEach(e => {
+                    e.updatePath();
+                });
+            });
         }
-        
-        // if (newGoalNode2.position != goalNode2.position) {
-        //     goalNode2 = newGoalNode2;
-        //     ais.forEach(e => e.updatePath());
-        // }
     }
 
     // Render
