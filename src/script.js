@@ -27,25 +27,39 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Scene
 const scene = new THREE.Scene()
-const boxDimensions = 5;
+const boxDimensions = 10;
 const floorHeight = -25;
 var simStarted = false;
 
 // making floor
-const planeGeometry = new THREE.PlaneGeometry(2000, 800, 1, 1);
-const planeMesh = new THREE.MeshStandardMaterial();
-planeMesh.color = new THREE.Color(0x808080);
-const plane = new THREE.Mesh(planeGeometry, planeMesh);
-plane.castShadow = false;
-plane.receiveShadow = true;
-plane.position.set(200, -75, floorHeight - 1);
-scene.add(plane);
+const backgroundPlaneGeometry = new THREE.PlaneGeometry(2500, 1500, 1, 1);
+const backgroundPlaneMesh = new THREE.MeshStandardMaterial();
+backgroundPlaneMesh.color = new THREE.Color(0x808080);
+const backgroundPlane = new THREE.Mesh(backgroundPlaneGeometry, backgroundPlaneMesh);
+backgroundPlane.castShadow = false;
+backgroundPlane.receiveShadow = true;
+backgroundPlane.position.set(300, -150, floorHeight - 25);
+scene.add(backgroundPlane);
 
 
-var nodeWidth = boxDimensions * 2;
-const gWidth = 64; // 139 w/ boxDimensions * 2
-const gHeight = 29; // 55 w/ boxDimensions * 2
+
+const nodeWidth = boxDimensions;
+const gWidth = 125; // 139 w/ boxDimensions * 2
+const gHeight = 60; // 55 w/ boxDimensions * 2
 const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: floorHeight }, nodeWidth);
+
+
+const playAreaPlaneGeometry = new THREE.PlaneGeometry(nodeWidth * gWidth, nodeWidth * gHeight, 1, 1);
+const playAreaPlaneMesh = new THREE.MeshStandardMaterial();
+playAreaPlaneMesh.color = new THREE.Color(0xdbdbdb);
+const playAreaPlane = new THREE.Mesh(playAreaPlaneGeometry, playAreaPlaneMesh);
+playAreaPlane.castShadow = false;
+playAreaPlane.receiveShadow = true;
+console.log(playAreaPlane.geometry.computeBoundingBox());
+const playAreaPlaneSize = playAreaPlane.geometry.boundingBox.getSize();
+console.log(playAreaPlaneSize);
+playAreaPlane.position.set(0 + playAreaPlaneSize.x / 2, 0 - playAreaPlaneSize.y / 2, floorHeight - 1);
+scene.add(playAreaPlane);
 
 function getRandomPosition() {
     let minX = 1;
@@ -67,13 +81,13 @@ let topLeft = {
 // POINT LIGHT
 const light1 = gui.addFolder('Light 1');
 
-const pointLight = new THREE.PointLight(0xffffff, 0.3)
+const pointLight = new THREE.PointLight(0xffffff, 0.2)
 pointLight.position.set(0, 0, 40);
 light1.add(pointLight.position, 'x').min(-500).max(500).step(0.001);
 light1.add(pointLight.position, 'y').min(-500).max(500).step(0.001);
 light1.add(pointLight.position, 'z').min(1).max(115).step(0.01);
 light1.add(pointLight, 'intensity').min(0).max(10).step(0.01);
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
+pointLight.position.set(630, -292, 200);
 
 const lightColor = {
     color: 0x7cc8ed,
@@ -88,7 +102,8 @@ const ambientLight = new THREE.AmbientLight(0x404040);
 
 scene.add(ambientLight);
 scene.add(pointLight)
-scene.add(pointLightHelper);
+// const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
+// scene.add(pointLightHelper);
 
 /**
  * Sizes
@@ -120,7 +135,7 @@ const viewSize = 900;
 const aspectRatio = canvas.width / canvas.height;
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 500);
-camera.position.set(322, -142, 190); // 190, -65, 150
+camera.position.set(630, -292, 190); // 190, -65, 150
 
 const perpCam = gui.addFolder('Orth Cam 1');
 
@@ -207,11 +222,13 @@ canvas.addEventListener("mousemove", (e) => {
     pos.copy(camera.position).add(vec.multiplyScalar(distance));
 
     // CLICK DRAGGING FOR WALLS
-    let node = grid.getNode(pos);
-    if (lastMouseNode != node && mouseDown && ctrl) {
-        lastMouseNode = node;
-        if (node.wall == null) node.addWall();
-        else node.removeWall();
+    if (ctrl) {
+        let node = grid.getNode(pos);
+        if (lastMouseNode != node && mouseDown && ctrl) {
+            lastMouseNode = node;
+            if (node.wall == null) node.addWall();
+            else node.removeWall();
+        }
     }
 });
 
@@ -219,6 +236,7 @@ document.getElementById("floatButton").addEventListener("click", function () {
     console.log("Starting...");
     groups.forEach(e => {
         e.members.forEach(e => {
+            // console.log(e.group.position);
             e.updatePathingGrid();
         });
     });
@@ -362,11 +380,7 @@ function resizeCanvasToDiv() {
 let elapsedTime = 0;
 let pathUpdateInterval = 150;
 
-// const tick = () => {
-    
-// }
-
-function tick() {
+const tick = () => {
     resizeCanvasToDiv();
     // const elapsedTime = clock.getElapsedTime()
     var now = Date.now();
@@ -392,7 +406,6 @@ function tick() {
             });
         }
     }
-    
 
     // Render
     renderer.render(scene, camera);

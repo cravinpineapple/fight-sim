@@ -116,8 +116,12 @@ export default class SquareAI extends Entity {
     }
 
     getCenter() {
-        return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
-        );
+        // old get center
+        // return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
+        // );
+
+        // not actual center
+        return new THREE.Vector3(this.group.position.x, this.group.position.y, 0);
     }
 
     getCenterForPath() {
@@ -188,10 +192,8 @@ export default class SquareAI extends Entity {
         if (this.preys.length == 0)
             return null;
 
-        
-
         let startNode = this.gridRef.getNode(this.group.position);
-        startNode.renderObj.material.color = new THREE.Color("#FF0000");
+        // startNode.renderObj.material.color = new THREE.Color("#FF0000");
 
         let closestNode = this.gridRef.getNode(this.preys[0].group.position);
         let closestNum = this.calcHeuristic(startNode, closestNode);
@@ -245,7 +247,10 @@ export default class SquareAI extends Entity {
     }
 
     getPath(end) {
+        console.log(this.getCenter());
         let start = this.gridRef.getNode(this.getCenter());
+        // console.log(start);
+
         let currNode = this.pathingGrid[start.row][start.col];
         let goalNode = this.pathingGrid[end.row][end.col];
         let open = [currNode];

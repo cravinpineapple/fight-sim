@@ -80,8 +80,6 @@ export default class NodeGrid {
     getNode(vector) {
         let x = Math.floor(vector.x / this.nodeWidth);
         let y = Math.floor(Math.abs(vector.y / this.nodeWidth));
-        console.log("x" + x);
-        console.log("y" + y);
         return this.grid[y][x];
     }
 }
