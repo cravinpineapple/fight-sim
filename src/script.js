@@ -17,7 +17,10 @@ const sideNavMaximizeButton = document.getElementById('sidenav-header-maximize-b
 // Renderer
 var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true,
-})
+});
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 const windowWidth = document.documentElement.clientWidth
 const windowHeight = document.documentElement.clientHeight
 
@@ -36,8 +39,6 @@ const backgroundPlaneGeometry = new THREE.PlaneGeometry(2500, 1500, 1, 1);
 const backgroundPlaneMesh = new THREE.MeshStandardMaterial();
 backgroundPlaneMesh.color = new THREE.Color(0x808080);
 const backgroundPlane = new THREE.Mesh(backgroundPlaneGeometry, backgroundPlaneMesh);
-backgroundPlane.castShadow = false;
-backgroundPlane.receiveShadow = true;
 backgroundPlane.position.set(300, -150, floorHeight - 25);
 scene.add(backgroundPlane);
 
@@ -53,40 +54,45 @@ const playAreaPlaneGeometry = new THREE.PlaneGeometry(nodeWidth * gWidth, nodeWi
 const playAreaPlaneMesh = new THREE.MeshStandardMaterial();
 playAreaPlaneMesh.color = new THREE.Color(0xdbdbdb);
 const playAreaPlane = new THREE.Mesh(playAreaPlaneGeometry, playAreaPlaneMesh);
-playAreaPlane.castShadow = false;
 playAreaPlane.receiveShadow = true;
-console.log(playAreaPlane.geometry.computeBoundingBox());
+playAreaPlane.geometry.computeBoundingBox();
 const playAreaPlaneSize = playAreaPlane.geometry.boundingBox.getSize();
 console.log(playAreaPlaneSize);
 playAreaPlane.position.set(0 + playAreaPlaneSize.x / 2, 0 - playAreaPlaneSize.y / 2, floorHeight - 1);
 scene.add(playAreaPlane);
 
-function getRandomPosition() {
-    let minX = 1;
-    let maxX = gWidth * nodeWidth - 20;
-    let minY = -1;
-    let maxY = -(gHeight - 2) * nodeWidth;
-
-    let randX = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-    let randY = Math.floor(Math.random() * (maxY - minY + 1) + minY);
-
-    return { x: randX, y: randY, z: 0 };
-}
-
-let topLeft = {
-    x: Math.round(-canvas.clientWidth / 2),
-    y: Math.round(canvas.clientHeight / 2),
-};
-
 // POINT LIGHT
-const light1 = gui.addFolder('Light 1');
+const light1 = gui.addFolder('Directional Light');
+
+const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+directionalLight.position.set(800, -450, 50);
+light1.add(directionalLight.position, 'x').min(0).max(2000).step(0.5);
+light1.add(directionalLight.position, 'y').min(-500).max(0).step(0.5);
+light1.add(directionalLight.position, 'z').min(1).max(200).step(0.5);
+light1.add(directionalLight, 'intensity').min(0).max(10).step(0.01);
+light1.add(directionalLight.target.position, 'x').min(0).max(2000).step(0.5);
+light1.add(directionalLight.target.position, 'y').min(0).max(2000).step(0.5);
+light1.add(directionalLight.target.position, 'z').min(1).max(200).step(0.5);
+let directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+scene.add(directionalLightHelper);
+scene.add(directionalLight.target);
+directionalLight.castShadow = true;
+directionalLight.target.position.set(850, -500, 0);
+directionalLight.shadow.camera.left = 0;
+directionalLight.shadow.camera.right = 500;
+directionalLight.shadow.camera.top = 0;
+directionalLight.shadow.camera.bottom = -500;
+directionalLight.shadow.camera.near = 1.0;
+directionalLight.shadow.camera.far = 500;
+directionalLight.shadow.width = 2048;
+directionalLight.shadow.height = 2048;
+
+scene.add(directionalLight);
+
+
 
 const pointLight = new THREE.PointLight(0xffffff, 0.15)
 pointLight.position.set(0, 0, 40);
-light1.add(pointLight.position, 'x').min(-500).max(500).step(0.001);
-light1.add(pointLight.position, 'y').min(-500).max(500).step(0.001);
-light1.add(pointLight.position, 'z').min(1).max(115).step(0.01);
-light1.add(pointLight, 'intensity').min(0).max(10).step(0.01);
 pointLight.position.set(630, -292, 200);
 
 const lightColor = {
@@ -101,7 +107,7 @@ light1.addColor(lightColor, 'color').onChange(() => {
 const ambientLight = new THREE.AmbientLight(0x404040);
 
 scene.add(ambientLight);
-scene.add(pointLight)
+// scene.add(pointLight)
 // const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
 // scene.add(pointLightHelper);
 
@@ -198,7 +204,7 @@ canvas.addEventListener("mousedown", (e) => {
             }
         }
 
-        let newEntity = new SquareAI(group.color, { width: size, height: size, depth: size }, 
+        let newEntity = new SquareAI(group.color, { width: size, height: size, depth: size },
             pos, scene, group.speed, grid, beats, loses, group.id);
         group.members.push(newEntity);
         console.log(group);
@@ -397,7 +403,7 @@ const tick = () => {
                 e.tryMove();
             });
         });
-    
+
         if (elapsedTime >= pathUpdateInterval) {
             groups.forEach(e => {
                 e.members.forEach(e => {
