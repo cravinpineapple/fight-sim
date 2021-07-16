@@ -34,8 +34,6 @@
                     id="entity-customizer-name-text-box0" value="Square0" />
                 <div class="spacer" id="spacer0"></div>
                 <button class="entity-customizer-minimize" id="entity-customizer-minimize0" minimized="false">-</button>
-                <div class="spacer" id="spacer0"></div>
-                <!-- <button class="entity-customizer-delete" id="entity-customizer-delete0">x</button> -->
             </div>
             <div class="spacer-col" id="spacer-col0"></div>
             <div class="rounded-divider" id="rounded-divider0"></div>
@@ -43,12 +41,19 @@
             <div class="entity-shape-row" id="entity-shape-row0">
                 <label class="shape-label" for="entity-customizer-shape-dropdown0" id="shape-label0">Shape:</label>
                 <div class="spacer" id="spacer0"></div>
-                <div class="shape-dropdown-container" id="shape-dropdown-container0">
-                    <button class="shape-drop-button" id="shape-drop-button0">Dropdown</button>
-                    <div class="shape-dropdown-content">
-                        <a href="#">Square</a>
+                <div class="shape-pick-container" id="shape-pick-container0">
+                    <div class="entity-customizer-container-shape-pick-square-visual" id="entity-customizer-container-shape-pick-square-visual0"></div>
+                </div>
+            </div>
+            <div class="entity-customizer-shape-picker" id="entity-customizer-shape-picker0">
+                <div class="entity-customizer-shape-picker-box" id="entity-customizer-shape-picker-box0">
+                    <div class="entity-customizer-container-shape-pick-row" id="entity-customizer-container-shape-pick-row0">
+                        <div class="entity-customizer-container-shape-pick-square" id="entity-customizer-container-shape-pick-square0"></div>
+                        <div class="entity-customizer-container-shape-pick-circle" id="entity-customizer-container-shape-pick-circle0"></div>
+                        <div class="entity-customizer-container-shape-pick-triangle" id="entity-customizer-container-shape-pick-triangle0"></div>
                     </div>
                 </div>
+                <div class="entity-customizer-shape-picker-pointer" id="entity-customizer-shape-picker-pointer0"></div>
             </div>
             <div class="spacer-col" id="spacer-col0"></div>
             <div class="entity-speed-row" id="entity-speed-row0">
@@ -91,6 +96,19 @@
             <div class="spacer-col" id="spacer-col0"></div>
         </div>
         <button class="roundButton" id="add-customizer" onclick="addEntityCustomizerBox()">&#43</button>
+    </div>
+
+    <div class="entity-customizer-shape-picker" id="entity-customizer-shape-picker0">
+        <div class="entity-customizer-shape-picker-box" id="entity-customizer-shape-picker-box0">
+            <div class="entity-customizer-container-shape-pick-row" id="entity-customizer-container-shape-pick-row0">
+                <div class="entity-customizer-container-shape-pick-square" id="entity-customizer-container-shape-pick-square0"></div>
+                <div class="entity-customizer-container-shape-pick-circle" id="entity-customizer-container-shape-pick-square0"></div>
+                <div class="entity-customizer-container-shape-pick-triangle-container" id="entity-customizer-container-shape-pick-triangle-container0">
+                    <div class="entity-customizer-container-shape-pick-triangle" id="entity-customizer-container-shape-pick-triangle"></div>
+                </div>
+            </div>
+        </div>
+        <div class="entity-customizer-shape-picker-pointer" id="entity-customizer-shape-picker-pointer0"></div>
     </div>
 
     <div class="entity-selector" id="entity-selector"></div>

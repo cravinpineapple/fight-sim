@@ -1,5 +1,6 @@
 var entityCustomizerID = 0; // ID generator
 var colorPickerContainerVisible = false;
+var shapePickerContainerVisible = false;
 var removeID = 0;
 const INDICATOR_HIGHLIGHT_COLOR = "rgb(142, 255, 128)";
 
@@ -12,6 +13,7 @@ const randomWords = ["wing",
 let regEx = /\d+/;
 
 var colorPickerContainer = document.getElementById(`entity-customizer-color-picker0`);
+var shapePickerContainer = document.getElementById(`entity-customizer-shape-picker0`);
 var sidenav = document.getElementById("sidenav");
 var entitySelector = document.getElementById("entity-selector");
 
@@ -27,6 +29,14 @@ window.addEventListener("click", function () {
     if (colorPickerContainer.style.visibility == "visible") {
         colorPickerContainerVisible = true;
     }
+
+    if (shapePickerContainerVisible) {
+        shapePickerContainer.style.visibility = "hidden";
+        shapePickerContainerVisible = false;
+    }
+    if (shapePickerContainer.style.visibility == "visible") {
+        shapePickerContainerVisible = true;
+    }
 });
 
 sidenav.addEventListener("scroll", function () {
@@ -36,6 +46,14 @@ sidenav.addEventListener("scroll", function () {
     }
     if (colorPickerContainer.style.visibility == "visible") {
         colorPickerContainerVisible = true;
+    }
+
+    if (shapePickerContainerVisible) {
+        shapePickerContainer.style.visibility = "hidden";
+        shapePickerContainerVisible = false;
+    }
+    if (shapePickerContainer.style.visibility == "visible") {
+        shapePickerContainerVisible = true;
     }
 });
 
@@ -58,12 +76,19 @@ function addEntityCustomizerBox() {
         `<div class="entity-shape-row" id="entity-shape-row${newID}">` +
         `<label class="shape-label" for="entity-customizer-shape-dropdown${newID}" id="shape-label${newID}">Shape:</label>` +
         `<div class="spacer" id="spacer${newID}"></div>` +
-        `<div class="shape-dropdown-container" id="shape-dropdown-container${newID}">` +
-        `<button class="shape-drop-button" id="shape-drop-button${newID}">Dropdown</button>` +
-        `<div class="shape-dropdown-content">` +
-        `<a href="#">Square</a>` +
+        `<div class="shape-pick-container" id="shape-pick-container${newID}">` +
+        `<div class="entity-customizer-container-shape-pick-square-visual" id="entity-customizer-container-shape-pick-square-visual${newID}"></div>` +
         `</div>` +
         `</div>` +
+        `<div class="entity-customizer-shape-picker" id="entity-customizer-shape-picker${newID}">` +
+        `<div class="entity-customizer-shape-picker-box" id="entity-customizer-shape-picker-box${newID}">` +
+        `<div class="entity-customizer-container-shape-pick-row" id="entity-customizer-container-shape-pick-row${newID}">` +
+        `<div class="entity-customizer-container-shape-pick-square" id="entity-customizer-container-shape-pick-square${newID}"></div>` +
+        `<div class="entity-customizer-container-shape-pick-circle" id="entity-customizer-container-shape-pick-circle${newID}"></div>` +
+        `<div class="entity-customizer-container-shape-pick-triangle" id="entity-customizer-container-shape-pick-triangle${newID}"></div>` +
+        `</div>` +
+        `</div>` +
+        `<div class="entity-customizer-shape-picker-pointer" id="entity-customizer-shape-picker-pointer${newID}"></div>` +
         `</div>` +
         `<div class="spacer-col" id="spacer-col${newID}"></div>` +
         `<div class="entity-speed-row" id="entity-speed-row${newID}">` +
@@ -197,6 +222,7 @@ function addEntityCustomizerListeners(newID) {
     var container = document.getElementById(`entity-customizer-container${newID}`);
     var headerDivider = document.getElementById(`rounded-divider${newID}`);
     var shapeRow = document.getElementById(`entity-shape-row${newID}`);
+    var shapeBox = document.getElementById(`shape-pick-container${newID}`);
     var speedRow = document.getElementById(`entity-speed-row${newID}`);
     var sizeRow = document.getElementById(`entity-size-row${newID}`);
     var colorRow = document.getElementById(`entity-color-row${newID}`);
@@ -214,6 +240,11 @@ function addEntityCustomizerListeners(newID) {
     sizeSlider.value = randomSize;
     nameTextBox.value = "" + randomName;
     colorBox.style.backgroundColor = randomColor;
+
+    document.getElementById(`entity-customizer-container-shape-pick-${groups[newID].shape}-visual${newID}`).style.backgroundColor = randomColor;
+    document.getElementById(`entity-customizer-container-shape-pick-square${newID}`).style.backgroundColor = randomColor;
+    document.getElementById(`entity-customizer-container-shape-pick-circle${newID}`).style.backgroundColor = randomColor;
+    document.getElementById(`entity-customizer-container-shape-pick-triangle${newID}`).style.borderBottomColor = randomColor;
 
     var selector = createSelector(newID, randomName, randomShape, randomColor);
     selector.addEventListener("click", function() {
@@ -252,6 +283,21 @@ function addEntityCustomizerListeners(newID) {
         });
     }
 
+    shapeBox.addEventListener("click", function () {
+        let id = this.id.match(regEx)[0];
+
+        var e = window.event;
+        var posX = e.clientX + 30;
+        var posY = e.clientY - 35;
+
+        shapePickerContainer.style.visibility = "hidden";
+        shapePickerContainer = document.getElementById(`entity-customizer-shape-picker${id}`);
+
+        shapePickerContainer.style.top = posY + "px";
+        shapePickerContainer.style.left = posX + "px";
+        shapePickerContainer.style.visibility = "visible";
+    });
+
     // color picker
     var colorPicker = new iro.ColorPicker(`#entity-customizer-color-picker-wheel${newID}`, {
         width: 140, color: randomColor,
@@ -260,7 +306,15 @@ function addEntityCustomizerListeners(newID) {
         let id = this.el.id.match(regEx)[0];
         groups[id].color = color.hexString;
         document.getElementById(`entity-customizer-color-box${id}`).style.backgroundColor = color.hexString;
-        document.getElementById(`${randomShape}-selector-option${id}`).style.backgroundColor = color.hexString;
+        document.getElementById(`${groups[id].shape}-selector-option${id}`).style.backgroundColor = color.hexString;
+
+        console.log(id);
+
+        document.getElementById(`entity-customizer-container-shape-pick-${groups[id].shape}-visual${id}`).style.backgroundColor = color.hexString;
+        document.getElementById(`entity-customizer-container-shape-pick-square${id}`).style.backgroundColor = color.hexString;
+        document.getElementById(`entity-customizer-container-shape-pick-circle${id}`).style.backgroundColor = color.hexString;
+        document.getElementById(`entity-customizer-container-shape-pick-triangle${id}`).style.borderBottomColor = color.hexString;
+
 
         for (let i = 0; i < groups[id].members.length; i++) {
             groups[id].members[i].updateColor(color.hexString);
