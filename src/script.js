@@ -52,7 +52,7 @@ const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 -
 
 const playAreaPlaneGeometry = new THREE.PlaneGeometry(nodeWidth * gWidth, nodeWidth * gHeight, 1, 1);
 const playAreaPlaneMesh = new THREE.MeshStandardMaterial();
-playAreaPlaneMesh.color = new THREE.Color(0xdbdbdb);
+playAreaPlaneMesh.color = new THREE.Color(0x919191);
 const playAreaPlane = new THREE.Mesh(playAreaPlaneGeometry, playAreaPlaneMesh);
 playAreaPlane.receiveShadow = true;
 playAreaPlane.geometry.computeBoundingBox();

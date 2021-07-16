@@ -174,6 +174,74 @@ body
     align-items: center;
 }
 
+.entity-customizer-container-shape-pick
+{
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-top: 5%;
+    margin-left: 5%;
+    width: 85%;
+    max-width: 85%;
+    height: 5%;
+    border-radius: 10px;
+    background-color: rgb(206, 206, 206);
+    padding-left: 2%;
+    padding-top: 4%;
+    padding-bottom: 5%;
+    padding-right: 2%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.entity-customizer-container-shape-pick-row
+{
+    display: flex;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.entity-customizer-container-shape-pick-square
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 2.5vw;
+    width: 2.5vw;
+    max-width: 4vw;
+    position: relative;
+    z-index: 1;
+    background-color: rgb(255, 2, 2);
+    flex: 4;
+}
+
+.entity-customizer-container-shape-pick-circle
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 2.5vw;
+    width: 2.5vw;
+    max-width: 4vw;
+    position: relative;
+    z-index: 1;
+    background-color: rgb(255, 2, 2);
+    border-radius: 50px;
+    flex: 4;
+}
+
+.entity-customizer-container-shape-pick-triangle
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 0;
+    width: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 40px solid rgb(255, 0, 0);
+    background-color: transparent;
+}
+
 .sidenav-header
 {
     width: 100%;
@@ -312,6 +380,48 @@ body
     border-width: 3px;
     border-style: solid;
     flex: 10;
+}
+
+.entity-customizer-shape-picker
+{
+    position: fixed;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    /* margin-left: 14.3%; */
+    /* margin-top: -4%; */
+    visibility: hidden;
+    top: 300px;
+    left: 300px;
+}
+
+.entity-customizer-shape-picker-box
+{
+    position: fixed;
+    z-index: 5;
+    width: 12vw;
+    height: 8vh;
+    /* background-color: #ff0000; */
+    background-color: #818181;
+    border-radius: 20px;
+}
+
+.entity-customizer-shape-picker-pointer
+{
+    position: fixed;
+	height: 5vh;
+	width: 2.5vw;
+	/* background: #33ff00; */
+	background: #818181;
+	margin: 0 auto;
+	transform: rotate(45deg);
+	border-radius: 0 0 0 7px;
+	position: relative;
+    margin-left: -12px;
+    margin-top: 11px;
+    border-left: 3px solid #363636;
+    border-bottom: 3px solid #363636;
+    z-index: 1;
 }
 
 .entity-customizer-color-picker
@@ -616,60 +726,39 @@ hr.rounded
     font-size: 17px;
 }
 
-
-/* dropdown menu stuff */
-
-.shape-drop-button {
-    background-color: rgb(92, 92, 92);
-    color: white;
-    font-size: 2vh;
-    border: none;
-    cursor: pointer;
-    width: 12vh;
-    height: 4vh;
+.shape-pick-container
+{
+    padding-top: 3%;
+    padding-left: 6%;
+    width: 3.25vw;
+    height: 6vh;
+    background-color: rgb(109, 109, 109);
     border-radius: 15px;
-    flex: 10;
 }
-  
-  /* The container <div> - needed to position the dropdown content */
-.shape-dropdown-container {
+
+.entity-customizer-container-shape-pick-square-visual
+{
+    height: 2.5vw;
+    width: 2.5vw;
     position: relative;
-    display: inline-block;
+    background-color: rgb(255, 2, 2);
 }
 
-/* Dropdown Content (Hidden by Default) */
-.shape-dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    width: 100%;
-    border-radius: 15px;
+.entity-customizer-container-shape-pick-circle-visual
+{
+    height: 2.5vw;
+    width: 2.5vw;
+    position: relative;
+    background-color: rgb(255, 2, 2);
+    border-radius: 50px;
 }
 
-/* Links inside the dropdown */
-.shape-dropdown-content a {
-    color: black;
-    padding-top: 12px;
-    padding-left: 16px;
-    text-decoration: none;
-    display: block;
-    height: 40px;
-}
-
-/* Change color of dropdown links on hover */
-.shape-dropdown-content a:hover {
-    background-color: #f1f1f1;
-    border-radius: 15px;
-}
-
-/* Show the dropdown menu on hover */
-.shape-dropdown-container:hover .shape-dropdown-content {
-    display: block;
-}
-
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.shape-dropdown-container:hover .shape-drop-button {
-    background-color: rgb(56, 56, 56);
+.entity-customizer-container-shape-pick-triangle-visual
+{
+    height: 0;
+    width: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 40px solid rgb(255, 0, 0);
+    background-color: transparent;
 }
