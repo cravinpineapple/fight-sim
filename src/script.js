@@ -47,7 +47,7 @@ scene.add(backgroundPlane);
 const nodeWidth = boxDimensions;
 const gWidth = 125; // 139 w/ boxDimensions * 2
 const gHeight = 60; // 55 w/ boxDimensions * 2
-const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: floorHeight }, nodeWidth);
+const grid = new NodeGrid(gHeight, gWidth, scene, { x: 0 + nodeWidth / 2, y: 0 - nodeWidth / 2, z: 0 }, nodeWidth);
 
 
 const playAreaPlaneGeometry = new THREE.PlaneGeometry(nodeWidth * gWidth, nodeWidth * gHeight, 1, 1);
@@ -398,6 +398,30 @@ const tick = () => {
     moveCamera();
 
     if (simStarted) {
+        // if (groups.length == 2) {
+        //     if (groups[0].members.length == 1 && groups[1].members.length == 1) {
+        //         let closestPred = groups[0].members[0].getClosestPredatorNode();
+        //         let inversePredNode = groups[0].members[0].getInversePredatorNode(closestPred);
+        //         inversePredNode.renderObj.material.color = new THREE.Color(0xFF0000);
+        //         console.log("test");
+        //     }
+        // }
+
+        let testAI = groups[0].members[0];
+        let node1 = grid.getNode(testAI.getTopLeftPos());
+        let node2 = grid.getNode(testAI.getTopRightPos());
+        let node3 = grid.getNode(testAI.getBottomLeftPos());
+        let node4 = grid.getNode(testAI.getBottomRightPos());
+        // testAI.renderObj.geometry.computeBoundingBox();
+
+        // console.log(testAI.group.scale);
+        // console.log(testAI.renderObj.geometry.boundingBox);
+        // console.log(testAI.getWidthAndHeight());
+        node1.renderObj.material.color = new THREE.Color(0xFF0000);
+        node2.renderObj.material.color = new THREE.Color(0xFF0000);
+        node3.renderObj.material.color = new THREE.Color(0xFF0000);
+        node4.renderObj.material.color = new THREE.Color(0xFF0000);
+
         groups.forEach(e => {
             e.members.forEach(e => {
                 e.tryMove();
@@ -421,3 +445,40 @@ const tick = () => {
 }
 
 tick();
+
+
+// const tick = () => {
+//     resizeCanvasToDiv();
+//     // const elapsedTime = clock.getElapsedTime()
+//     var now = Date.now();
+//     delta = now - lastUpdate;
+//     lastUpdate = now;
+
+//     elapsedTime += delta;
+
+//     moveCamera();
+
+//     if (simStarted) {
+//         groups.forEach(e => {
+//             e.members.forEach(e => {
+//                 e.tryMove();
+//             });
+//         });
+
+//         if (elapsedTime >= pathUpdateInterval) {
+//             groups.forEach(e => {
+//                 e.members.forEach(e => {
+//                     e.updatePath();
+//                 });
+//             });
+//         }
+//     }
+
+//     // Render
+//     renderer.render(scene, camera);
+
+//     // Call tick again on the next frame
+//     window.requestAnimationFrame(tick);
+// }
+
+// tick();

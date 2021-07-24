@@ -24,7 +24,7 @@ export default class Node extends Entity {
             y: pos.y,
             z: pos.z,
         }
-        this.renderObj.visible = false; // should be false
+        this.renderObj.visible = true; // should be false
 
         this.row = nodeInfo.row;
         this.col = nodeInfo.col;

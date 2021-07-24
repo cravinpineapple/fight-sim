@@ -13,13 +13,13 @@ export default class SquareAI extends Entity {
         const aiGeometry = new THREE.BoxGeometry(1, 1, 1);
         const aiMaterial = new THREE.MeshBasicMaterial();
         aiMaterial.color = new THREE.Color(color);
-        aiMaterial.wireframe = false;
+        aiMaterial.wireframe = true;
 
         this.gridRef = gridRef;
 
         this.pathingGrid = null;
         this.updatePathingGrid();
-        
+
         this.currentPath = [];
         this.lineInfo = {
             fraction: 0,
@@ -120,8 +120,57 @@ export default class SquareAI extends Entity {
         // return new THREE.Vector3(this.group.position.x + (this.size.width / 2), this.group.position.y - (this.size.height / 2), 0
         // );
 
-        // not actual center
+        // not actual center (?)
         return new THREE.Vector3(this.group.position.x, this.group.position.y, 0);
+    }
+
+    getTopLeftPos() {
+        let width = this.getWidthAndHeight().width / 2;
+        return {
+            x: this.group.position.x - width,
+            y: this.group.position.y + width,
+            z: this.group.position.z,
+        }
+    }
+
+    getTopRightPos() {
+        let width = this.getWidthAndHeight().width / 2;
+        return {
+            x: this.group.position.x + width,
+            y: this.group.position.y + width,
+            z: this.group.position.z,
+        }
+    }
+
+    getBottomLeftPos() {
+        let width = this.getWidthAndHeight().width / 2;
+        return {
+            x: this.group.position.x - width,
+            y: this.group.position.y - width,
+            z: this.group.position.z,
+        }
+    }
+
+    getBottomRightPos() {
+        let width = this.getWidthAndHeight().width / 2;
+        return {
+            x: this.group.position.x + width,
+            y: this.group.position.y - width,
+            z: this.group.position.z,
+        }
+    }
+
+    isPredatorDetected(predator) {
+
+    }
+
+    // {width, height}
+    getWidthAndHeight() {
+        this.renderObj.geometry.computeBoundingBox();
+        return {
+            width: this.group.scale.x * this.renderObj.geometry.boundingBox.max.x * 2,
+            height: this.group.scale.y * this.renderObj.geometry.boundingBox.max.y * 2,
+        };
     }
 
     getCenterForPath() {
@@ -143,7 +192,7 @@ export default class SquareAI extends Entity {
             console.log("path not reachable");
             this.lineInfo.pointsPath = null;
             return;
-        } 
+        }
 
         if (this.pathLineVisible) this.scene.remove(this.visualLinePath);
 
@@ -210,6 +259,53 @@ export default class SquareAI extends Entity {
         return closestNode;
     }
 
+    // returns the node of the closest prey
+    getClosestPredatorNode() {
+        console.log(this.predators.length);
+        if (this.predators.length == 0)
+            return null;
+
+        let startNode = this.gridRef.getNode(this.group.position);
+
+        let closestNode = this.gridRef.getNode(this.predators[0].group.position);
+        let closestNum = this.calcHeuristic(startNode, closestNode);
+
+        for (let i = 1; i < this.predators.length; i++) {
+            let newClosestNode = this.gridRef.getNode(this.predators[i].group.position);
+            let newClosestNum = this.calcHeuristic(startNode, newClosestNode);
+            if (newClosestNum < closestNum) {
+                closestNode = newClosestNode;
+                closestNum = newClosestNum;
+            }
+        }
+
+        return closestNode;
+    }
+
+    getInversePredatorNode(closestPredNode) {
+        
+        let currentNode = this.gridRef.getNode(this.group.position);
+
+        console.log("current node: ");
+        console.log(currentNode);
+        console.log("closest pred: ");
+        console.log(closestPredNode);
+
+        // inverse row and inverse column
+        let iRow = currentNode.row + (currentNode.row - closestPredNode.row);
+        let iCol = currentNode.col + (currentNode.col - closestPredNode.col);
+        console.log("Inverse Row: " + iRow);
+        console.log("Inverse Col: " + iCol);
+
+        // adjust for out of bounds inverses
+        if (iRow < 0) iRow = 0;
+        else if (iRow > this.gridRef.gridWidth - 1) iRow = this.gridRef.gridWidth - 1;
+        if (iCol < 0) iCol = 0;
+        else if (iCol > this.gridRef.gridHeight - 1) iCol = this.gridRef.gridHeight - 1;
+
+        return this.gridRef.grid[iRow][iCol];
+    }
+
     calcHeuristic(currNode, goalNode) {
         const D = 10; // non-diagonal move cost
         const D2 = 14; // diagonal move cost
@@ -232,17 +328,23 @@ export default class SquareAI extends Entity {
     }
 
     updatePath() {
-        if (this.preys.length == 0) return;
+        if (this.preys.length == 0 && this.predators.length == 0) return;
 
         let closestPrey = this.getClosestPreyNode();
-        let closestPreyNode = this.gridRef.getNode(closestPrey.position);
+        let goalNode = this.gridRef.getNode(closestPrey.position);
 
-        if (!this.pathingGrid[closestPreyNode.row][closestPreyNode.col].walkable || this.preyGoalNode == closestPrey) {
+        // get closest predator node
+        let closestPredator = this.getClosestPredatorNode();
+
+        // if closest predator node is within the runaway detection range
+        //      set goal to inverse closest predator node
+
+        if (!this.pathingGrid[closestPreyNode.row][closestPreyNode.col].walkable || this.goalNode == closestPrey /*|| this.goalNode == closestPredator*/) {
             return;
         }
 
-        this.preyGoalNode = closestPrey;
-        this.getPath(closestPrey);
+        this.goalNode = closestPrey;
+        this.getPath(goalNode);
         this.buildFollowPath();
     }
 
@@ -268,7 +370,7 @@ export default class SquareAI extends Entity {
 
 
             if (current == null) return [];
-            
+
             if (current.id == goalNode.id) {
                 let path = [current];
                 current = current.parent;
